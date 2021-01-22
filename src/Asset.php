@@ -48,9 +48,8 @@ class Asset
             return;
         }
 
-        $projectDir = '';
-        if (isset($_ENV['ASSETS_PROJECT_DIRECTORY'])) {
-            $projectDir = $_ENV['ASSETS_PROJECT_DIRECTORY'] . '/';
+        if (false === $projectDir = \getenv('ASSETS_PROJECT_DIRECTORY')) {
+            $projectDir = '';
         }
         $paths = [
             $this->path,

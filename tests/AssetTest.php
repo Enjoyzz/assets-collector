@@ -49,5 +49,59 @@ class AssetTest extends TestCase
         $this->assertSame($setId, !is_null($asset->getId()));
     }
 
+    public function testHttpScheme()
+    {
+        $_SERVER['HTTP_SCHEME'] = 'https';
+        $asset = new Asset('css', '//test.com');
+        $this->assertSame('https://test.com', $asset->getPath());
+        unset($_SERVER['HTTP_SCHEME']);
+    }
+
+    public function testHttpSchemeFailHttps()
+    {
+        $asset = new Asset('css', '//test.com');
+        $this->assertSame('http://test.com', $asset->getPath());
+    }
+
+    public function testHttps()
+    {
+        unset($_SERVER['HTTP_SCHEME']);
+        $_SERVER['HTTPS'] = 'on';
+        $asset = new Asset('css', '//test.com');
+        $this->assertSame('https://test.com', $asset->getPath());
+        unset($_SERVER['HTTPS']);
+
+    }
+
+    public function testHttpsFail()
+    {
+        unset($_SERVER['HTTP_SCHEME']);
+        $_SERVER['HTTPS'] = 'off';
+        $asset = new Asset('css', '//test.com');
+        $this->assertSame('http://test.com', $asset->getPath());
+        unset($_SERVER['HTTPS']);
+
+    }
+
+    public function testServerPort()
+    {
+        $_SERVER['SERVER_PORT'] = 443;
+        $asset = new Asset('css', '//test.com');
+        $this->assertSame('https://test.com', $asset->getPath());
+        unset($_SERVER['SERVER_PORT']);
+
+    }
+
+    public function testServerPortFail()
+    {
+        unset($_SERVER['HTTP_SCHEME']);
+        unset($_SERVER['HTTPS']);
+        $_SERVER['SERVER_PORT'] = 4333;
+        $asset = new Asset('css', '//test.com');
+        $this->assertSame(true, $asset->isUrl());
+        $this->assertSame('http://test.com', $asset->getPath());
+        unset($_SERVER['SERVER_PORT']);
+
+    }
 
 }

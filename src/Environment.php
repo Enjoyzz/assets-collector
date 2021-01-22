@@ -48,7 +48,7 @@ class Environment
             );
         }
         $this->projectDir = $projectDir;
-        chdir($this->projectDir);
+        \putenv('ASSETS_PROJECT_DIRECTORY='.$this->projectDir);
 
         $this->compileDir = $this->setCompileDir($compileDir);
         $this->logger = new NullLogger();

@@ -48,8 +48,20 @@ class Asset
             return;
         }
 
-        if (false !== $this->path = realpath($this->path)) {
-            $this->setId();
+        $projectDir = '';
+        if (isset($_ENV['ASSETS_PROJECT_DIRECTORY'])) {
+            $projectDir = $_ENV['ASSETS_PROJECT_DIRECTORY'] . '/';
+        }
+        $paths = [
+            $this->path,
+            $projectDir . $this->path
+        ];
+
+        foreach ($paths as $path) {
+            if (false !== $this->path = realpath($path)) {
+                $this->setId();
+                break;
+            }
         }
     }
 

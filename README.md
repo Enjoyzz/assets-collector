@@ -1,51 +1,41 @@
 # Assets Collector
 
-
 Инициализация
 
-*Чтобы можно было использовать единый инстанс запустите его в в DI контейнере*
+*Чтобы можно было использовать единый инстанс запустите его в DI контейнере*
 
 ```php
+/**
+* @param string first argument - compile path relative project directory
+* @param string second argument - project directory
+ */
+$environment = new \Enjoys\AssetsCollector\Environment('assets', __DIR__); 
+$environment->setBaseUrl("/assets-collector/example/assets"); //Base URL to compile path for Web
+$environment->setStrategy(\Enjoys\AssetsCollector\Assets::STRATEGY_ONE_FILE); //Assets::STRATEGY_MANY_FILES
+$environment->setCacheTime(0); //cache time in seconds
+$environment->setCssBuildFile('dir/file.css'); //or $environment->setJsBuildFile(); allowed use dir in the path
 
-$config = new \Enjoys\AssetsCollector\Environment(
-    __DIR__.'/assets', //полный путь для сборки и кеширования, пример, /var/www/project/web/assets
-    '/assets', //относительный baseUrl до директории сборки, пример, /something/assets (http://localhost/something/assets/...)
-    '/var/www/project' //директория проекта (не веб), rootPath если хотите
-);
+/** @var \Psr\Log\LoggerInterface $logger */
+$environment->setLogger($logger);
 
-$config->setBuild(true);
-$config->setCacheTime(86400);
-//other setting
-$config->setVersion(time());
-$config->setParamVersion('?v='); //default '?_ver='
-$config->setCssPath('css'); // css is default value
-$config->setCssBuildFile('main.css'); //main.css - default value
-$config->setJsPath('js'); // js is default value
-$config->setJsBuildFile('script.js'); //script.js -default value
-
-```
-
-```php
-/** @var \Enjoys\AssetsCollector\Environment $config */
-$filesystemAdapter = new \League\Flysystem\Local\LocalFilesystemAdapter($config->getProjectDir());
 ```
 
 ```php
 /** 
- * @var \League\Flysystem\FilesystemAdapter $filesystemAdapter
- * @var \Enjoys\AssetsCollector\Environment $config
+ * @var \Enjoys\AssetsCollector\Environment $environment
  */
-$assets = new \Enjoys\AssetsCollector\Assets($config, $filesystemAdapter = null);
+$assets = new \Enjoys\AssetsCollector\Assets($environment);
 
 ```
 
-Добавление в коллекцию 
+Добавление в коллекцию
 
-*Если третим параметрам передать namespace, то при выводе так же нужно его писать. Своего рода группировка*
+*Если третьим параметрам передать namespace, то при выводе так же нужно его писать. Своего рода группировка*
+
 ```php
 /** @var \Enjoys\AssetsCollector\Assets $assets */
 $assets->add('css', [
-    'style/style.css', //относительный путь
+    'style/style.css', //относительный путь, относительно текущей рабочей директории
     __DIR__ . '/style/style.css', //полный путь
     '//example.com/style.css', //сокращенная URL ссылка
     'https://example.com/style.css', //URL ссылка
@@ -53,24 +43,33 @@ $assets->add('css', [
 ]);
 ```
 
-Вывод 
+Вывод
+
 ```php
-/** @var \Enjoys\AssetsCollector\Assets $assets */
-$assets->getCss();
-$assets->getJs('admin_namespace');
+/** @var \Enjoys\AssetsCollector\Assets $assets 
+ */
+$assets->get('css'); //get Css with default namespace
+$assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 ```
 
-При Build = true происходит чтение всех файлов и запись в один файл. Вернет html строку для подлючения стилей или скриптов
+При $environment->setStrategy(\Enjoys\AssetsCollector\Assets::STRATEGY_ONE_FILE); происходит чтение всех файлов и запись
+в один файл. Вернет html строку для подключения стилей или скриптов
+
 ```html
-<link type='text/css' rel='stylesheet' href='/assets/main.css?_ver=1610822303' />
-```
-Если отключено, вернет примерно такое, удобно при разработке
-```html
-<link type='text/css' rel='stylesheet' href='/assets/bootstrap.min.css?_ver=1610822303' />
-<link type='text/css' rel='stylesheet' href='https://example.com/style.css?_ver=1610822303' />
+
+<link type='text/css' rel='stylesheet' href='/assets/main.css?_ver=1610822303'/>
 ```
 
-####ДЛЯ JS ВСЕ АНАЛОГИЧНО, ЗА ИСКЛЮЧЕНИЕМ HTML В ВЫВОДЕ
+При $environment->setStrategy(\Enjoys\AssetsCollector\Assets::STRATEGY_MANY_FILES); вернет стили или скрипты по
+отдельности, примерно так, удобно при разработке
+
+```html
+
+<link type='text/css' rel='stylesheet' href='/assets/bootstrap.min.css?_ver=1610822303'/>
+<link type='text/css' rel='stylesheet' href='https://example.com/style.css?_ver=1610822303'/>
+```
+
+#### ДЛЯ JS ВСЕ АНАЛОГИЧНО, ЗА ИСКЛЮЧЕНИЕМ HTML В ВЫВОДЕ
 
 ## Twig
 

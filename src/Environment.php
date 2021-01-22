@@ -48,6 +48,8 @@ class Environment
             );
         }
         $this->projectDir = $projectDir;
+        chdir($this->projectDir);
+
         $this->compileDir = $this->setCompileDir($compileDir);
         $this->logger = new NullLogger();
     }

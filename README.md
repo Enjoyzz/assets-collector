@@ -1,5 +1,7 @@
 # Assets Collector
 
+![7.4](https://github.com/Enjoyzz/assets-collector/workflows/7.4/badge.svg?branch=master)
+
 Инициализация
 
 *Чтобы можно было использовать единый инстанс запустите его в DI контейнере*

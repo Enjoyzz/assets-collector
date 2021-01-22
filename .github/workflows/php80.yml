@@ -47,9 +47,3 @@ jobs:
         run: |
           mkdir -p build/logs
           vendor/bin/phpunit  tests --verbose --coverage-clover build/logs/clover.xml
-
-      - name: Code coverage
-        if: matrix.operating-system != 'windows-latest'
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload  --format=php-clover build/logs/clover.xml

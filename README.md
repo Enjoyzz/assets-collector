@@ -7,10 +7,11 @@
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 [![Code Coverage](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)
 
-Инициализация
+
 
 *Чтобы можно было использовать единый инстанс запустите его в DI контейнере*
 
+###Инициализация
 ```php
 /**
 * @param string first argument - compile path relative project directory
@@ -25,17 +26,11 @@ $environment->setCssBuildFile('dir/file.css'); //or $environment->setJsBuildFile
 /** @var \Psr\Log\LoggerInterface $logger */
 $environment->setLogger($logger);
 
-```
-
-```php
-/** 
- * @var \Enjoys\AssetsCollector\Environment $environment
- */
 $assets = new \Enjoys\AssetsCollector\Assets($environment);
 
 ```
 
-Добавление в коллекцию
+####Добавление в коллекцию
 
 *Если третьим параметрам передать namespace, то при выводе так же нужно его писать. Своего рода группировка*
 
@@ -50,7 +45,7 @@ $assets->add('css', [
 ]);
 ```
 
-Вывод
+####Вывод
 
 ```php
 /** @var \Enjoys\AssetsCollector\Assets $assets 
@@ -59,7 +54,7 @@ $assets->get('css'); //get Css with default namespace
 $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 ```
 
-При $environment->setStrategy(\Enjoys\AssetsCollector\Assets::STRATEGY_ONE_FILE); происходит чтение всех файлов и запись
+При $environment->setStrategy(Assets::STRATEGY_ONE_FILE); происходит чтение всех файлов и запись
 в один файл. Вернет html строку для подключения стилей или скриптов
 
 ```html
@@ -67,7 +62,7 @@ $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 <link type='text/css' rel='stylesheet' href='/assets/main.css?_ver=1610822303'/>
 ```
 
-При $environment->setStrategy(\Enjoys\AssetsCollector\Assets::STRATEGY_MANY_FILES); вернет стили или скрипты по
+При $environment->setStrategy(Assets::STRATEGY_MANY_FILES); вернет стили или скрипты по
 отдельности, примерно так, удобно при разработке
 
 ```html

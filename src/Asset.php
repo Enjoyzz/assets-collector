@@ -67,7 +67,7 @@ class Asset
     private function checkIsUrl(): bool
     {
         if (\str_starts_with($this->path, '//')) {
-            $this->path = $this->defineHttpScheme() . ':' . $this->path;
+            $this->path = Helpers::getHttpScheme() . ':' . $this->path;
             return true;
         }
 
@@ -77,22 +77,6 @@ class Asset
         return false;
     }
 
-    private function defineHttpScheme(): string
-    {
-        $scheme = 'http';
-        if (isset($_SERVER['HTTP_SCHEME'])) {
-            return $_SERVER['HTTP_SCHEME'];
-        }
-
-        if (isset($_SERVER['HTTPS']) && \strtolower($_SERVER['HTTPS']) != 'off') {
-            return 'https';
-        }
-
-        if (isset($_SERVER['SERVER_PORT']) && 443 == $_SERVER['SERVER_PORT']) {
-            return 'https';
-        }
-        return $scheme;
-    }
 
 
     public function isMinify(): bool

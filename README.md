@@ -21,7 +21,6 @@ $environment = new \Enjoys\AssetsCollector\Environment('assets', __DIR__);
 $environment->setBaseUrl("/assets-collector/example/assets"); //Base URL to compile path for Web
 $environment->setStrategy(\Enjoys\AssetsCollector\Assets::STRATEGY_ONE_FILE); //Assets::STRATEGY_MANY_FILES
 $environment->setCacheTime(0); //cache time in seconds
-$environment->setCssBuildFile('dir/file.css'); //or $environment->setJsBuildFile(); allowed use dir in the path
 
 /** @var \Psr\Log\LoggerInterface $logger */
 $environment->setLogger($logger);

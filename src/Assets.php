@@ -10,8 +10,6 @@ use Psr\Log\LoggerInterface;
 
 class Assets
 {
-
-
     public const NAMESPACE_COMMON = 'common';
 
     public const RENDER_HTML = 'html';

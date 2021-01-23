@@ -73,7 +73,7 @@ class Assets
      */
     public function get(string $type, $namespace = self::NAMESPACE_COMMON): string
     {
-        $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
+        $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace), $namespace);
         return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);
     }
 
@@ -81,16 +81,19 @@ class Assets
     /**
      * @param string $type
      * @param array<Asset> $assetsCollection
+     * @param string $namespace
      * @return array<string>
      * @throws \Exception
      */
-    private function getResults(string $type, array $assetsCollection): array
+    private function getResults(string $type, array $assetsCollection, $namespace = self::NAMESPACE_COMMON): array
     {
         $strategy = StrategyFactory::getStrategy(
             $this->environment,
             $assetsCollection,
-            $type
+            $type,
+            $namespace
         );
+
         return $strategy->getResult();
     }
 

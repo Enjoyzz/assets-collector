@@ -94,20 +94,6 @@ class EnvironmentTest extends TestCase
         $this->assertSame(999, $environment->getCacheTime());
     }
 
-    public function testSetBuildFile()
-    {
-        $environment = new Environment();
-        $environment->setCssBuildFile('a.css');
-        $environment->setJsBuildFile('b.js');
-        $this->assertSame('a.css', $environment->getBuildFile('css'));
-        $this->assertSame('b.js', $environment->getBuildFile('js'));
-    }
-
-    public function testGetInvalidBuildFile()
-    {
-        $environment = new Environment();
-        $this->assertSame('', $environment->getBuildFile('invalid_type'));
-    }
 
     public function testGetRender()
     {

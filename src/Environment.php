@@ -13,16 +13,10 @@ class Environment
     private string $compileDir;
     private string $baseUrl = '';
 
-    /**
-     * @var array|string[]
-     */
-    private array $buildFile = [
-        'css' => 'css/main.css',
-        'js' => 'js/script.js'
-    ];
+
+    private ?string $pageId = null;
 
     private int $cacheTime = -1;
-    private bool $build = false;
 
     private int $strategy = Assets::STRATEGY_MANY_FILES;
     private string $render = Assets::RENDER_HTML;
@@ -156,35 +150,6 @@ class Environment
         return $this->cacheTime;
     }
 
-    /**
-     * @param string $cssFile
-     */
-    public function setCssBuildFile(string $cssFile): void
-    {
-        $this->buildFile['css'] = $cssFile;
-    }
-
-    /**
-     * @param string $type
-     * @return string
-     */
-    public function getBuildFile(string $type): string
-    {
-        if (!isset($this->buildFile[$type])) {
-            return '';
-        }
-        return $this->buildFile[$type];
-    }
-
-
-    /**
-     * @param string $jsFile
-     */
-    public function setJsBuildFile(string $jsFile): void
-    {
-        $this->buildFile['js'] = $jsFile;
-    }
-
     public function getStrategy(): int
     {
         return $this->strategy;
@@ -213,6 +178,22 @@ class Environment
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPageId(): ?string
+    {
+        return $this->pageId;
+    }
+
+    /**
+     * @param string|null $pageId
+     */
+    public function setPageId(?string $pageId): void
+    {
+        $this->pageId = $pageId;
     }
 
 }

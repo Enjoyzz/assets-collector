@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
-
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
@@ -21,17 +20,44 @@ class OneFileStrategy extends StrategyAbstract
      * @param Environment $environment
      * @param array<Asset> $assetsCollection
      * @param string $type
+     * @param string $namespace
      * @throws \Exception
      */
-    public function __construct(Environment $environment, array $assetsCollection, string $type)
-    {
-        parent::__construct($environment, $assetsCollection, $type);
+    public function __construct(
+        Environment $environment,
+        array $assetsCollection,
+        string $type,
+        string $namespace = Assets::NAMESPACE_COMMON
+    ) {
+        parent::__construct($environment, $assetsCollection, $type, $namespace);
 
         $this->cacheTime = $environment->getCacheTime();
-        $url = $environment->getBuildFile($type);
-        $this->filePath = $environment->getCompileDir() . '/' . $url;
-        $this->fileUrl = $environment->getBaseUrl() . '/' . $url;
+
+        $filename = $this->generateFilename(
+            $environment->getPageId(),
+            $type
+        );
+
+        $this->filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $filename;
+        $this->fileUrl = $environment->getBaseUrl() . DIRECTORY_SEPARATOR . $filename;
         $this->init();
+    }
+
+    /**
+     * @param string|null $pageId
+     * @param string $type css|js
+     * @return string
+     */
+    private function generateFilename(?string $pageId, string $type): string
+    {
+        $type = \strtolower($type);
+        if ($pageId === null) {
+            $pageId = '';
+            if (isset($_SERVER['REQUEST_URI'])) {
+                $pageId = $_SERVER['REQUEST_URI'];
+            }
+        }
+        return '_' . $type . DIRECTORY_SEPARATOR . md5($this->getNamespace() . $pageId) . '.' . $type;
     }
 
     /**
@@ -49,7 +75,7 @@ class OneFileStrategy extends StrategyAbstract
 
     private function isCacheValid(): bool
     {
-        if($this->fileCreated){
+        if ($this->fileCreated) {
             return false;
         }
         return (filemtime($this->filePath) + $this->cacheTime) > time();
@@ -81,5 +107,21 @@ class OneFileStrategy extends StrategyAbstract
 
         $this->logger->info(sprintf('Return url: %s', $this->fileUrl));
         return [$this->fileUrl];
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileUrl(): string
+    {
+        return $this->fileUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilePath(): string
+    {
+        return $this->filePath;
     }
 }

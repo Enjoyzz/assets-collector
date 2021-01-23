@@ -5,6 +5,7 @@ namespace Enjoys\AssetsCollector\CollectStrategy;
 
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
 use Psr\Log\LoggerInterface;
 
@@ -27,24 +28,40 @@ abstract class StrategyAbstract implements StrategyInterface
 
     protected LoggerInterface $logger;
 
+    protected string $namespace;
+
     /**
      * StrategyAbstract constructor.
      * @param Environment $environment
      * @param array<Asset> $assetsCollection
      * @param string $type
+     * @param string $namespace
      */
-    public function __construct(Environment $environment, array $assetsCollection, string $type)
-    {
+    public function __construct(
+        Environment $environment,
+        array $assetsCollection,
+        string $type,
+        string $namespace = Assets::NAMESPACE_COMMON
+    ) {
         $this->environment = $environment;
         $this->assetsCollection = $assetsCollection;
         $this->type = $type;
         $this->logger = $environment->getLogger();
+        $this->namespace = $namespace;
     }
 
     /**
      * @return array<string>
      */
-    abstract  public function getResult(): array;
+    abstract public function getResult(): array;
+
+    /**
+     * @return string
+     */
+    public function getNamespace(): string
+    {
+        return $this->namespace;
+    }
 
     /**
      * @param string $file

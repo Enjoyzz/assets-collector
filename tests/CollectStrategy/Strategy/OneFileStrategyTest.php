@@ -36,10 +36,7 @@ class OneFileStrategyTest extends TestCase
     public function testOneFileStrategy()
     {
         $this->environment->setStrategy(Assets::STRATEGY_ONE_FILE);
-        $uniqname = uniqid('css');
-        $this->environment->setCssBuildFile('cssDir/' . $uniqname . '.css');
-
-
+        $this->environment->setPageId(null);
         $strategy = new OneFileStrategy(
             $this->environment, [
             new Asset('css', __DIR__ . '/../../fixtures/test.css'),
@@ -47,7 +44,7 @@ class OneFileStrategyTest extends TestCase
         ], 'css'
         );
 
-        $this->assertSame(['/test/something/cssDir/'.$uniqname.'.css'], $strategy->getResult());
+        $this->assertSame(['/test/something/_css/9efab2399c7c560b34de477b9aa0a465.css'], $strategy->getResult());
         $this->assertSame(
             str_replace(
                 "\r",
@@ -58,7 +55,7 @@ p{color:#fff}
 
 CSS
             ),
-            file_get_contents($this->environment->getCompileDir() . '/' . $this->environment->getBuildFile('css'))
+            file_get_contents($strategy->getFilePath())
         );
     }
 

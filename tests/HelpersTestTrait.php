@@ -4,7 +4,7 @@
 namespace Tests\Enjoys\AssetsCollector;
 
 
-trait HelpersTest
+trait HelpersTestTrait
 {
 
     private function removeDirectoryRecursive($path, $removeParent = false)

@@ -7,12 +7,12 @@ use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
-use Tests\Enjoys\AssetsCollector\HelpersTest;
+use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
 class OneFileStrategyTest extends TestCase
 {
 
-    use HelpersTest;
+    use HelpersTestTrait;
     /**
      * @var Environment
      */

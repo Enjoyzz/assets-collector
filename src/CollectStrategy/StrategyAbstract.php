@@ -28,7 +28,6 @@ abstract class StrategyAbstract implements StrategyInterface
 
     protected LoggerInterface $logger;
 
-    protected string $namespace;
 
     /**
      * StrategyAbstract constructor.
@@ -47,21 +46,12 @@ abstract class StrategyAbstract implements StrategyInterface
         $this->assetsCollection = $assetsCollection;
         $this->type = $type;
         $this->logger = $environment->getLogger();
-        $this->namespace = $namespace;
     }
 
     /**
      * @return array<string>
      */
     abstract public function getResult(): array;
-
-    /**
-     * @return string
-     */
-    public function getNamespace(): string
-    {
-        return $this->namespace;
-    }
 
     /**
      * @param string $file

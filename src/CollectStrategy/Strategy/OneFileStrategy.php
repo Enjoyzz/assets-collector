@@ -3,7 +3,6 @@
 namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
 use Enjoys\AssetsCollector\Asset;
-use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
@@ -20,23 +19,18 @@ class OneFileStrategy extends StrategyAbstract
      * @param Environment $environment
      * @param array<Asset> $assetsCollection
      * @param string $type
-     * @param string $namespace
      * @throws \Exception
      */
     public function __construct(
         Environment $environment,
         array $assetsCollection,
-        string $type,
-        string $namespace = Assets::NAMESPACE_COMMON
+        string $type
     ) {
-        parent::__construct($environment, $assetsCollection, $type, $namespace);
+        parent::__construct($environment, $assetsCollection, $type);
 
         $this->cacheTime = $environment->getCacheTime();
 
-        $filename = $this->generateFilename(
-            $environment->getPageId(),
-            $type
-        );
+        $filename = $this->generateFilename($type);
 
         $this->filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $filename;
         $this->fileUrl = $environment->getBaseUrl() . DIRECTORY_SEPARATOR . $filename;
@@ -44,20 +38,12 @@ class OneFileStrategy extends StrategyAbstract
     }
 
     /**
-     * @param string|null $pageId
      * @param string $type css|js
      * @return string
      */
-    private function generateFilename(?string $pageId, string $type): string
+    private function generateFilename(string $type): string
     {
-        $type = \strtolower($type);
-        if ($pageId === null) {
-            $pageId = '';
-            if (isset($_SERVER['REQUEST_URI'])) {
-                $pageId = $_SERVER['REQUEST_URI'];
-            }
-        }
-        return '_' . $type . DIRECTORY_SEPARATOR . md5($this->getNamespace() . $pageId) . '.' . $type;
+        return '_' . $type . DIRECTORY_SEPARATOR . md5(serialize($this->assetsCollection)) . '.' . $type;
     }
 
     /**

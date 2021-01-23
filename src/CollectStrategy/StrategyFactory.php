@@ -22,11 +22,10 @@ class StrategyFactory
      * @param Environment $environment
      * @param array<Asset> $assetsCollection
      * @param string $type
-     * @param string $namespace
      * @return StrategyInterface
      * @throws \Exception
      */
-    public static function getStrategy(Environment $environment, array $assetsCollection, string $type, string $namespace = Assets::NAMESPACE_COMMON): StrategyInterface
+    public static function getStrategy(Environment $environment, array $assetsCollection, string $type): StrategyInterface
     {
         $strategy = $environment->getStrategy();
         if(!isset(self::STRATEGY[$strategy])){
@@ -34,7 +33,7 @@ class StrategyFactory
         }
         $strategyClass = self::STRATEGY[$strategy];
 
-        return new $strategyClass($environment, $assetsCollection, $type, $namespace);
+        return new $strategyClass($environment, $assetsCollection, $type);
     }
 
 

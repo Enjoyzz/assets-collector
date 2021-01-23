@@ -44,7 +44,7 @@ class OneFileStrategyTest extends TestCase
         ], 'css'
         );
 
-        $this->assertSame(['/test/something/_css/9efab2399c7c560b34de477b9aa0a465.css'], $strategy->getResult());
+        $this->assertSame(['/test/something/_css/53e85740211b741c2b5fba26092038e9.css'], $strategy->getResult());
         $this->assertSame(
             str_replace(
                 "\r",

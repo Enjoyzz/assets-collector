@@ -35,7 +35,6 @@ class Assets
     public function __construct(Environment $environment)
     {
         $this->environment = $environment;
-
         $this->logger = $this->environment->getLogger();
         $this->assetsCollection = new AssetsCollection($this->environment);
     }
@@ -71,7 +70,7 @@ class Assets
      */
     public function get(string $type, $namespace = self::NAMESPACE_COMMON): string
     {
-        $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace), $namespace);
+        $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
         return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);
     }
 
@@ -83,13 +82,12 @@ class Assets
      * @return array<string>
      * @throws \Exception
      */
-    private function getResults(string $type, array $assetsCollection, $namespace = self::NAMESPACE_COMMON): array
+    private function getResults(string $type, array $assetsCollection): array
     {
         $strategy = StrategyFactory::getStrategy(
             $this->environment,
             $assetsCollection,
-            $type,
-            $namespace
+            $type
         );
 
         return $strategy->getResult();

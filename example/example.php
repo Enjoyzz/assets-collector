@@ -22,7 +22,6 @@ $environment->setBaseUrl("/assets-collector/example/assets");
 $environment->setStrategy(Assets::STRATEGY_ONE_FILE);
 $environment->setCacheTime(5);
 $environment->setLogger($logger);
-//$environment->setPageId('d');
 
 
 $assets = new Assets($environment);

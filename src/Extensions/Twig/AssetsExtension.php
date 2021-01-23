@@ -40,8 +40,8 @@ class AssetsExtension extends AbstractExtension
     {
         return [
             new TwigFunction('asset', [$this, 'asset']),
-            new TwigFunction('eCSS', [$this, 'getExternCss']),
-            new TwigFunction('eJS', [$this, 'getExternJs']),
+            new TwigFunction('eCSS', [$this, 'getExternCss'], ['is_safe' => ['html']]),
+            new TwigFunction('eJS', [$this, 'getExternJs'], ['is_safe' => ['html']]),
         ];
     }
 

@@ -86,6 +86,6 @@ $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 Вывод
 
 ```twig
-{{ eCSS()|raw }}
-{{ eJS()|raw }}
+{{ eCSS() }}
+{{ eJS('namespace') }}
 ```

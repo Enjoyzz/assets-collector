@@ -13,6 +13,7 @@ class OneFileStrategyTest extends TestCase
 {
 
     use HelpersTestTrait;
+
     /**
      * @var Environment
      */
@@ -27,7 +28,6 @@ class OneFileStrategyTest extends TestCase
 
     protected function tearDown(): void
     {
-
         $this->removeDirectoryRecursive($this->environment->getCompileDir(), true);
 
         $this->environment = null;
@@ -37,14 +37,14 @@ class OneFileStrategyTest extends TestCase
     {
         $this->environment->setStrategy(Assets::STRATEGY_ONE_FILE);
         $this->environment->setPageId(null);
-        $strategy = new OneFileStrategy(
-            $this->environment, [
+
+        $assetsCollection = [
             new Asset('css', __DIR__ . '/../../fixtures/test.css'),
             new Asset('css', __DIR__ . '/../../../tests/fixtures/test2.css'),
-        ], 'css'
-        );
+        ];
+        $strategy = new OneFileStrategy($this->environment, $assetsCollection, 'css');
 
-        $this->assertSame(['/test/something/_css/53e85740211b741c2b5fba26092038e9.css'], $strategy->getResult());
+        $this->assertSame(['/test/something/_css/'.md5(serialize($assetsCollection)).'.css'], $strategy->getResult());
         $this->assertSame(
             str_replace(
                 "\r",

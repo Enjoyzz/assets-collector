@@ -5,7 +5,6 @@ namespace Enjoys\AssetsCollector\CollectStrategy;
 
 
 use Enjoys\AssetsCollector\Asset;
-use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
 use Psr\Log\LoggerInterface;
 
@@ -34,13 +33,11 @@ abstract class StrategyAbstract implements StrategyInterface
      * @param Environment $environment
      * @param array<Asset> $assetsCollection
      * @param string $type
-     * @param string $namespace
      */
     public function __construct(
         Environment $environment,
         array $assetsCollection,
-        string $type,
-        string $namespace = Assets::NAMESPACE_COMMON
+        string $type
     ) {
         $this->environment = $environment;
         $this->assetsCollection = $assetsCollection;

@@ -10,25 +10,41 @@
 
 *Чтобы можно было использовать единый инстанс запустите его в DI контейнере*
 
-###Инициализация
+**Настройка окружения**
 ```php
-/**
-* @param string first argument - compile path relative project directory
-* @param string second argument - project directory
- */
-$environment = new \Enjoys\AssetsCollector\Environment('assets', __DIR__); 
-$environment->setBaseUrl("/assets-collector/example/assets"); //Base URL to compile path for Web
+//project directory
+$projectDir = __DIR__;
+//compile path relative project directory
+$assetsDir = $projectDir .'/assets'; 
+//or relative project directory
+//$assetsDir = 'assets';
+
+$environment = new \Enjoys\AssetsCollector\Environment($assetsDir, $projectDir); 
+//Base URL to compile path for Web
+$environment->setBaseUrl("/assets-collector/example/assets"); 
+//Set strategy, default STRATEGY_MANY_FILES
 $environment->setStrategy(\Enjoys\AssetsCollector\Assets::STRATEGY_ONE_FILE); //Assets::STRATEGY_MANY_FILES
+//Cache time for files in strategy STRATEGY_ONE_FILE
 $environment->setCacheTime(0); //cache time in seconds
+//Adds the output version, for example //example.php/style.css?v=123 
+$environment->setVersion(123);
+//You can change the parameter for the version
+$environment->setParamVersion('?ver=');
 
-/** @var \Psr\Log\LoggerInterface $logger */
+/** 
+ * YYou can add a logger that implements \Psr\Log\LoggerInterface, for example, Monolog
+ * @var \Psr\Log\LoggerInterface $logger 
+ */
 $environment->setLogger($logger);
-
-$assets = new \Enjoys\AssetsCollector\Assets($environment);
-
 ```
 
-####Добавление в коллекцию
+**Инициализация класса**
+```php
+/** @var \Enjoys\AssetsCollector\Environment $environment */
+$assets = new \Enjoys\AssetsCollector\Assets($environment);
+```
+
+**Добавление в коллекцию**
 
 *Если третьим параметрам передать namespace, то при выводе так же нужно его писать. Своего рода группировка*
 
@@ -43,7 +59,7 @@ $assets->add('css', [
 ]);
 ```
 
-####Вывод
+**Вывод**
 
 ```php
 /** @var \Enjoys\AssetsCollector\Assets $assets 
@@ -52,7 +68,7 @@ $assets->get('css'); //get Css with default namespace
 $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 ```
 
-При $environment->setStrategy(Assets::STRATEGY_ONE_FILE); происходит чтение всех файлов и запись
+При *$environment->setStrategy(Assets::STRATEGY_ONE_FILE);* происходит чтение всех файлов и запись
 в один файл. Вернет html строку для подключения стилей или скриптов
 
 ```html
@@ -60,7 +76,7 @@ $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 <link type='text/css' rel='stylesheet' href='/assets/main.css?_ver=1610822303'/>
 ```
 
-При $environment->setStrategy(Assets::STRATEGY_MANY_FILES); вернет стили или скрипты по
+При *$environment->setStrategy(Assets::STRATEGY_MANY_FILES);* вернет стили или скрипты по
 отдельности, примерно так, удобно при разработке
 
 ```html
@@ -69,11 +85,13 @@ $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 <link type='text/css' rel='stylesheet' href='https://example.com/style.css?_ver=1610822303'/>
 ```
 
-#### ДЛЯ JS ВСЕ АНАЛОГИЧНО, ЗА ИСКЛЮЧЕНИЕМ HTML В ВЫВОДЕ
+***ДЛЯ JS ВСЕ АНАЛОГИЧНО, ЗА ИСКЛЮЧЕНИЕМ HTML В ВЫВОДЕ***
 
-## Twig
+## Twig Extention
 
-Добавление в коллекцию. Показано для css, но для js то же самое
+**Добавление в коллекцию.**
+
+Показано для css, но для js то же самое
 
 ```twig
  {{  asset('css', [{0: 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.css', 'minify': false}]) }}
@@ -81,7 +99,7 @@ $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
  {{  asset('css', ['path/style1.css', 'style2.css']) }}
 ```
 
-Вывод
+**Вывод**
 
 ```twig
 {{ eCSS() }}

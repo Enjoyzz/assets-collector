@@ -14,7 +14,7 @@ var hello = "Hello world";
 //output
 alert(hello);
 JS;
-        $minify = new JsMinify($content);
+        $minify = new JsMinify($content, []);
         $this->assertSame('var hello="Hello world";alert(hello);', $minify->getContent());
     }
 }

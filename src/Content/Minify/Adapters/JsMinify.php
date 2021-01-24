@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector\Content\Minify\Adapters;
 
 use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
+use Enjoys\Traits\Options;
 use JShrink\Minifier;
 
 /**
@@ -13,11 +14,19 @@ use JShrink\Minifier;
  */
 class JsMinify implements MinifyInterface
 {
+    use Options;
+
     private string $content;
 
-    public function __construct(string $content)
+    /**
+     * JsMinify constructor.
+     * @param string $content
+     * @param array<mixed> $minifyOptions
+     */
+    public function __construct(string $content, array $minifyOptions)
     {
         $this->content = $content;
+        $this->setOptions($minifyOptions);
     }
 
     /**
@@ -26,6 +35,11 @@ class JsMinify implements MinifyInterface
      */
     public function getContent(): string
     {
-        return (string)Minifier::minify($this->content, array('flaggedComments' => false));
+        return (string)Minifier::minify(
+            $this->content,
+            [
+                'flaggedComments' => $this->getOption('flaggedComments', false)
+            ]
+        );
     }
 }

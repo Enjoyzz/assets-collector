@@ -15,7 +15,7 @@ body {
 }
 CSS;
 
-        $minify = new CssMinify($content);
+        $minify = new CssMinify($content, []);
         $this->assertSame('body{color:red}', $minify->getContent());
     }
 }

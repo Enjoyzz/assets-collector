@@ -38,6 +38,10 @@ $environment->setParamVersion('?ver=');
 $environment->setLogger($logger);
 ```
 
+[Настройки CSS Minify](#options_cssminify)
+
+[Настройки JS Minify](#options_jsminify)
+
 **Инициализация класса**
 ```php
 /** @var \Enjoys\AssetsCollector\Environment $environment */
@@ -104,4 +108,37 @@ $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 ```twig
 {{ eCSS() }}
 {{ eJS('namespace') }}
+```
+
+<a id="options_cssminify"></a>
+## Настройки CSS Minify
+Для передачи параметров для CSSMinify используется метод Environment::setCssMinifyOptions(array [])
+
+Подробное описание параметров: https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port#api
+
+```php
+/** @var \Enjoys\AssetsCollector\Environment $environment */
+//не обязательно передавать все параметры, можно только выборочно 
+$environment->setCssMinifyOptions([
+    'keepSourceMapComment' => false, //bool
+    'removeImportantComments' => true, //bool
+    'setLineBreakPosition' => 1000, //int
+    'setMaxExecutionTime' => 60, //int
+    'setMemoryLimit' => '128M',
+    'setPcreBacktrackLimit' => 1000000, //int
+    'setPcreRecursionLimit' => 500000, //int
+]);
+```
+<a id="options_jsminify"></a>
+## Настройки JS Minify
+Для передачи параметров для JS Minify используется метод Environment::setJsMinifyOptions(array [])
+
+Подробнее про [JShrink](https://github.com/tedious/JShrink)
+
+```php
+/** @var \Enjoys\AssetsCollector\Environment $environment */
+//не обязательно передавать все параметры, можно только выборочно 
+$environment->setJsMinifyOptions([
+    'flaggedComments' => false
+]);
 ```

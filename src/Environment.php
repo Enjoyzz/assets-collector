@@ -20,6 +20,14 @@ class Environment
     private ?string $version = null;
     private string $paramVersion = '?v=';
 
+    /**
+     * @var array{css: array<mixed>, js: array<mixed>}
+     */
+    private array $minifyOptions = [
+        'css' => [],
+        'js' => []
+    ];
+
     private LoggerInterface $logger;
 
     /**
@@ -174,5 +182,29 @@ class Environment
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * @return array{css: array<mixed>, js: array<mixed>}
+     */
+    public function getMinifyOptions(): array
+    {
+        return $this->minifyOptions;
+    }
+
+    /**
+     * @param array|array[] $options
+     */
+    public function setCssMinifyOptions(array $options): void
+    {
+        $this->minifyOptions['css'] = $options;
+    }
+
+    /**
+     * @param array|array[] $options
+     */
+    public function setJsMinifyOptions(array $options): void
+    {
+        $this->minifyOptions['js'] = $options;
     }
 }

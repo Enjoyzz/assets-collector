@@ -20,15 +20,21 @@ class MinifyFactory
     /**
      * @param string $content
      * @param string $type
+     * @param array{css: array<mixed>, js: array<mixed>}  $minifyOptions
      * @return MinifyInterface
      */
-    public static function minify(string $content, string $type): MinifyInterface
+    public static function minify(string $content, string $type, array $minifyOptions): MinifyInterface
     {
         $minifyClass = Adapters\NullMinify::class;
 
         if (isset(self::MINIFIES[$type])) {
             $minifyClass = self::MINIFIES[$type];
         }
-        return new $minifyClass($content);
+
+        $options = [];
+        if(isset($minifyOptions[$type])){
+            $options = $minifyOptions[$type];
+        }
+        return new $minifyClass($content, $options);
     }
 }

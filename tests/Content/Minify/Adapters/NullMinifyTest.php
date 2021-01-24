@@ -15,7 +15,7 @@ body {
 }
 CSS;
 
-        $minify = new NullMinify($content);
+        $minify = new NullMinify($content, []);
         $this->assertSame($content, $minify->getContent());
     }
 }

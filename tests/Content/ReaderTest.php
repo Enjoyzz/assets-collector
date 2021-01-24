@@ -11,13 +11,13 @@ class ReaderTest extends TestCase
 
     public function testLocalFile(): void
     {
-        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css'));
+        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css'), []);
         $this->assertSame("body{color:#00008b}\n", $reader->getContents());
     }
 
     public function testLocalFileNoMinify(): void
     {
-        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css', [Asset::PARAM_MINIFY => false]));
+        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css', [Asset::PARAM_MINIFY => false]), []);
         $this->assertSame(
             <<<CSS
 body {
@@ -31,13 +31,13 @@ CSS,
 
     public function testReturnGetContentReadFalse(): void
     {
-        $reader = new Reader(new Asset('css', '/'));
+        $reader = new Reader(new Asset('css', '/'), []);
         $this->assertSame('', $reader->getContents());
     }
 
     public function testReturnGetContentFileExistsFalse(): void
     {
-        $reader = new Reader(new Asset('css', '/test.css'));
+        $reader = new Reader(new Asset('css', '/test.css'), []);
         $this->assertSame('', $reader->getContents());
     }
 }

@@ -29,12 +29,24 @@ class Reader
      */
     private $content;
 
-    public function __construct(Asset $asset, LoggerInterface $logger = null)
+    /**
+     * @var array{css: array<mixed>, js: array<mixed>}
+     */
+    private array $minifyOptions;
+
+    /**
+     * Reader constructor.
+     * @param Asset $asset
+     * @param array{css: array<mixed>, js: array<mixed>} $minifyOptions
+     * @param LoggerInterface|null $logger
+     */
+    public function __construct(Asset $asset, array $minifyOptions, LoggerInterface $logger = null)
     {
         $this->asset = $asset;
         $this->logger = $logger ?? new NullLogger();
 
         $this->content = $this->getContent();
+        $this->minifyOptions = $minifyOptions;
     }
 
     public function getContents(): string
@@ -51,7 +63,7 @@ class Reader
         }
 
         if ($this->asset->isMinify()) {
-            $this->content = MinifyFactory::minify($this->content, $this->asset->getType())->getContent() . "\n";
+            $this->content = MinifyFactory::minify($this->content, $this->asset->getType(), $this->minifyOptions)->getContent() . "\n";
             $this->logger->info(sprintf('Minify: %s', $this->asset->getPath()));
         }
         return $this->content;

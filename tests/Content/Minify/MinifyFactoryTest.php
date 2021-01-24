@@ -12,14 +12,14 @@ class MinifyFactoryTest extends TestCase
 {
     public function testMinifyFactorySuccess(): void
     {
-        $factory = MinifyFactory::minify('', 'css');
+        $factory = MinifyFactory::minify('', 'css', []);
         $this->assertInstanceOf(MinifyInterface::class, $factory);
         $this->assertInstanceOf(CssMinify::class, $factory);
     }
 
     public function testMinifyFactoryInvalid(): void
     {
-        $factory = MinifyFactory::minify('', 'invalid');
+        $factory = MinifyFactory::minify('', 'invalid', []);
         $this->assertInstanceOf(MinifyInterface::class, $factory);
         $this->assertInstanceOf(NullMinify::class, $factory);
     }

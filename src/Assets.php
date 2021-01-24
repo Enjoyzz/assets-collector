@@ -78,7 +78,6 @@ class Assets
     /**
      * @param string $type
      * @param array<Asset> $assetsCollection
-     * @param string $namespace
      * @return array<string>
      * @throws \Exception
      */

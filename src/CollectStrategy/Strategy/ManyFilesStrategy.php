@@ -40,7 +40,7 @@ class ManyFilesStrategy extends StrategyAbstract
                 $this->logger->error($e->getMessage());
             }
 
-            $result[] = $this->environment->getBaseUrl() . $link;
+            $result[] = $this->environment->getBaseUrl() . str_replace(DIRECTORY_SEPARATOR, '/', $link);
         }
         return $result;
     }

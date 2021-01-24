@@ -36,7 +36,6 @@ class OneFileStrategyTest extends TestCase
     public function testOneFileStrategy()
     {
         $this->environment->setStrategy(Assets::STRATEGY_ONE_FILE);
-        $this->environment->setPageId(null);
 
         $assetsCollection = [
             new Asset('css', __DIR__ . '/../../fixtures/test.css'),

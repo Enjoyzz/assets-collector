@@ -12,9 +12,6 @@ class Environment
     private string $compileDir;
     private string $baseUrl = '';
 
-
-    private ?string $pageId = null;
-
     private int $cacheTime = -1;
 
     private int $strategy = Assets::STRATEGY_MANY_FILES;
@@ -177,21 +174,5 @@ class Environment
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPageId(): ?string
-    {
-        return $this->pageId;
-    }
-
-    /**
-     * @param string|null $pageId
-     */
-    public function setPageId(?string $pageId): void
-    {
-        $this->pageId = $pageId;
     }
 }

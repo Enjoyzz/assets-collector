@@ -88,7 +88,7 @@ class Environment
      */
     public function setBaseUrl(string $baseUrl = '/'): Environment
     {
-        $this->baseUrl = rtrim($baseUrl, '/');
+        $this->baseUrl = rtrim($baseUrl, '\/');
         return $this;
     }
 

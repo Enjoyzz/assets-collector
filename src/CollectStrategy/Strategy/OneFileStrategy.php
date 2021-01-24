@@ -33,7 +33,7 @@ class OneFileStrategy extends StrategyAbstract
         $filename = $this->generateFilename($type);
 
         $this->filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $filename;
-        $this->fileUrl = $environment->getBaseUrl() . DIRECTORY_SEPARATOR . $filename;
+        $this->fileUrl = $environment->getBaseUrl() . '/' . str_replace(DIRECTORY_SEPARATOR, '/', $filename);
         $this->init();
     }
 

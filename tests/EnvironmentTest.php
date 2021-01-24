@@ -32,7 +32,7 @@ class EnvironmentTest extends TestCase
         return [
             ['', realpath('')],
             [__DIR__, __DIR__],
-            ['/', '/'],
+            ['/', realpath('/')],
             ['0', [\Exception::class]],
         ];
     }

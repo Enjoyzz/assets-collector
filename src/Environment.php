@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector;
 
 use Psr\Log\LoggerInterface;
@@ -195,5 +194,4 @@ class Environment
     {
         $this->pageId = $pageId;
     }
-
 }

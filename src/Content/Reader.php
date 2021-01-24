@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector\Content;
-
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Content\Minify\MinifyFactory;
@@ -19,7 +17,6 @@ use Psr\Log\NullLogger;
  */
 class Reader
 {
-
     use LoggerAwareTrait;
 
     /**
@@ -124,5 +121,4 @@ class Reader
         $this->logger->info(sprintf('Read: %s', $filename));
         return $content;
     }
-
 }

@@ -1,13 +1,11 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector;
-
 
 class Helpers
 {
 
-    static public function getHttpScheme(): string
+    public static function getHttpScheme(): string
     {
         $scheme = 'http';
         if (isset($_SERVER['HTTP_SCHEME'])) {

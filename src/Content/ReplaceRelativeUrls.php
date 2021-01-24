@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector\Content;
 
-
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 

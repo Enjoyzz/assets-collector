@@ -11,13 +11,13 @@ use Twig\TwigFunction;
 /**
  * Class AssetsExtension
  * Set assets from Twig. In the css example, but for js the same
- * {{  asset('css', [{0: 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.css', 'minify': false}]) }}
+ * {{  asset('css', [{0: '//cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.css', 'minify': false}]) }}
  * {{  asset('css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.css') }}
  * {{  asset('css', ['path/style1.css', 'style2.css']) }}
  *
  * Output
- * {{ eCSS()|raw }}
- * {{ eJS()|raw }}
+ * {{ eCSS() }}
+ * {{ eJS() }}
  *
  * @package Enjoys\AssetsCollector\Extensions\Twig
  */
@@ -74,5 +74,4 @@ class AssetsExtension extends AbstractExtension
     {
         return $this->assetsCollector->get('js', $namespace);
     }
-
 }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector\CollectStrategy;
-
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Environment;

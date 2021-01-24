@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
-
 use Enjoys\Traits\Options;
 
 class Asset
@@ -123,6 +122,4 @@ class Asset
     {
         $this->id = md5($this->path);
     }
-
-
 }

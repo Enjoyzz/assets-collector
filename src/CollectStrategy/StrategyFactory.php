@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector\CollectStrategy;
-
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
@@ -25,17 +23,17 @@ class StrategyFactory
      * @return StrategyInterface
      * @throws \Exception
      */
-    public static function getStrategy(Environment $environment, array $assetsCollection, string $type): StrategyInterface
-    {
+    public static function getStrategy(
+        Environment $environment,
+        array $assetsCollection,
+        string $type
+    ): StrategyInterface {
         $strategy = $environment->getStrategy();
-        if(!isset(self::STRATEGY[$strategy])){
+        if (!isset(self::STRATEGY[$strategy])) {
             throw new \Exception('Invalid strategy');
         }
         $strategyClass = self::STRATEGY[$strategy];
 
         return new $strategyClass($environment, $assetsCollection, $type);
     }
-
-
-
 }

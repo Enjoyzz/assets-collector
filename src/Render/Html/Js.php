@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector\Render\Html;
-
 
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Render\RenderInterface;
@@ -26,7 +24,7 @@ class Js implements RenderInterface
     {
         $result = '';
         foreach ($paths as $path) {
-           $result .= "<script src='{$path}{$this->environment->getVersion()}'></script>\n";
+            $result .= "<script src='{$path}{$this->environment->getVersion()}'></script>\n";
         }
         return $result;
     }

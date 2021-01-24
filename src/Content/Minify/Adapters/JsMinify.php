@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector\Content\Minify\Adapters;
 
-
 use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
 use JShrink\Minifier;
 

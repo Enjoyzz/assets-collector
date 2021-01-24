@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector\CollectStrategy;
-
 
 interface StrategyInterface
 {

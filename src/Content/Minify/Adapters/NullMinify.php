@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector\Content\Minify\Adapters;
 
-
 use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
 
 /**
@@ -27,6 +26,4 @@ class NullMinify implements MinifyInterface
     {
         return $this->content;
     }
-
-
 }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector\Render\Html;
-
 
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Render\RenderInterface;

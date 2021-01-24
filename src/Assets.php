@@ -100,6 +100,4 @@ class Assets
     {
         return $this->environment;
     }
-
-
 }

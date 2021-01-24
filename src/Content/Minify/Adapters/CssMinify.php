@@ -41,5 +41,4 @@ class CssMinify implements MinifyInterface
         // Compress the CSS code!
         return $compressor->run($this->content);
     }
-
 }

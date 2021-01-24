@@ -22,7 +22,7 @@ class MinifyFactory
      * @param string $type
      * @return MinifyInterface
      */
-    public static function minify(string $content, string $type):MinifyInterface
+    public static function minify(string $content, string $type): MinifyInterface
     {
         $minifyClass = Adapters\NullMinify::class;
 
@@ -31,5 +31,4 @@ class MinifyFactory
         }
         return new $minifyClass($content);
     }
-
 }

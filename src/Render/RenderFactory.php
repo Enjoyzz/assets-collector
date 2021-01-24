@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector\Render;
-
 
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
@@ -25,15 +23,17 @@ class RenderFactory
      * @return RenderInterface
      * @throws \Exception
      */
-    public static function getRender(string $type, Environment $environment, string $render = Assets::RENDER_HTML): RenderInterface
-    {
-        if(!isset(self::RENDERS[$render][$type])){
+    public static function getRender(
+        string $type,
+        Environment $environment,
+        string $render = Assets::RENDER_HTML
+    ): RenderInterface {
+        if (!isset(self::RENDERS[$render][$type])) {
             throw new \Exception('Invalid render');
         }
 
-        $renderClass =  self::RENDERS[$render][$type];
+        $renderClass = self::RENDERS[$render][$type];
 
         return new $renderClass($environment);
-
     }
 }

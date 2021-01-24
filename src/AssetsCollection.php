@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Enjoys\AssetsCollector;
-
 
 use Psr\Log\LoggerInterface;
 

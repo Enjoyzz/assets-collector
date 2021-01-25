@@ -11,7 +11,7 @@ class Asset
     use Options;
 
     public const MINIFY = 'minify';
-    public const PARAM_CREATE_SYMLINK = 'symlinks';
+    public const CREATE_SYMLINK = 'symlinks';
 
     private ?string $id = null;
     /**

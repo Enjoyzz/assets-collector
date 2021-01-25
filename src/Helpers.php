@@ -2,6 +2,9 @@
 
 namespace Enjoys\AssetsCollector;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+
 class Helpers
 {
 
@@ -26,25 +29,51 @@ class Helpers
      * @param string $file
      * @param string $data
      * @param string $mode
+     * @param LoggerInterface|null $logger
      * @return void
      */
-    public static function writeFile(string $file, string $data, string $mode = 'w'): void
-    {
+    public static function writeFile(
+        string $file,
+        string $data,
+        string $mode = 'w',
+        LoggerInterface $logger = null
+    ): void {
+
+        $logger ??= new NullLogger();
+
         $f = fopen($file, $mode);
         if ($f !== false) {
             fwrite($f, $data);
             fclose($f);
+            $logger->info(sprintf('Write to: %s', $file));
+        }
+    }
+
+    public static function createEmptyFile(
+        string $file,
+        LoggerInterface $logger = null
+    ): void {
+
+        $logger ??= new NullLogger();
+
+        $f = fopen($file, 'w');
+        if ($f !== false) {
+            fwrite($f, '');
+            fclose($f);
+            $logger->info(sprintf('Create file: %s', $file));
         }
     }
 
     /**
      * @param string $path
      * @param int $permissions
+     * @param LoggerInterface|null $logger
      * @return void
      * @throws \Exception
      */
-    public static function createDirectory(string $path, int $permissions = 0777): void
+    public static function createDirectory(string $path, int $permissions = 0777, LoggerInterface $logger = null): void
     {
+        $logger ??= new NullLogger();
 
         if (preg_match("/(\/\.+|\.+)$/i", $path)) {
             throw new \Exception(
@@ -63,6 +92,26 @@ class Helpers
                     sprintf("Не удалось создать директорию: %s! Причина: %s", $path, $error['message'])
                 );
             }
+            $logger->info(sprintf('Create directory %s', $path));
+        }
+    }
+
+    /**
+     * @param string $link
+     * @param string $target
+     * @param LoggerInterface|null $logger
+     * @throws \Exception
+     */
+    public static function createSymlink(string $link, string $target, LoggerInterface $logger = null)
+    {
+        $logger ??= new NullLogger();
+
+        $directory = pathinfo($link, PATHINFO_DIRNAME);
+        Helpers::createDirectory($directory, 0755, $logger);
+
+        if (!file_exists($link)) {
+            symlink($target, $link);
+            $logger->info(sprintf('Create symlink: %s', $link));
         }
     }
 }

@@ -34,13 +34,24 @@ $assets->add(
     'css',
     [
         [
-            'build/phpmetrics/css/normalize.css',
+            'build/phpmetrics/css/style.css',
             \Enjoys\AssetsCollector\Asset::PARAM_CREATE_SYMLINK => [
-                __DIR__ . '/assets/fonts' => __DIR__ . '/../build/phpmetrics/fonts'
+              //  __DIR__ . '/assets/fonts' => __DIR__ . '/../build/phpmetrics/fonts'
             ]
         ],
+        [
+            'build/phpmetrics/css/roboto.css',
+            \Enjoys\AssetsCollector\Asset::PARAM_CREATE_SYMLINK => [
+                  __DIR__ . '/assets/build/phpmetrics/fonts' => __DIR__ . '/../build/phpmetrics/fonts',
+                  __DIR__ . '/assets/build/phpmetrics/css' => __DIR__ . '/../build/phpmetrics/css',
 
+            ]
+        ],
     ]
 );
-var_dump($assets->get('css'));
-var_dump($assets->get('css', '1'));
+echo $assets->get('css');
+?>
+
+<body>
+<h1>Test</h1>
+</body>

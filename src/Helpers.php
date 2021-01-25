@@ -38,7 +38,6 @@ class Helpers
         string $mode = 'w',
         LoggerInterface $logger = null
     ): void {
-
         $logger ??= new NullLogger();
 
         $f = fopen($file, $mode);
@@ -49,11 +48,8 @@ class Helpers
         }
     }
 
-    public static function createEmptyFile(
-        string $file,
-        LoggerInterface $logger = null
-    ): void {
-
+    public static function createEmptyFile(string $file, LoggerInterface $logger = null): void
+    {
         $logger ??= new NullLogger();
 
         $f = fopen($file, 'w');
@@ -102,16 +98,16 @@ class Helpers
      * @param LoggerInterface|null $logger
      * @throws \Exception
      */
-    public static function createSymlink(string $link, string $target, LoggerInterface $logger = null)
+    public static function createSymlink(string $link, string $target, LoggerInterface $logger = null): void
     {
         $logger ??= new NullLogger();
 
         $directory = pathinfo($link, PATHINFO_DIRNAME);
         Helpers::createDirectory($directory, 0755, $logger);
 
-        if (!file_exists($link)) {
+        if (file_exists($link)) {
             symlink($target, $link);
-            $logger->info(sprintf('Create symlink: %s', $link));
+            $logger->info(sprintf('Created symlink: %s', $link));
         }
     }
 }

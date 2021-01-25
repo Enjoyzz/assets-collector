@@ -10,10 +10,9 @@ class Asset
 {
     use Options;
 
-    public const TYPE_CSS = 'css';
-    public const TYPE_JS = 'js';
-
     public const PARAM_MINIFY = 'minify';
+    public const PARAM_CREATE_SYMLINK = 'symlinks';
+
     private ?string $id = null;
     /**
      * @var false|string

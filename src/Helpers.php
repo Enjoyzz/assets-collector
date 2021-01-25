@@ -43,8 +43,15 @@ class Helpers
      * @return void
      * @throws \Exception
      */
-    public static  function createDirectory(string $path, int $permissions = 0777): void
+    public static function createDirectory(string $path, int $permissions = 0777): void
     {
+
+        if (preg_match("/(\/\.+|\.+)$/i", $path)) {
+            throw new \Exception(
+                sprintf("Нельзя создать директорию: %s", $path)
+            );
+        }
+
         //Clear the most recent error
         error_clear_last();
 

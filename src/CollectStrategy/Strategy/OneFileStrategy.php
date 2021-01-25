@@ -6,6 +6,7 @@ use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Helpers;
 
 class OneFileStrategy extends StrategyAbstract
 {
@@ -56,9 +57,12 @@ class OneFileStrategy extends StrategyAbstract
      */
     private function init(): void
     {
-        $this->createDirectory(pathinfo($this->filePath, PATHINFO_DIRNAME));
+        $path = pathinfo($this->filePath, PATHINFO_DIRNAME);
+        Helpers::createDirectory($path);
+        $this->logger->info(sprintf('Create directory %s', $path));
+
         if (!file_exists($this->filePath)) {
-            $this->writeFile($this->filePath, '');
+            Helpers::writeFile($this->filePath, '');
             $this->fileCreated = true;
             $this->logger->info(sprintf('Create new file %s', $this->filePath));
         }
@@ -90,7 +94,7 @@ class OneFileStrategy extends StrategyAbstract
                 $output .= (new Reader($asset, $this->minifyOptions, $this->logger))->getContents();
             }
 
-            $this->writeFile($this->filePath, $output);
+            Helpers::writeFile($this->filePath, $output);
             $this->logger->info(sprintf('Write to: %s', $this->filePath));
         } catch (\Exception $e) {
             $this->logger->notice($e->getMessage());

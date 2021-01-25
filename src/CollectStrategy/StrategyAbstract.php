@@ -43,46 +43,4 @@ abstract class StrategyAbstract implements StrategyInterface
         $this->logger = $environment->getLogger();
     }
 
-    /**
-     * @return array<string>
-     */
-    abstract public function getResult(): array;
-
-    /**
-     * @param string $file
-     * @param string $data
-     * @param string $mode
-     * @return void
-     */
-    protected function writeFile(string $file, string $data, string $mode = 'w'): void
-    {
-        $f = fopen($file, $mode);
-        if ($f) {
-            fwrite($f, $data);
-            fclose($f);
-        }
-    }
-
-    /**
-     * @param string $path
-     * @param int $permissions
-     * @return void
-     * @throws \Exception
-     */
-    protected function createDirectory(string $path, int $permissions = 0777): void
-    {
-        //Clear the most recent error
-        error_clear_last();
-
-        if (!is_dir($path)) {
-            if (@mkdir($path, $permissions, true) === false) {
-                /** @var string[] $error */
-                $error = error_get_last();
-                throw new \Exception(
-                    sprintf("Не удалось создать директорию: %s! Причина: %s", $path, $error['message'])
-                );
-            }
-            $this->logger->info(sprintf('Create directory %s', $path));
-        }
-    }
 }

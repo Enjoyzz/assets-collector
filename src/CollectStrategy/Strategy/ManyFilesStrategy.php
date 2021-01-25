@@ -3,6 +3,7 @@
 namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
+use Enjoys\AssetsCollector\Helpers;
 
 class ManyFilesStrategy extends StrategyAbstract
 {
@@ -37,7 +38,10 @@ class ManyFilesStrategy extends StrategyAbstract
 
             try {
                 if (!file_exists($symlink)) {
-                    $this->createDirectory(pathinfo($symlink, PATHINFO_DIRNAME));
+                    $path = pathinfo($symlink, PATHINFO_DIRNAME);
+                    Helpers::createDirectory($path);
+                    $this->logger->info(sprintf('Create directory %s', $path));
+
                     symlink($asset->getPath(), $symlink);
                     $this->logger->info(sprintf('Create symlink: %s', $symlink));
                 }

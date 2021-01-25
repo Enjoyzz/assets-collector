@@ -35,13 +35,13 @@ $assets->add(
     [
         [
             'build/phpmetrics/css/style.css',
-            \Enjoys\AssetsCollector\Asset::PARAM_CREATE_SYMLINK => [
+            \Enjoys\AssetsCollector\Asset::CREATE_SYMLINK => [
               //  __DIR__ . '/assets/fonts' => __DIR__ . '/../build/phpmetrics/fonts'
             ]
         ],
         [
             'build/phpmetrics/css/roboto.css',
-            \Enjoys\AssetsCollector\Asset::PARAM_CREATE_SYMLINK => [
+            \Enjoys\AssetsCollector\Asset::CREATE_SYMLINK => [
                   __DIR__ . '/assets/build/phpmetrics/fonts' => __DIR__ . '/../build/phpmetrics/fonts',
                   __DIR__ . '/assets/build/phpmetrics/css' => __DIR__ . '/../build/phpmetrics/css',
 

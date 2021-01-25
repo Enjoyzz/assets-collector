@@ -90,7 +90,7 @@ class OneFileStrategy extends StrategyAbstract
             foreach ($this->assetsCollection as $asset) {
                 $output .= (new Reader($asset, $this->minifyOptions, $this->logger))->getContents();
 
-                $optSymlinks = (array)$asset->getOption(Asset::PARAM_CREATE_SYMLINK, []);
+                $optSymlinks = (array)$asset->getOption(Asset::CREATE_SYMLINK, []);
                 foreach ($optSymlinks as $optLink => $optTarget) {
                     Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }

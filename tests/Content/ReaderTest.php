@@ -17,7 +17,7 @@ class ReaderTest extends TestCase
 
     public function testLocalFileNoMinify(): void
     {
-        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css', [Asset::PARAM_MINIFY => false]), []);
+        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css', [Asset::MINIFY => false]), []);
         $this->assertSame(
             <<<CSS
 body {

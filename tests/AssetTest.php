@@ -31,7 +31,7 @@ class AssetTest extends TestCase
             ['css', __DIR__.'/fixtures/test.css', [], false, __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR.'test.css', true, 'css', true],
             ['css', __DIR__.'/../README.md', [], false, realpath(__DIR__.'/../README.md'), true, 'css', true],
             ['css', '../README.md', [], false, false, true, 'css', false],
-            ['css', '../README.md', [Asset::PARAM_MINIFY => false], false, false, false, 'css', false],
+            ['css', '../README.md', [Asset::MINIFY => false], false, false, false, 'css', false],
         ];
     }
 

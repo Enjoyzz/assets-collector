@@ -10,7 +10,7 @@ class Asset
 {
     use Options;
 
-    public const PARAM_MINIFY = 'minify';
+    public const MINIFY = 'minify';
     public const PARAM_CREATE_SYMLINK = 'symlinks';
 
     private ?string $id = null;
@@ -36,7 +36,7 @@ class Asset
         $this->type = $type;
         $this->origPath = $path;
         $this->path = $path;
-        $this->minify = $this->getOption(self::PARAM_MINIFY, true);
+        $this->minify = $this->getOption(self::MINIFY, true);
         $this->isUrl = $this->checkIsUrl();
 
         $this->normalizePath();

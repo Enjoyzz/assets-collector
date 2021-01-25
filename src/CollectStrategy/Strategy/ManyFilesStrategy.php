@@ -23,7 +23,15 @@ class ManyFilesStrategy extends StrategyAbstract
                 continue;
             }
 
-            $link = str_replace($this->environment->getProjectDir(), '', $asset->getPath());
+            $link = str_replace(
+                [
+                    $this->environment->getCompileDir(),
+                    $this->environment->getProjectDir()
+                ]
+                ,
+                '',
+                $asset->getPath()
+            );
 
             $symlink = $this->environment->getCompileDir() . $link;
 

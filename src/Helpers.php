@@ -105,7 +105,7 @@ class Helpers
         $directory = pathinfo($link, PATHINFO_DIRNAME);
         Helpers::createDirectory($directory, 0755, $logger);
 
-        if (file_exists($link)) {
+        if (!file_exists($link)) {
             symlink($target, $link);
             $logger->info(sprintf('Created symlink: %s', $link));
         }

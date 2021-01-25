@@ -22,6 +22,8 @@ class Asset
     private string $type;
     private bool $isUrl;
     private string $origPath;
+    private bool $minify;
+
 
     /**
      * Asset constructor.
@@ -35,6 +37,7 @@ class Asset
         $this->type = $type;
         $this->origPath = $path;
         $this->path = $path;
+        $this->minify = $this->getOption(self::PARAM_MINIFY, true);
         $this->isUrl = $this->checkIsUrl();
 
         $this->normalizePath();
@@ -80,7 +83,7 @@ class Asset
 
     public function isMinify(): bool
     {
-        return $this->getOption(self::PARAM_MINIFY, true);
+        return $this->minify;
     }
 
     /**

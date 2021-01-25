@@ -32,6 +32,7 @@ url(//google.com);
 url(google);
 url('http://test.com');
 url("data:image")
+url('inner/path/style.css');
 CONTENT;
 
         $expectContent = <<<CONTENT
@@ -42,6 +43,7 @@ url(//google.com);
 url({$domain}google);
 url('http://test.com');
 url("data:image")
+url('{$domain}inner/path/style.css');
 CONTENT;
 
         $processor = new ReplaceRelativeUrls($content, $path);

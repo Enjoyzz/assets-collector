@@ -57,14 +57,11 @@ class OneFileStrategy extends StrategyAbstract
      */
     private function init(): void
     {
-        $path = pathinfo($this->filePath, PATHINFO_DIRNAME);
-        Helpers::createDirectory($path);
-        $this->logger->info(sprintf('Create directory %s', $path));
+        Helpers::createDirectory(pathinfo($this->filePath, PATHINFO_DIRNAME), 0755, $this->logger);
 
         if (!file_exists($this->filePath)) {
-            Helpers::writeFile($this->filePath, '');
+            Helpers::createEmptyFile($this->filePath, $this->logger);
             $this->fileCreated = true;
-            $this->logger->info(sprintf('Create new file %s', $this->filePath));
         }
     }
 
@@ -92,10 +89,13 @@ class OneFileStrategy extends StrategyAbstract
 
             foreach ($this->assetsCollection as $asset) {
                 $output .= (new Reader($asset, $this->minifyOptions, $this->logger))->getContents();
-            }
 
-            Helpers::writeFile($this->filePath, $output);
-            $this->logger->info(sprintf('Write to: %s', $this->filePath));
+                $optSymlinks = (array)$asset->getOption(Asset::PARAM_CREATE_SYMLINK, []);
+                foreach ($optSymlinks as $optLink => $optTarget) {
+                    Helpers::createSymlink($optLink, $optTarget, $this->logger);
+                }
+            }
+            Helpers::writeFile($this->filePath, $output, 'w', $this->logger);
         } catch (\Exception $e) {
             $this->logger->notice($e->getMessage());
         }

@@ -2,6 +2,7 @@
 
 namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
+use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Helpers;
 
@@ -34,20 +35,17 @@ class ManyFilesStrategy extends StrategyAbstract
                 $asset->getPath()
             );
 
-            $symlink = $this->environment->getCompileDir() . $link;
-
             try {
-                if (!file_exists($symlink)) {
-                    $path = pathinfo($symlink, PATHINFO_DIRNAME);
-                    Helpers::createDirectory($path);
-                    $this->logger->info(sprintf('Create directory %s', $path));
+                Helpers::createSymlink($this->environment->getCompileDir() . $link, $asset->getPath(), $this->logger);
 
-                    symlink($asset->getPath(), $symlink);
-                    $this->logger->info(sprintf('Create symlink: %s', $symlink));
+                $optSymlinks = (array)$asset->getOption(Asset::PARAM_CREATE_SYMLINK, []);
+                foreach ($optSymlinks as $optLink => $optTarget) {
+                    Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }
             } catch (\Exception  $e) {
                 $this->logger->error($e->getMessage());
             }
+
 
             $result[] = $this->environment->getBaseUrl() . str_replace(DIRECTORY_SEPARATOR, '/', $link);
         }

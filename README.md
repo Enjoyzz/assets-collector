@@ -6,11 +6,10 @@
 [![Build Status](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)
 
-
-
 *Чтобы можно было использовать единый инстанс запустите его в DI контейнере*
 
 **Настройка окружения**
+
 ```php
 //project directory
 $projectDir = __DIR__;
@@ -43,6 +42,7 @@ $environment->setLogger($logger);
 [Настройки JS Minify](#options_jsminify)
 
 **Инициализация класса**
+
 ```php
 /** @var \Enjoys\AssetsCollector\Environment $environment */
 $assets = new \Enjoys\AssetsCollector\Assets($environment);
@@ -59,7 +59,33 @@ $assets->add('css', [
     __DIR__ . '/style/style.css', //полный путь
     '//example.com/style.css', //сокращенная URL ссылка
     'https://example.com/style.css', //URL ссылка
-    ['style.css', \Enjoys\AssetsCollector\Asset::PARAM_MINIFY => false], //попускает минификацию конкретного файла
+    ['style.css', \Enjoys\AssetsCollector\Asset::MINIFY => false], //попускает минификацию конкретного файла
+]);
+```
+
+**Дополнительные параметры**
+
+Можно передать ссылку на ресурс в качесве массива, где 1-й элемент массива сам путь, последующие элементы массива
+параметры
+
+```php
+/** @var \Enjoys\AssetsCollector\Assets $assets */
+$assets->add('css', [
+    [
+         __DIR__.'/style.css',
+         // По-умолчанию все ресурсы минифицируются, если указать явно false, этот ресур пропустит минификацию
+         Asset::MINIFY => false,
+         
+         // Если нужно созать дополнительные симлинки, то можно указать их в этом параметре, в качества миссива,
+         // где ключ - сама ссылка, а значение - исходный файл или директория (цель)
+         // Это бывает необходимо если в ресурсе есть относительные ссылки, и чтобы был к ним доступ нужно прописать
+         // явно все символические ссылки
+         Asset::CREATE_SYMLINK => [
+            __DIR__.'/symlink' => __DIR__.'/../../../target',
+            //...
+        ],          
+    ],
+    //...
 ]);
 ```
 
@@ -72,16 +98,16 @@ $assets->get('css'); //get Css with default namespace
 $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 ```
 
-При *$environment->setStrategy(Assets::STRATEGY_ONE_FILE);* происходит чтение всех файлов и запись
-в один файл. Вернет html строку для подключения стилей или скриптов
+При *$environment->setStrategy(Assets::STRATEGY_ONE_FILE);* происходит чтение всех файлов и запись в один файл. Вернет
+html строку для подключения стилей или скриптов
 
 ```html
 
 <link type='text/css' rel='stylesheet' href='/assets/main.css?_ver=1610822303'/>
 ```
 
-При *$environment->setStrategy(Assets::STRATEGY_MANY_FILES);* вернет стили или скрипты по
-отдельности, примерно так, удобно при разработке
+При *$environment->setStrategy(Assets::STRATEGY_MANY_FILES);* вернет стили или скрипты по отдельности, примерно так,
+удобно при разработке
 
 ```html
 
@@ -111,7 +137,9 @@ $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 ```
 
 <a id="options_cssminify"></a>
+
 ## Настройки CSS Minify
+
 Для передачи параметров для CSSMinify используется метод Environment::setCssMinifyOptions(array [])
 
 Подробное описание параметров: https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port#api
@@ -129,8 +157,11 @@ $environment->setCssMinifyOptions([
     'setPcreRecursionLimit' => 500000, //int
 ]);
 ```
+
 <a id="options_jsminify"></a>
+
 ## Настройки JS Minify
+
 Для передачи параметров для JS Minify используется метод Environment::setJsMinifyOptions(array [])
 
 Подробнее про [JShrink](https://github.com/tedious/JShrink)

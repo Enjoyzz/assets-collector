@@ -30,7 +30,6 @@ class ReplaceRelativeUrls
 
     /**
      * @return string
-     * @todo у регулярки есть проблему , можно посмотреть в тесте
      */
     public function getContent(): string
     {

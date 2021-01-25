@@ -1,1 +1,13 @@
+Проблема ReplaceRelativeUrls
+
+url: http://example.domain/inner/path/style.css
+/*******/
+url('img/sample.jpg')
+неверно, (сейчас так)   --> url('http://example.domainimg/sample.jpg')
+верно, (так надо)       --> url('http://example.domain/inner/path/img/sample.jpg')
+----------------------------------------------------------------------------------
+url('../img/sample.jpg')
+неверно, (сейчас так)   --> url('http://example.domain../img/sample.jpg')
+верно, (так надо)       --> url('http://example.domain/inner/img/sample.jpg')
+/*******/
 

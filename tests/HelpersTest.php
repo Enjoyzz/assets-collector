@@ -26,7 +26,7 @@ class HelpersTest extends TestCase
             [__DIR__.'/..', false],
             [__DIR__.'/.', false],
             [__DIR__.'/_temp/.s', true],
-            ['/_temp', false]
+            ['/_te<>mp', false]
         ];
 
     }

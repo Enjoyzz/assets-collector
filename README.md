@@ -11,7 +11,7 @@
 Рекомендуем устанавливать через Composer
 
 ```
-composer require --no-dev enjoys/assets-collector 
+composer require enjoys/assets-collector
 ```
 
 ## Использование

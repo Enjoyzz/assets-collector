@@ -105,18 +105,16 @@ class Helpers
         $directory = pathinfo($link, PATHINFO_DIRNAME);
         Helpers::createDirectory($directory, 0755, $logger);
 
-        if (!file_exists($link)) {
-            //Clear the most recent error
-            error_clear_last();
-
-            @symlink($target, $link);
-            /** @var string[] $error */
-            $error = error_get_last();
-            if($error !== null){
-                $logger->error(sprintf("Не удалось создать symlink: %s на: %s! Причина: %s", $link, $target, $error['message']));
-                return;
-            }
-            $logger->info(sprintf('Created symlink: %s', $link));
+        if (!file_exists($target)) {
+            $logger->notice(sprintf("Цeлевой директории или файла не существует. Symlink на %s не создан", $target));
+            return;
         }
+        if (file_exists($link)) {
+            $logger->info(sprintf("Symlink уже существует: %s", $link));
+            return;
+        }
+
+        symlink($target, $link);
+        $logger->info(sprintf('Created symlink: %s', $link));
     }
 }

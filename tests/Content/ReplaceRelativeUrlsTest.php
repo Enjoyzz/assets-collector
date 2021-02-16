@@ -14,14 +14,14 @@ class ReplaceRelativeUrlsTest extends TestCase
         return [
             ['http://test.com/style.css', 'http://test.com'],
             ['https://test.com/style.css', 'https://test.com'],
-            ['https://test.com:8080/style.css', 'https://test.com:8080'],
+            ['https://test.com:8080/style.css', 'https://test.com:8080']
         ];
     }
 
     /**
      * @dataProvider data
      */
-    public function testReplaceRelativeUrls($path, $domain)
+    public function testReplaceRelativeUrls($url, $domain)
     {
 
         $content = <<<CONTENT
@@ -37,16 +37,16 @@ CONTENT;
 
         $expectContent = <<<CONTENT
 url('{$domain}/test');
-url('{$domain}yandex.com');
+url('{$domain}/yandex.com');
 url('//google.com');
 url(//google.com);
-url({$domain}google);
+url({$domain}/google);
 url('http://test.com');
 url("data:image")
-url('{$domain}inner/path/style.css');
+url('{$domain}/inner/path/style.css');
 CONTENT;
 
-        $processor = new ReplaceRelativeUrls($content, $path);
+        $processor = new ReplaceRelativeUrls($content, $url);
         $this->assertSame($expectContent, $processor->getContent());
     }
 }

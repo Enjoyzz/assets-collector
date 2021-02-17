@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7bf6350e2781deafc5c23acea9f12190",
+    "content-hash": "02f7ce2f2f18540ee22d2f2061488e9f",
     "packages": [
         {
             "name": "enjoys/traits",
@@ -50,6 +50,48 @@
                 "source": "https://github.com/Enjoyzz/traits/tree/1.3.0"
             },
             "time": "2020-12-31T07:15:09+00:00"
+        },
+        {
+            "name": "enjoys/url-converter",
+            "version": "0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Enjoyzz/UrlConverter.git",
+                "reference": "c76b42ef50a97389566e6156ce689c2f1b4cdcc7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Enjoyzz/UrlConverter/zipball/c76b42ef50a97389566e6156ce689c2f1b4cdcc7",
+                "reference": "c76b42ef50a97389566e6156ce689c2f1b4cdcc7",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 | ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Enjoys\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Enjoys",
+                    "email": "deadly.info@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/Enjoyzz/UrlConverter/issues",
+                "source": "https://github.com/Enjoyzz/UrlConverter/tree/0.0.1"
+            },
+            "time": "2021-02-17T15:54:10+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",

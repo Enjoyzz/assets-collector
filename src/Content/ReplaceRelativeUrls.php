@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector\Content;
 
-use Psr\Http\Message\UriInterface;
+use Enjoys\UrlConverter;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 

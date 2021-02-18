@@ -109,9 +109,17 @@ class Helpers
             $logger->notice(sprintf("Цeлевой директории или файла не существует. Symlink на %s не создан", $target));
             return;
         }
-        if (file_exists($link)) {
+
+        $linkSpl = new \SplFileInfo($link);
+
+        if ($linkSpl->isLink() && $linkSpl->isReadable()) {
             $logger->info(sprintf("Symlink уже существует: %s", $link));
             return;
+        }
+
+        if ($linkSpl->isLink() && !$linkSpl->isReadable()) {
+            $logger->info(sprintf("Symlink существует, но указывает на неверное расположение: %s. Ссылка была удалена", $linkSpl->getLinkTarget()));
+            unlink($linkSpl->getPathname());
         }
 
         symlink($target, $link);

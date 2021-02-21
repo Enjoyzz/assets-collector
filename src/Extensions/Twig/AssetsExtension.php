@@ -74,4 +74,12 @@ class AssetsExtension extends AbstractExtension
     {
         return $this->assetsCollector->get('js', $namespace);
     }
+
+    /**
+     * @return Assets
+     */
+    public function getAssetsCollector(): Assets
+    {
+        return $this->assetsCollector;
+    }
 }

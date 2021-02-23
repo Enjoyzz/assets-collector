@@ -113,7 +113,7 @@ class Helpers
         $linkSpl = new \SplFileInfo($link);
 
         if ($linkSpl->isLink() && $linkSpl->isReadable()) {
-            $logger->info(sprintf("Symlink уже существует: %s", $link));
+            //$logger->info(sprintf("Symlink уже существует: %s", $link));
             return;
         }
 

@@ -42,4 +42,11 @@ class HelpersTest extends TestCase
         Helpers::createDirectory($path);
         $this->assertDirectoryExists($path);
     }
+
+    public function testCreateSymlinkWhenUpFolderSymlynkAlreadyExist(){
+        //$this->expectWarning();
+        Helpers::createSymlink(__DIR__.'/_temp/fixtures', __DIR__.'/fixtures');
+        Helpers::createSymlink(__DIR__.'/_temp/fixtures/test.css', __DIR__.'/fixtures/test.css');
+        $this->assertTrue(true);
+    }
 }

@@ -9,7 +9,7 @@ use Enjoys\AssetsCollector\Helpers;
 class ManyFilesStrategy extends StrategyAbstract
 {
     /**
-     * @return array<string>
+     * @return array
      */
     public function getResult(): array
     {
@@ -49,6 +49,7 @@ class ManyFilesStrategy extends StrategyAbstract
 
             $result[] = $this->environment->getBaseUrl() . str_replace(DIRECTORY_SEPARATOR, '/', $link);
         }
+
         return $result;
     }
 }

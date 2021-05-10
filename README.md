@@ -79,6 +79,7 @@ $assets->add('css', [
 Можно передать ссылку на ресурс в качестве массива, где 1-й элемент массива — сам путь, а последующие элементы массива —
 это параметры
 
+
 ```php
 use Enjoys\AssetsCollector\Asset;
 
@@ -101,7 +102,22 @@ $assets->add('css', [
     //...
 ]);
 ```
+*При сборке assets все собирается по порядку как пришли данные в коллекцию, так было раньше, и так стало сейчас по
+умолчанию. Но можно выбрать способ вставки assets в коллекцию, изменив последний параметр
+в `\Enjoys\AssetsCollector\Assets::add` `push` или `unshift`.*
 
+*Это удобно использовать например в шаблонах twig, где
+например в самом главном шаблоне подключаются общие стили, а потом в дочерних шаблонах подключаются конкретные стили,
+так вот при push, общие стили будут подключены ниже чем конкретные, при unshift - подкюлочены будут сначала стили общие
+, потом конкретные, хотя twig все равно их будет обрабатывать в обратном порядке - от дочерних шаблонов до общих*
+
+- `push` - дефолтное значение вставляет данные в конец
+- `unshift` - вставляет данные в начало коллекции.
+
+```php
+/** @var \Enjoys\AssetsCollector\Assets $assets */
+$assets->add($type = 'css|js', [], $namespace, $method = 'push|unshift');
+```
 **Вывод**
 
 ```php
@@ -115,6 +131,7 @@ $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 html строку для подключения стилей или скриптов
 
 ```html
+
 <link type='text/css' rel='stylesheet' href='/assets/main.css?_ver=1610822303'/>
 ```
 
@@ -122,6 +139,7 @@ html строку для подключения стилей или скрипт
 удобно при разработке
 
 ```html
+
 <link type='text/css' rel='stylesheet' href='/assets/bootstrap.min.css?_ver=1610822303'/>
 <link type='text/css' rel='stylesheet' href='https://example.com/style.css?_ver=1610822303'/>
 ```

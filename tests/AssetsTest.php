@@ -72,4 +72,86 @@ HTML
             $assets->get('js')
         );
     }
+
+    public function testAddedQueuePush()
+    {
+        $assets = new Assets($this->config);
+        $assets->add(
+            'css',
+            [
+                __DIR__ . '/../tests/fixtures/test.css',
+                __DIR__ . '/../tests/fixtures/test2.css',
+            ]
+        );
+        $assets->add(
+            'css',
+            [
+                __DIR__ . '/../tests/fixtures/test3.css',
+            ]
+        );
+
+        $this->assertSame(
+            str_replace(
+                "\r",
+                "",
+                <<<HTML
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css' />
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test2.css' />
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test3.css' />
+
+HTML
+            ),
+            $assets->get('css')
+        );
+    }
+
+    public function testAddedQueueUnshift()
+    {
+        $assets = new Assets($this->config);
+        $assets->add(
+            'css',
+            [
+                __DIR__ . '/../tests/fixtures/test.css',
+                __DIR__ . '/../tests/fixtures/test2.css',
+            ],
+            'test',
+            'unshift'
+        );
+        $assets->add(
+            'css',
+            [
+                __DIR__ . '/../tests/fixtures/test3.css',
+            ],
+            'test',
+            'unshift'
+        );
+
+        $this->assertSame(
+            str_replace(
+                "\r",
+                "",
+                <<<HTML
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test3.css' />
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css' />
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test2.css' />
+
+HTML
+            ),
+            $assets->get('css', 'test')
+        );
+    }
+
+    public function testInvalidMethodAddToCollection()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $assets = new Assets($this->config);
+        $assets->add(
+            'css',
+            [
+                __DIR__ . '/../tests/fixtures/test.css',
+            ],
+            'test',
+            'invalid'
+        );
+    }
 }

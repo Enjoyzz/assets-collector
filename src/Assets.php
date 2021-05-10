@@ -41,12 +41,14 @@ class Assets
 
     /**
      * @param string $type
-     * @param string|array<mixed> $paths
+     * @param string|array $paths
      * @param string $namespace
+     * @param string $method
      * @return $this
      */
-    public function add(string $type, $paths, $namespace = self::NAMESPACE_COMMON): Assets
+    public function add(string $type, $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
     {
+        $collection = new AssetsCollection($this->environment);
         foreach ((array)$paths as $path) {
             $params = [];
             if (is_array($path)) {
@@ -54,11 +56,18 @@ class Assets
                 $path = array_shift($params);
             }
 
-            $this->assetsCollection->add(
+            $collection->add(
                 new Asset($type, $path, $params),
                 $namespace
             );
         }
+
+        if(!in_array($method, ['push', 'unshift'],true)){
+            throw new \InvalidArgumentException('Allowed methods only `push` and `unshift`');
+        }
+
+        $this->assetsCollection->$method($collection);
+
         return $this;
     }
 
@@ -68,7 +77,7 @@ class Assets
      * @return string
      * @throws \Exception
      */
-    public function get(string $type, $namespace = self::NAMESPACE_COMMON): string
+    public function get(string $type, string $namespace = self::NAMESPACE_COMMON): string
     {
         $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
         return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);

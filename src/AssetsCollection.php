@@ -58,11 +58,18 @@ class AssetsCollection
         return $this->assets[$type][$namespace];
     }
 
-//    /**
-//     * @return array
-//     */
-//    public function getAssets(): array
-//    {
-//        return $this->assets;
-//    }
+    public function push(AssetsCollection $collection)
+    {
+        $this->assets =  array_merge_recursive($this->getAssets(), $collection->getAssets());
+    }
+
+    public function unshift(AssetsCollection $collection)
+    {
+        $this->assets =  array_merge_recursive($collection->getAssets(), $this->getAssets());
+    }
+
+    public function getAssets(): array
+    {
+        return $this->assets;
+    }
 }

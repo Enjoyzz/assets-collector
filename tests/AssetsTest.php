@@ -154,4 +154,33 @@ HTML
             'invalid'
         );
     }
+
+
+    public function testAddSameAssetsInDifferentCallAdd()
+    {
+        $assets = new Assets($this->config);
+        $assets->add(
+            'css',
+            [
+                __DIR__ . '/../tests/fixtures/test.css'
+            ]
+        );
+        $assets->add(
+            'css',
+            [
+                __DIR__ . '/../tests/fixtures/test.css'
+            ]
+        );
+        $this->assertSame(
+            str_replace(
+                "\r",
+                "",
+                <<<HTML
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css' />
+
+HTML
+            ),
+            $assets->get('css')
+        );
+    }
 }

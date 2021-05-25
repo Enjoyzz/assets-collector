@@ -60,12 +60,12 @@ class AssetsCollection
 
     public function push(AssetsCollection $collection)
     {
-        $this->assets =  array_merge_recursive($this->getAssets(), $collection->getAssets());
+        $this->assets =  array_merge_recursive_distinct($this->getAssets(), $collection->getAssets());
     }
 
     public function unshift(AssetsCollection $collection)
     {
-        $this->assets =  array_merge_recursive($collection->getAssets(), $this->getAssets());
+        $this->assets =  array_merge_recursive_distinct($collection->getAssets(), $this->getAssets());
     }
 
     public function getAssets(): array

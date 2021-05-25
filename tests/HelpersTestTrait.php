@@ -16,7 +16,7 @@ trait HelpersTestTrait
         foreach ($ri as $file) {
             if ($file->isLink()) {
                 $symlink = realpath($file->getPath()) . '/' . $file->getFilename();
-                unlink($symlink);
+                (is_dir($symlink)) ? rmdir($symlink) : unlink($symlink);
                 continue;
             }
             $file->isDir() ? rmdir($file->getRealPath()) : unlink($file->getRealPath());

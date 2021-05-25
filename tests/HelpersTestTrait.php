@@ -15,8 +15,12 @@ trait HelpersTestTrait
         /** @var \SplFileInfo $file */
         foreach ($ri as $file) {
             if ($file->isLink()) {
-                $symlink = realpath($file->getPath()) . '/' . $file->getFilename();
-                (is_dir($symlink)) ? rmdir($symlink) : unlink($symlink);
+                $symlink = realpath($file->getPath()) . DIRECTORY_SEPARATOR . $file->getFilename();
+                if(PHP_OS_FAMILY == 'Windows'){
+                    (is_dir($symlink)) ? rmdir($symlink) : unlink($symlink);
+                }else{
+                    unlink($symlink);
+                }
                 continue;
             }
             $file->isDir() ? rmdir($file->getRealPath()) : unlink($file->getRealPath());

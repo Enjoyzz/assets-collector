@@ -112,7 +112,7 @@ class Helpers
 
         $linkSpl = new \SplFileInfo($link);
 
-        if (($linkSpl->isLink() || $linkSpl->isFile()) && $linkSpl->isReadable()) {
+        if (($linkSpl->isLink() || $linkSpl->isFile() || $linkSpl->isDir()) && $linkSpl->isReadable()) {
             return;
         }
 

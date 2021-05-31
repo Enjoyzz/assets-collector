@@ -45,8 +45,8 @@ class HelpersTest extends TestCase
 
     public function testCreateSymlinkWhenUpFolderSymlynkAlreadyExist(){
         //$this->expectWarning();
-        Helpers::createSymlink(__DIR__.'/_temp/fixtures', __DIR__.'/fixtures');
         Helpers::createSymlink(__DIR__.'/_temp/fixtures/test.css', __DIR__.'/fixtures/test.css');
+        Helpers::createSymlink(__DIR__.'/_temp/fixtures', __DIR__.'/fixtures');
         $this->assertTrue(true);
     }
 }

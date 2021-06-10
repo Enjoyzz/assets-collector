@@ -5,6 +5,10 @@ namespace Enjoys\AssetsCollector;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+use function Enjoys\FileSystem\createDirectory;
+use function Enjoys\FileSystem\CreateSymlink;
+use function Enjoys\FileSystem\writeFile;
+
 class Helpers
 {
 
@@ -39,25 +43,15 @@ class Helpers
         LoggerInterface $logger = null
     ): void {
         $logger ??= new NullLogger();
-
-        $f = fopen($file, $mode);
-        if ($f !== false) {
-            fwrite($f, $data);
-            fclose($f);
-            $logger->info(sprintf('Write to: %s', $file));
-        }
+        writeFile($file, $data, $mode);
+        $logger->info(sprintf('Write to: %s', $file));
     }
 
     public static function createEmptyFile(string $file, LoggerInterface $logger = null): void
     {
         $logger ??= new NullLogger();
-
-        $f = fopen($file, 'w');
-        if ($f !== false) {
-            fwrite($f, '');
-            fclose($f);
-            $logger->info(sprintf('Create file: %s', $file));
-        }
+        writeFile($file, '');
+        $logger->info(sprintf('Create file: %s', $file));
     }
 
     /**
@@ -71,23 +65,7 @@ class Helpers
     {
         $logger ??= new NullLogger();
 
-        if (preg_match("/(\/\.+|\.+)$/i", $path)) {
-            throw new \Exception(
-                sprintf("Нельзя создать директорию: %s", $path)
-            );
-        }
-
-        //Clear the most recent error
-        error_clear_last();
-
-        if (!is_dir($path)) {
-            if (@mkdir($path, $permissions, true) === false) {
-                /** @var string[] $error */
-                $error = error_get_last();
-                throw new \Exception(
-                    sprintf("Не удалось создать директорию: %s! Причина: %s", $path, $error['message'])
-                );
-            }
+        if (createDirectory($path, $permissions)) {
             $logger->info(sprintf('Create directory %s', $path));
         }
     }
@@ -102,26 +80,11 @@ class Helpers
     {
         $logger ??= new NullLogger();
 
-        $directory = pathinfo($link, PATHINFO_DIRNAME);
-        Helpers::createDirectory($directory, 0755, $logger);
-
-        if (!file_exists($target)) {
-            $logger->notice(sprintf("Цeлевой директории или файла не существует. Symlink на %s не создан", $target));
-            return;
+        try {
+            CreateSymlink($link, $target);
+            $logger->info(sprintf('Created symlink: %s', $link));
+        } catch (\Exception $e) {
+            $logger->notice($e->getMessage());
         }
-
-        $linkSpl = new \SplFileInfo($link);
-
-        if (($linkSpl->isLink() || $linkSpl->isFile() || $linkSpl->isDir()) && $linkSpl->isReadable()) {
-            return;
-        }
-
-        if ($linkSpl->isLink() && !$linkSpl->isReadable()) {
-            $logger->info(sprintf("Symlink существует, но указывает на неверное расположение: %s. Ссылка была удалена", $linkSpl->getLinkTarget()));
-            unlink($linkSpl->getPathname());
-        }
-
-        symlink($target, $link);
-        $logger->info(sprintf('Created symlink: %s', $link));
     }
 }

@@ -81,8 +81,9 @@ class Helpers
         $logger ??= new NullLogger();
 
         try {
-            CreateSymlink($link, $target);
-            $logger->info(sprintf('Created symlink: %s', $link));
+            if (CreateSymlink($link, $target)) {
+                $logger->info(sprintf('Created symlink: %s', $link));
+            }
         } catch (\Exception $e) {
             $logger->notice($e->getMessage());
         }

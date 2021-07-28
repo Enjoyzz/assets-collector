@@ -2,8 +2,8 @@
 
 namespace Tests\Enjoys\AssetsCollector\Render;
 
-use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 use Enjoys\AssetsCollector\Render\Html\Css;
 use Enjoys\AssetsCollector\Render\RenderFactory;
 use Enjoys\AssetsCollector\Render\RenderInterface;
@@ -21,7 +21,7 @@ class RenderFactoryTest extends TestCase
 
     public function testGetRenderInvalid(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(UnexpectedParameters::class);
         RenderFactory::getRender('css', new Environment(), 'invalid');
     }
 }

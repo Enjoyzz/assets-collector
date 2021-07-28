@@ -4,6 +4,7 @@ namespace Enjoys\AssetsCollector\Render;
 
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 use Enjoys\AssetsCollector\Render\Html\Css;
 use Enjoys\AssetsCollector\Render\Html\Js;
 
@@ -28,11 +29,18 @@ class RenderFactory
         Environment $environment,
         string $render = Assets::RENDER_HTML
     ): RenderInterface {
-        if (!isset(self::RENDERS[$render][$type])) {
-            throw new \Exception('Invalid render');
+
+        if(!array_key_exists($render, self::RENDERS)){
+            throw new UnexpectedParameters(
+                sprintf('Invalid render group. Allowed only: %s', implode(', ', array_keys(self::RENDERS)))
+            );
         }
 
-        $renderClass = self::RENDERS[$render][$type];
+        if (null === $renderClass = (self::RENDERS[$render][$type] ?? null)) {
+            throw new UnexpectedParameters(
+                sprintf('Invalid render. Allowed only: %s', implode(', ', array_keys(self::RENDERS[$render])))
+            );
+        }
 
         return new $renderClass($environment);
     }

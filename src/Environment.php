@@ -2,6 +2,7 @@
 
 namespace Enjoys\AssetsCollector;
 
+use Enjoys\AssetsCollector\Exception\PathDirectoryIsNotValid;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -34,15 +35,14 @@ class Environment
      * Environment constructor.
      * @param string $compileDir
      * @param string $projectDir Если пустая строка, то realpath вернет текущую рабочую директорию
-     * @throws \Exception
      */
     public function __construct(string $compileDir = '/', string $projectDir = '')
     {
         $projectDir = realpath($projectDir);
 
         if ($projectDir === false) {
-            throw new \Exception(
-                sprintf("Не установлена директория проекта или не удалось автоматически определить директорию")
+            throw new PathDirectoryIsNotValid(
+                "Не установлена директория проекта или не удалось автоматически определить директорию"
             );
         }
         $this->projectDir = $projectDir;

@@ -4,6 +4,7 @@ namespace Tests\Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
 use PHPUnit\Framework\TestCase;
 
 class AssetsTest extends TestCase
@@ -143,7 +144,7 @@ HTML
 
     public function testInvalidMethodAddToCollection()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(NotAllowedMethods::class);
         $assets = new Assets($this->config);
         $assets->add(
             'css',

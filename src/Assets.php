@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\CollectStrategy\StrategyFactory;
+use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
 use Enjoys\AssetsCollector\Render\RenderFactory;
 use Psr\Log\LoggerInterface;
 
@@ -63,7 +64,7 @@ class Assets
         }
 
         if(!in_array($method, ['push', 'unshift'],true)){
-            throw new \InvalidArgumentException('Allowed methods only `push` and `unshift`');
+            throw new NotAllowedMethods('Allowed methods only `push` and `unshift`');
         }
 
         $this->assetsCollection->$method($collection);

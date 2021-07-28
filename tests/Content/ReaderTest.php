@@ -72,7 +72,7 @@ CSS,
         $this->assertSame(
             <<<CSS
 @font-face {
-    src:url('/fixtures/sub/fonts/font.eot');
+    src:url('/fixtures/sub/fonts/font.eot') format('eot');
     src:url('/fixtures/sub/css/font2.eot');
     src:url('/fixtures/sub/css/font2.eot');
     src:url('/font3.eot');

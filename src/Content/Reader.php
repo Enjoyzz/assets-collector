@@ -4,6 +4,7 @@ namespace Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Content\Minify\MinifyFactory;
+use Enjoys\AssetsCollector\Environment;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
@@ -33,6 +34,7 @@ class Reader
      * @var array{css: array<mixed>, js: array<mixed>}
      */
     private array $minifyOptions;
+    private Environment $environment;
 
     /**
      * Reader constructor.
@@ -40,13 +42,15 @@ class Reader
      * @param array{css: array<mixed>, js: array<mixed>} $minifyOptions
      * @param LoggerInterface|null $logger
      */
-    public function __construct(Asset $asset, array $minifyOptions, LoggerInterface $logger = null)
+    public function __construct(Asset $asset, array $minifyOptions, Environment $environment, LoggerInterface $logger = null)
     {
+        $this->environment = $environment;
         $this->asset = $asset;
         $this->logger = $logger ?? new NullLogger();
 
         $this->content = $this->getContent();
         $this->minifyOptions = $minifyOptions;
+
     }
 
     public function getContents(): string
@@ -60,6 +64,10 @@ class Reader
             $replaceRelativeUrls = new ReplaceRelativeUrls($this->content, $this->asset->getPath());
             $replaceRelativeUrls->setLogger($this->logger);
             $this->content = $replaceRelativeUrls->getContent();
+        }else{
+            $replaceRelativePath = new ReplaceRelativePaths($this->content, $this->asset->getPath(), $this->environment);
+            $replaceRelativePath->setLogger($this->logger);
+            $this->content = $replaceRelativePath->getContent();
         }
 
         if ($this->asset->isMinify()) {

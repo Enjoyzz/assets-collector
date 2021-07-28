@@ -41,6 +41,7 @@ class OneFileStrategy extends StrategyAbstract
         $this->filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $filename;
         $this->fileUrl = $environment->getBaseUrl() . '/' . str_replace(DIRECTORY_SEPARATOR, '/', $filename);
         $this->init();
+
     }
 
     /**
@@ -88,7 +89,7 @@ class OneFileStrategy extends StrategyAbstract
             $output = '';
 
             foreach ($this->assetsCollection as $asset) {
-                $output .= (new Reader($asset, $this->minifyOptions, $this->logger))->getContents();
+                $output .= (new Reader($asset, $this->minifyOptions, $this->environment, $this->logger))->getContents();
 
                 $optSymlinks = (array)$asset->getOption(Asset::CREATE_SYMLINK, []);
                 foreach ($optSymlinks as $optLink => $optTarget) {

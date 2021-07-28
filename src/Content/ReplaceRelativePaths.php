@@ -39,7 +39,7 @@ final class ReplaceRelativePaths
         $result = preg_replace_callback(
             '/(url\([\'"]?)(?!["\'a-z]+:|[\'"]?\/{2})(.+[^\'"])([\'"]?\))/i',
             function ($m) {
-                $realpath = realpath($this->path . $m[2]);
+                $realpath = realpath($this->path . parse_url($m[2], PHP_URL_PATH));
 
                 if ($realpath === false) {
                     return $m[1] . $m[2] . $m[3];

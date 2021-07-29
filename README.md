@@ -8,8 +8,6 @@
 
 ## Установка
 
-Рекомендуем устанавливать через Composer
-
 ```
 composer require enjoys/assets-collector
 ```

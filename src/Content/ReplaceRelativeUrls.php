@@ -31,10 +31,22 @@ class ReplaceRelativeUrls
      */
     public function getContent(): string
     {
-        $result = preg_replace_callback('/(url\([\'"]?)(?!["\'a-z]+:|[\'"]?\/{2})(.+[^\'"])([\'"]?\))/i', function (array $m) {
-            $urlConverter = new UrlConverter();
-            return $m[1] . $urlConverter->relativeToAbsolute($this->url, $m[2]) . $m[3];
-        }, $this->content);
+        $result = preg_replace_callback(
+            '/(url\([\'"]?)(?!["\'a-z]+:|[\'"]?\/{2})(.+[^\'"])([\'"]?\))/i',
+            function (array $m) {
+                /** @var string[] $m */
+                $urlConverter = new UrlConverter();
+
+                /** @var string|false $urlNormalized */
+                $urlNormalized = $urlConverter->relativeToAbsolute($this->url, $m[2]);
+                if ($urlNormalized === false) {
+                    return $m[1] . $m[2] . $m[3];
+                }
+
+                return $m[1] . $urlNormalized . $m[3];
+            },
+            $this->content
+        );
 
         if ($result === null) {
             $this->logger->notice(sprintf('Regex return null value. Returned empty string: %s', $this->url));

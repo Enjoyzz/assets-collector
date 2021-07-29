@@ -5,7 +5,7 @@ namespace Enjoys\AssetsCollector\CollectStrategy;
 interface StrategyInterface
 {
     /**
-     * @return array
+     * @return string[]
      */
     public function getResult(): array;
 }

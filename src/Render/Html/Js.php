@@ -17,7 +17,7 @@ class Js implements RenderInterface
         $this->environment = $environment;
     }
     /**
-     * @param array<string> $paths
+     * @param string[] $paths
      * @return string
      */
     public function getResult(array $paths): string

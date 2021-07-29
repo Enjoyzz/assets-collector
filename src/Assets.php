@@ -50,15 +50,18 @@ class Assets
     public function add(string $type, $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
     {
         $collection = new AssetsCollection($this->environment);
+        /** @var array|string $path */
         foreach ((array)$paths as $path) {
             $params = [];
             if (is_array($path)) {
                 $params = $path;
+
+                /** @var string $path */
                 $path = array_shift($params);
             }
 
             $collection->add(
-                new Asset($type, (string)$path, $params),
+                new Asset($type, $path, $params),
                 $namespace
             );
         }
@@ -88,7 +91,7 @@ class Assets
     /**
      * @param string $type
      * @param array<Asset> $assetsCollection
-     * @return array<string>
+     * @return string[]
      * @throws \Exception
      */
     private function getResults(string $type, array $assetsCollection): array

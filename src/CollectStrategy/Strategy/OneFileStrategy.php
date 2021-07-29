@@ -75,7 +75,7 @@ class OneFileStrategy extends StrategyAbstract
     }
 
     /**
-     * @return array<string>
+     * @return string[]
      */
     public function getResult(): array
     {

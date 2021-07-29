@@ -14,65 +14,65 @@ class Asset
     public const CREATE_SYMLINK = 'symlinks';
 
     private ?string $id = null;
+
     /**
-     * @var false|string
+     * @var string|false
      */
     private $path;
     private string $type;
     private bool $isUrl;
     private string $origPath;
     private bool $minify;
+    private string $url;
 
 
-    /**
-     * Asset constructor.
-     * @param string $type
-     * @param string $path
-     * @param array<mixed> $params
-     */
     public function __construct(string $type, string $path, array $params = [])
     {
         $this->setOptions($params);
         $this->type = $type;
         $this->origPath = $path;
-        $this->path = $path;
         $this->minify = $this->getOption(self::MINIFY, true);
-        $this->isUrl = $this->checkIsUrl();
-
-        $this->normalizePath();
+        $this->isUrl = $this->checkIsUrl($path);
+        $this->path = $this->getNormalizedPath($path);
     }
 
-    private function normalizePath(): void
+    /**
+     * @param string $path
+     * @return false|string
+     */
+    private function getNormalizedPath(string $path)
     {
-        if ($this->isUrl() && $this->path !== false) {
-            $this->setId();
-            return;
+        if ($this->isUrl()) {
+            $this->setId($this->url);
+            return $this->url;
         }
 
         if (false === $projectDir = \getenv('ASSETS_PROJECT_DIRECTORY')) {
             $projectDir = '';
         }
         $paths = [
-            $this->path,
-            $projectDir . $this->path
+            $path,
+            $projectDir . $path
         ];
 
         foreach ($paths as $path) {
-            if (false !== $this->path = realpath($path)) {
-                $this->setId();
+            if (false !== $normalizedPath = realpath($path)) {
+                $this->setId($normalizedPath);
                 break;
             }
         }
+        return $normalizedPath;
     }
 
-    private function checkIsUrl(): bool
+    private function checkIsUrl(string $path): bool
     {
-        if (\str_starts_with($this->path, '//')) {
-            $this->path = Helpers::getHttpScheme() . ':' . $this->path;
+        if (\str_starts_with($path, '//')) {
+            $this->url = Helpers::getHttpScheme() . ':' . $path;
             return true;
         }
 
-        if (in_array(strpos($this->path, '://'), [4, 5])) {
+        if (in_array(strpos($path, '://'), [4, 5])) {
+            $this->url = $path;
             return true;
         }
         return false;
@@ -120,8 +120,8 @@ class Asset
         return $this->origPath;
     }
 
-    private function setId(): void
+    private function setId(string $path): void
     {
-        $this->id = md5($this->path);
+        $this->id = md5($path);
     }
 }

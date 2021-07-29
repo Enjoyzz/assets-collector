@@ -15,9 +15,6 @@ use Psr\Log\NullLogger;
 class ReplaceRelativeUrls
 {
     private string $content;
-
-    private string $domain;
-
     private string $url;
     private LoggerInterface $logger;
 

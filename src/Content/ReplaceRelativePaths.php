@@ -14,8 +14,6 @@ use Psr\Log\NullLogger;
 final class ReplaceRelativePaths
 {
     private string $content;
-
-    private string $domain;
     private string $path;
     private Environment $environment;
     private LoggerInterface $logger;

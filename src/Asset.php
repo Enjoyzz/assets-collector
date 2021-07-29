@@ -23,7 +23,7 @@ class Asset
     private bool $isUrl;
     private string $origPath;
     private bool $minify;
-    private string $url;
+    private string $url = '';
 
 
     public function __construct(string $type, string $path, array $params = [])

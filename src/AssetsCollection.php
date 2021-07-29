@@ -7,7 +7,7 @@ use Psr\Log\LoggerInterface;
 class AssetsCollection
 {
     /**
-     * @var array<mixed>
+     * @var array
      */
     private array $assets = [];
     /**

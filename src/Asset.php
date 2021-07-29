@@ -31,7 +31,7 @@ class Asset
         $this->setOptions($params);
         $this->type = $type;
         $this->origPath = $path;
-        $this->minify = $this->getOption(self::MINIFY, true);
+        $this->minify = (bool)$this->getOption(self::MINIFY, true);
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
     }

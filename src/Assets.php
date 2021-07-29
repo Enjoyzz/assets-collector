@@ -58,7 +58,7 @@ class Assets
             }
 
             $collection->add(
-                new Asset($type, $path, $params),
+                new Asset($type, (string)$path, $params),
                 $namespace
             );
         }

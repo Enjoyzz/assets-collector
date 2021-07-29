@@ -22,7 +22,7 @@ class Environment
     private string $paramVersion = '?v=';
 
     /**
-     * @var array{css: array<mixed>, js: array<mixed>}
+     * @var array{css: array, js: array}
      */
     private array $minifyOptions = [
         'css' => [],
@@ -35,6 +35,7 @@ class Environment
      * Environment constructor.
      * @param string $compileDir
      * @param string $projectDir Если пустая строка, то realpath вернет текущую рабочую директорию
+     * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
      */
     public function __construct(string $compileDir = '/', string $projectDir = '')
     {
@@ -62,7 +63,7 @@ class Environment
 
 
     /**
-     * realpath нельзя применять так как директории изначально может не быть
+     * Функцию realpath() нельзя применять так как директории изначально может не быть,
      * она может потом быть создана, если будут права
      * @param string $path
      * @return string
@@ -73,8 +74,7 @@ class Environment
             $path = str_replace($this->getProjectDir(), '', $path);
         }
         $path = $this->getProjectDir() . '/' . ltrim($path, '/\.');
-        $path = rtrim($path, '/');
-        return $path;
+        return rtrim($path, '/');
     }
 
     /**
@@ -185,7 +185,7 @@ class Environment
     }
 
     /**
-     * @return array{css: array<mixed>, js: array<mixed>}
+     * @return array{css: array, js: array}
      */
     public function getMinifyOptions(): array
     {

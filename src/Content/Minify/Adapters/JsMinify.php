@@ -21,7 +21,7 @@ class JsMinify implements MinifyInterface
     /**
      * JsMinify constructor.
      * @param string $content
-     * @param array<mixed> $minifyOptions
+     * @param array $minifyOptions
      */
     public function __construct(string $content, array $minifyOptions)
     {

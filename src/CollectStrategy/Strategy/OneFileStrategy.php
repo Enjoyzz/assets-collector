@@ -15,7 +15,7 @@ class OneFileStrategy extends StrategyAbstract
     private string $fileUrl;
     private bool $fileCreated = false;
     /**
-     * @var array{css: array<mixed>, js: array<mixed>}
+     * @var array{css: array, js: array}
      */
     private array $minifyOptions;
 

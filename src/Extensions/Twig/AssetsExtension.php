@@ -51,7 +51,7 @@ class AssetsExtension extends AbstractExtension
      * @param string $namespace
      * @param string $method
      */
-    public function asset(string $type, array $paths = [], string $namespace = Assets::NAMESPACE_COMMON, $method = 'push'): void
+    public function asset(string $type, array $paths = [], string $namespace = Assets::NAMESPACE_COMMON, string $method = 'push'): void
     {
         $this->assetsCollector->add($type, $paths, $namespace, $method);
     }

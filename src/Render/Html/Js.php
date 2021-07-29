@@ -19,6 +19,7 @@ class Js implements RenderInterface
     /**
      * @param string[] $paths
      * @return string
+     * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
      */
     public function getResult(array $paths): string
     {

@@ -28,7 +28,7 @@ class Reader
     private $content;
 
     /**
-     * @var array{css: array<mixed>, js: array<mixed>}
+     * @var array{css: array, js: array}
      */
     private array $minifyOptions;
     private Environment $environment;
@@ -40,7 +40,8 @@ class Reader
     /**
      * Reader constructor.
      * @param Asset $asset
-     * @param array{css: array<mixed>, js: array<mixed>} $minifyOptions
+     * @param array{css: array, js: array} $minifyOptions
+     * @param Environment $environment
      * @param LoggerInterface|null $logger
      */
     public function __construct(
@@ -57,6 +58,9 @@ class Reader
         $this->minifyOptions = $minifyOptions;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getContents(): string
     {
         $path = $this->asset->getPath();

@@ -13,25 +13,13 @@ use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
 class NullMinify implements MinifyInterface
 {
     private string $content;
-    /**
-     * @var array<mixed>
-     */
-    private array $minifyOptions;
 
-    /**
-     * NullMinify constructor.
-     * @param string $content
-     * @param array<mixed> $minifyOptions
-     */
     public function __construct(string $content, array $minifyOptions)
     {
         $this->content = $content;
-        $this->minifyOptions = $minifyOptions;
+
     }
 
-    /**
-     * @return string
-     */
     public function getContent(): string
     {
         return $this->content;

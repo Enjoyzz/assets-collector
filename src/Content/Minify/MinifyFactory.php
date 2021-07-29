@@ -20,7 +20,7 @@ class MinifyFactory
     /**
      * @param string $content
      * @param string $type
-     * @param array{css: array<mixed>, js: array<mixed>}  $minifyOptions
+     * @param array{css: array, js: array}  $minifyOptions
      * @return MinifyInterface
      */
     public static function minify(string $content, string $type, array $minifyOptions): MinifyInterface

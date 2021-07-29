@@ -9,7 +9,7 @@ interface MinifyInterface
     /**
      * MinifyInterface constructor.
      * @param string $content
-     * @param array{css: array<mixed>, js: array<mixed>} $minifyOptions
+     * @param array{css: array, js: array} $minifyOptions
      */
     public function __construct(string $content, array $minifyOptions);
     public function getContent(): string;

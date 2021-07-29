@@ -16,12 +16,12 @@ class ManyFilesStrategy extends StrategyAbstract
         $result = [];
 
         foreach ($this->assetsCollection as $asset) {
-            if ($asset->getPath() === false) {
+            if (false === $path = $asset->getPath()) {
                 continue;
             }
 
             if ($asset->isUrl()) {
-                $result[] = $asset->getPath();
+                $result[] = $path;
                 continue;
             }
 
@@ -32,11 +32,11 @@ class ManyFilesStrategy extends StrategyAbstract
                 ]
                 ,
                 '',
-                $asset->getPath()
+                $path
             );
 
             try {
-                Helpers::createSymlink($this->environment->getCompileDir() . $link, $asset->getPath(), $this->logger);
+                Helpers::createSymlink($this->environment->getCompileDir() . $link, $path, $this->logger);
 
                 $optSymlinks = (array)$asset->getOption(Asset::CREATE_SYMLINK, []);
                 foreach ($optSymlinks as $optLink => $optTarget) {

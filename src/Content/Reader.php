@@ -43,15 +43,18 @@ class Reader
      * @param array{css: array<mixed>, js: array<mixed>} $minifyOptions
      * @param LoggerInterface|null $logger
      */
-    public function __construct(Asset $asset, array $minifyOptions, Environment $environment, LoggerInterface $logger = null)
-    {
+    public function __construct(
+        Asset $asset,
+        array $minifyOptions,
+        Environment $environment,
+        LoggerInterface $logger = null
+    ) {
         $this->environment = $environment;
         $this->asset = $asset;
         $this->logger = $logger ?? new NullLogger();
 
         $this->content = $this->getContent();
         $this->minifyOptions = $minifyOptions;
-
     }
 
     public function getContents(): string
@@ -65,14 +68,20 @@ class Reader
             $replaceRelativeUrls = new ReplaceRelativeUrls($this->content, $this->asset->getPath());
             $replaceRelativeUrls->setLogger($this->logger);
             $this->content = $replaceRelativeUrls->getContent();
-        }else{
-            $replaceRelativePath = new ReplaceRelativePaths($this->content, $this->asset->getPath(), $this->environment);
+        } else {
+            $replaceRelativePath = new ReplaceRelativePaths(
+                $this->content, $this->asset->getPath(), $this->environment
+            );
             $replaceRelativePath->setLogger($this->logger);
             $this->content = $replaceRelativePath->getContent();
         }
 
         if ($this->asset->isMinify()) {
-            $this->content = MinifyFactory::minify($this->content, $this->asset->getType(), $this->minifyOptions)->getContent() . "\n";
+            $this->content = MinifyFactory::minify(
+                    $this->content,
+                    $this->asset->getType(),
+                    $this->minifyOptions
+                )->getContent() . "\n";
             $this->logger->info(sprintf('Minify: %s', $this->asset->getPath()));
         }
         return $this->content;
@@ -84,11 +93,13 @@ class Reader
      */
     private function getContent()
     {
-        if ($this->asset->isUrl()) {
-            return $this->readUrl($this->asset->getPath());
+        if(false !== $path = $this->asset->getPath()){
+            if ($this->asset->isUrl()) {
+                return $this->readUrl($path);
+            }
+            return $this->readFile($path);
         }
-
-        return $this->readFile($this->asset->getPath());
+        return false;
     }
 
     /**

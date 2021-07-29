@@ -49,6 +49,7 @@ class AssetsExtension extends AbstractExtension
      * @param string $type
      * @param array<string> $paths
      * @param string $namespace
+     * @param string $method
      */
     public function asset(string $type, array $paths = [], string $namespace = Assets::NAMESPACE_COMMON, $method = 'push'): void
     {

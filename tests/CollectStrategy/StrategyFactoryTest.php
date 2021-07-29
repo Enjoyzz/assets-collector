@@ -9,6 +9,7 @@ use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyFactory;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyInterface;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 use PHPUnit\Framework\TestCase;
 
 class StrategyFactoryTest extends TestCase
@@ -47,7 +48,7 @@ class StrategyFactoryTest extends TestCase
 
     public function testStrategyFactoryFail()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(UnexpectedParameters::class);
         $environment = $this->getMockBuilder(Environment::class)
             ->onlyMethods(['getStrategy'])
             ->getMock();

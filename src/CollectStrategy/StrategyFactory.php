@@ -7,6 +7,7 @@ use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\ManyFilesStrategy;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 
 class StrategyFactory
 {
@@ -21,7 +22,7 @@ class StrategyFactory
      * @param array<Asset> $assetsCollection
      * @param string $type
      * @return StrategyInterface
-     * @throws \Exception
+     * @throws UnexpectedParameters
      */
     public static function getStrategy(
         Environment $environment,
@@ -30,7 +31,7 @@ class StrategyFactory
     ): StrategyInterface {
         $strategy = $environment->getStrategy();
         if (!isset(self::STRATEGY[$strategy])) {
-            throw new \Exception('Invalid strategy');
+            throw new UnexpectedParameters('Invalid strategy');
         }
         $strategyClass = self::STRATEGY[$strategy];
 

@@ -58,12 +58,12 @@ class AssetsCollection
         return $this->assets[$type][$namespace];
     }
 
-    public function push(AssetsCollection $collection)
+    public function push(AssetsCollection $collection): void
     {
         $this->assets =  array_merge_recursive_distinct($this->getAssets(), $collection->getAssets());
     }
 
-    public function unshift(AssetsCollection $collection)
+    public function unshift(AssetsCollection $collection): void
     {
         $this->assets =  array_merge_recursive_distinct($collection->getAssets(), $this->getAssets());
     }

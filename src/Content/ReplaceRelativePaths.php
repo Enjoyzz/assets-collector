@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace Enjoys\AssetsCollector\Content;
-
 
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Helpers;
@@ -49,8 +47,7 @@ final class ReplaceRelativePaths
                         [
                             $this->environment->getCompileDir(),
                             $this->environment->getProjectDir()
-                        ]
-                        ,
+                        ],
                         '',
                         $realpath
                     )

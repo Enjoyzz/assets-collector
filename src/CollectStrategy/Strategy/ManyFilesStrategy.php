@@ -29,8 +29,7 @@ class ManyFilesStrategy extends StrategyAbstract
                 [
                     $this->environment->getCompileDir(),
                     $this->environment->getProjectDir()
-                ]
-                ,
+                ],
                 '',
                 $path
             );

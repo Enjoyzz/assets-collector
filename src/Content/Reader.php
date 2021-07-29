@@ -72,7 +72,9 @@ class Reader
             $this->content = $replaceRelativeUrls->getContent();
         } else {
             $replaceRelativePath = new ReplaceRelativePaths(
-                $this->content, $path, $this->environment
+                $this->content,
+                $path,
+                $this->environment
             );
             $replaceRelativePath->setLogger($this->logger);
             $this->content = $replaceRelativePath->getContent();
@@ -80,10 +82,10 @@ class Reader
 
         if ($this->asset->isMinify()) {
             $this->content = MinifyFactory::minify(
-                    $this->content,
-                    $this->asset->getType(),
-                    $this->minifyOptions
-                )->getContent() . "\n";
+                $this->content,
+                $this->asset->getType(),
+                $this->minifyOptions
+            )->getContent() . "\n";
             $this->logger->info(sprintf('Minify: %s', $path));
         }
         return $this->content;

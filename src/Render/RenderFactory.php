@@ -29,8 +29,7 @@ class RenderFactory
         Environment $environment,
         string $render = Assets::RENDER_HTML
     ): RenderInterface {
-
-        if(!array_key_exists($render, self::RENDERS)){
+        if (!array_key_exists($render, self::RENDERS)) {
             throw new UnexpectedParameters(
                 sprintf('Invalid render group. Allowed only: %s', implode(', ', array_keys(self::RENDERS)))
             );

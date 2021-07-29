@@ -66,7 +66,7 @@ class Assets
             );
         }
 
-        if(!in_array($method, ['push', 'unshift'],true)){
+        if (!in_array($method, ['push', 'unshift'], true)) {
             throw new NotAllowedMethods('Allowed methods only `push` and `unshift`');
         }
 

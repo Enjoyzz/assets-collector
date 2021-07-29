@@ -32,7 +32,7 @@ class MinifyFactory
         }
 
         $options = [];
-        if(isset($minifyOptions[$type])){
+        if (isset($minifyOptions[$type])) {
             $options = $minifyOptions[$type];
         }
         return new $minifyClass($content, $options);

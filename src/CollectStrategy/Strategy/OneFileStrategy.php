@@ -92,8 +92,10 @@ class OneFileStrategy extends StrategyAbstract
                 $output .= (new Reader($asset, $this->minifyOptions, $this->environment, $this->logger))->getContents();
 
                 $optSymlinks = (array)$asset->getOption(Asset::CREATE_SYMLINK, []);
+
+                /** @var array<string, string> $optSymlinks */
                 foreach ($optSymlinks as $optLink => $optTarget) {
-                    Helpers::createSymlink((string)$optLink, (string)$optTarget, $this->logger);
+                    Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }
             }
             Helpers::writeFile($this->filePath, $output, 'w', $this->logger);

@@ -34,7 +34,7 @@ class ReplaceRelativeUrls
      */
     public function getContent(): string
     {
-        $result = preg_replace_callback('/(url\([\'"]?)(?!["\'a-z]+:|[\'"]?\/{2})(.+[^\'"])([\'"]?\))/i', function ($m){
+        $result = preg_replace_callback('/(url\([\'"]?)(?!["\'a-z]+:|[\'"]?\/{2})(.+[^\'"])([\'"]?\))/i', function (array $m) {
             $urlConverter = new UrlConverter();
             return $m[1] . $urlConverter->relativeToAbsolute($this->url, $m[2]) . $m[3];
         }, $this->content);

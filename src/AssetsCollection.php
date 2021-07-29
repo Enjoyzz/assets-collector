@@ -7,7 +7,7 @@ use Psr\Log\LoggerInterface;
 class AssetsCollection
 {
     /**
-     * @var array
+     * @var Asset[][][]
      */
     private array $assets = [];
     /**
@@ -48,7 +48,7 @@ class AssetsCollection
     /**
      * @param string $type
      * @param string $namespace
-     * @return array<Asset>
+     * @return Asset[]
      */
     public function get(string $type, string $namespace): array
     {
@@ -58,15 +58,24 @@ class AssetsCollection
         return $this->assets[$type][$namespace];
     }
 
+    /**
+     * @param AssetsCollection $collection
+     * @psalm-suppress MixedPropertyTypeCoercion
+     */
     public function push(AssetsCollection $collection): void
     {
-        $this->assets =  array_merge_recursive_distinct($this->getAssets(), $collection->getAssets());
+        $this->assets = array_merge_recursive_distinct($this->getAssets(), $collection->getAssets());
     }
 
+    /**
+     * @param AssetsCollection $collection
+     * @psalm-suppress MixedPropertyTypeCoercion
+     */
     public function unshift(AssetsCollection $collection): void
     {
-        $this->assets =  array_merge_recursive_distinct($collection->getAssets(), $this->getAssets());
+        $this->assets = array_merge_recursive_distinct($collection->getAssets(), $this->getAssets());
     }
+
 
     public function getAssets(): array
     {

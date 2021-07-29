@@ -1,4 +1,3 @@
 /vendor/
 /phpunit.xml
-/psalm.xml
 /composer.lock

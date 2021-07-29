@@ -59,18 +59,20 @@ class Reader
 
     public function getContents(): string
     {
-        if (false === $this->content) {
-            $this->logger->notice(sprintf('Nothing return: %s', $this->asset->getPath()));
+        $path = $this->asset->getPath();
+
+        if ($this->content === false || $path === false) {
+            $this->logger->notice(sprintf('Nothing return: path is `%s`', (string)$path));
             return '';
         }
 
         if ($this->asset->isUrl()) {
-            $replaceRelativeUrls = new ReplaceRelativeUrls($this->content, $this->asset->getPath());
+            $replaceRelativeUrls = new ReplaceRelativeUrls($this->content, $path);
             $replaceRelativeUrls->setLogger($this->logger);
             $this->content = $replaceRelativeUrls->getContent();
         } else {
             $replaceRelativePath = new ReplaceRelativePaths(
-                $this->content, $this->asset->getPath(), $this->environment
+                $this->content, $path, $this->environment
             );
             $replaceRelativePath->setLogger($this->logger);
             $this->content = $replaceRelativePath->getContent();
@@ -82,7 +84,7 @@ class Reader
                     $this->asset->getType(),
                     $this->minifyOptions
                 )->getContent() . "\n";
-            $this->logger->info(sprintf('Minify: %s', $this->asset->getPath()));
+            $this->logger->info(sprintf('Minify: %s', $path));
         }
         return $this->content;
     }
@@ -93,7 +95,7 @@ class Reader
      */
     private function getContent()
     {
-        if(false !== $path = $this->asset->getPath()){
+        if (false !== $path = $this->asset->getPath()) {
             if ($this->asset->isUrl()) {
                 return $this->readUrl($path);
             }

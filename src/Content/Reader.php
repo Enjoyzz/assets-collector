@@ -8,7 +8,6 @@ use Enjoys\AssetsCollector\Environment;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
-use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -18,8 +17,6 @@ use Psr\Log\NullLogger;
  */
 class Reader
 {
-    use LoggerAwareTrait;
-
     /**
      * @var Asset
      */
@@ -35,6 +32,10 @@ class Reader
      */
     private array $minifyOptions;
     private Environment $environment;
+    /**
+     * @var LoggerInterface|NullLogger
+     */
+    private LoggerInterface $logger;
 
     /**
      * Reader constructor.
@@ -140,5 +141,13 @@ class Reader
 
         $this->logger->info(sprintf('Read: %s', $filename));
         return $content;
+    }
+
+    /**
+     * @param LoggerInterface|NullLogger $logger
+     */
+    public function setLogger($logger): void
+    {
+        $this->logger = $logger;
     }
 }

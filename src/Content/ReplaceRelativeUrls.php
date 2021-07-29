@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector\Content;
 
 use Enjoys\UrlConverter;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -14,13 +14,12 @@ use Psr\Log\NullLogger;
  */
 class ReplaceRelativeUrls
 {
-    use LoggerAwareTrait;
-
     private string $content;
 
     private string $domain;
-  //  private UriInterface $uri;
+
     private string $url;
+    private LoggerInterface $logger;
 
     public function __construct(string $content, string $url)
     {
@@ -48,7 +47,13 @@ class ReplaceRelativeUrls
         return $result;
     }
 
-
+    /**
+     * @param LoggerInterface|NullLogger $logger
+     */
+    public function setLogger($logger): void
+    {
+        $this->logger = $logger;
+    }
 
 
 }

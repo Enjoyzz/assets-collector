@@ -8,18 +8,17 @@ namespace Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Helpers;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 final class ReplaceRelativePaths
 {
-    use LoggerAwareTrait;
-
     private string $content;
 
     private string $domain;
     private string $path;
     private Environment $environment;
+    private LoggerInterface $logger;
 
     public function __construct(string $content, string $path, Environment $environment)
     {
@@ -71,5 +70,13 @@ final class ReplaceRelativePaths
         }
         $this->logger->info(sprintf('ReplaceRelativePaths: %s', $this->path));
         return $result;
+    }
+
+    /**
+     * @param LoggerInterface|NullLogger $logger
+     */
+    public function setLogger($logger): void
+    {
+        $this->logger = $logger;
     }
 }

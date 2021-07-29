@@ -109,4 +109,12 @@ class Assets
     {
         return $this->environment;
     }
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger;
+    }
 }

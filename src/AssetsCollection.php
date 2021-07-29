@@ -23,7 +23,7 @@ class AssetsCollection
 
     public function add(Asset $asset, string $namespace): void
     {
-        if ($asset->getPath() === false || $asset->getId() === null) {
+        if ($asset->getPath() === false || null === $assetId = $asset->getId()) {
             $this->logger->notice(sprintf('Path invalid: %s', $asset->getOrigPath()));
             return;
         }
@@ -34,7 +34,7 @@ class AssetsCollection
         }
 
 
-        $this->assets[$asset->getType()][$namespace][$asset->getId()] = $asset;
+        $this->assets[$asset->getType()][$namespace][$assetId] = $asset;
     }
 
     public function has(Asset $asset, string $namespace): bool

@@ -31,10 +31,6 @@ class Reader
      */
     private $path;
 
-    /**
-     * @var array{css: array, js: array}
-     */
-    private array $minifyOptions;
     private Environment $environment;
     /**
      * @var LoggerInterface|NullLogger
@@ -44,7 +40,6 @@ class Reader
     /**
      * Reader constructor.
      * @param Asset $asset
-     * @param array{css: array, js: array} $minifyOptions
      * @param Environment $environment
      * @param LoggerInterface|null $logger
      */

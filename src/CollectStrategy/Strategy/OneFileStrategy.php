@@ -14,10 +14,6 @@ class OneFileStrategy extends StrategyAbstract
     private string $filePath;
     private string $fileUrl;
     private bool $fileCreated = false;
-    /**
-     * @var array{css: array, js: array}
-     */
-    private array $minifyOptions;
 
     /**
      * Build constructor.

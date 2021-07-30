@@ -16,17 +16,20 @@ class CssMinify implements MinifyInterface
 {
     use Options;
 
-    private string $content;
+    private string $content = '';
 
     /**
      * CssMinify constructor.
-     * @param string $content
      * @param array $minifyOptions
      */
-    public function __construct(string $content, array $minifyOptions)
+    public function __construct(array $minifyOptions = [])
+    {
+        $this->setOptions($minifyOptions);
+    }
+
+    public function setContent(string $content): void
     {
         $this->content = $content;
-        $this->setOptions($minifyOptions);
     }
 
     /**

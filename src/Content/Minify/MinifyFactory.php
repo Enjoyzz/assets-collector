@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector\Content\Minify;
 
-use Enjoys\AssetsCollector\Content\Minify\Adapters;
+use Enjoys\AssetsCollector\Environment;
 
 /**
  * Class MinifyFactory
@@ -12,29 +12,17 @@ use Enjoys\AssetsCollector\Content\Minify\Adapters;
  */
 class MinifyFactory
 {
-    private const MINIFIES = [
-        'css' => Adapters\CssMinify::class,
-        'js' => Adapters\JsMinify::class
-    ];
 
     /**
      * @param string $content
      * @param string $type
-     * @param array{css: array, js: array}  $minifyOptions
+     * @param Environment $environment
      * @return MinifyInterface
      */
-    public static function minify(string $content, string $type, array $minifyOptions): MinifyInterface
+    public static function minify(string $content, string $type, Environment $environment): MinifyInterface
     {
-        $minifyClass = Adapters\NullMinify::class;
-
-        if (isset(self::MINIFIES[$type])) {
-            $minifyClass = self::MINIFIES[$type];
-        }
-
-        $options = [];
-        if (isset($minifyOptions[$type])) {
-            $options = $minifyOptions[$type];
-        }
-        return new $minifyClass($content, $options);
+        $minify = $environment->getMinify($type);
+        $minify->setContent($content);
+        return $minify;
     }
 }

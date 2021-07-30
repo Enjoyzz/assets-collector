@@ -44,6 +44,7 @@ $environment->setParamVersion('?ver=');
  * @var \Psr\Log\LoggerInterface $logger 
  */
 $environment->setLogger($logger);
+
 ```
 
 [Настройки CSS Minify](#options_cssminify)
@@ -77,7 +78,6 @@ $assets->add('css', [
 Можно передать ссылку на ресурс в качестве массива, где 1-й элемент массива — сам путь, а последующие элементы массива —
 это параметры
 
-
 ```php
 use Enjoys\AssetsCollector\Asset;
 
@@ -100,14 +100,15 @@ $assets->add('css', [
     //...
 ]);
 ```
+
 *При сборке assets все собирается по порядку как пришли данные в коллекцию, так было раньше, и так стало сейчас по
 умолчанию. Но можно выбрать способ вставки assets в коллекцию, изменив последний параметр
 в `\Enjoys\AssetsCollector\Assets::add` `push` или `unshift`.*
 
-*Это удобно использовать например в шаблонах twig, где
-например в самом главном шаблоне подключаются общие стили, а потом в дочерних шаблонах подключаются конкретные стили,
-так вот при push, общие стили будут подключены ниже чем конкретные, при unshift - подкюлочены будут сначала стили общие
-, потом конкретные, хотя twig все равно их будет обрабатывать в обратном порядке - от дочерних шаблонов до общих*
+*Это удобно использовать например в шаблонах twig, где например в самом главном шаблоне подключаются общие стили, а
+потом в дочерних шаблонах подключаются конкретные стили, так вот при push, общие стили будут подключены ниже чем
+конкретные, при unshift - подкюлочены будут сначала стили общие , потом конкретные, хотя twig все равно их будет
+обрабатывать в обратном порядке - от дочерних шаблонов до общих*
 
 - `push` - дефолтное значение вставляет данные в конец
 - `unshift` - вставляет данные в начало коллекции.
@@ -116,6 +117,7 @@ $assets->add('css', [
 /** @var \Enjoys\AssetsCollector\Assets $assets */
 $assets->add($type = 'css|js', [], $namespace, $method = 'push|unshift');
 ```
+
 **Вывод**
 
 ```php
@@ -130,7 +132,7 @@ html строку для подключения стилей или скрипт
 
 ```html
 
-<link type='text/css' rel='stylesheet' href='/assets/main.css?_ver=1610822303'/>
+<link type='text/css' rel='stylesheet' href='/assets/3c2ea3240f78656c2e4ad2b7f64a5bc2.css?_ver=1610822303'/>
 ```
 
 При *$environment->setStrategy(Assets::STRATEGY_MANY_FILES);* вернет стили или скрипты по отдельности, примерно так,
@@ -180,36 +182,56 @@ $twig->addExtension(new \Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension(
 
 ## Настройки CSS Minify
 
-Для передачи параметров для CSSMinify используется метод Environment::setCssMinifyOptions(array [])
+По умолчанию в качестве минификатора используется **NullMinify::class**, то есть ничего не сжимается. Для установки
+минификатора, в Environment используется метод **Environment::setMinifyCSS(MinifyInterface $minifyImpl)**
 
+
+Базовая реализация CSS Minify реализована с помощью библиотеки **tubalmartin\CssMin**
 Подробное описание параметров: https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port#api
 
+Легко можно реализовать минификацию с помощью других библиотек, реализовав интерфейс
+*\Enjoys\AssetsCollector\Content\Minify\MinifyInterface::class*
+
 ```php
+use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
+
 /** @var \Enjoys\AssetsCollector\Environment $environment */
-//не обязательно передавать все параметры, можно только выборочно 
-$environment->setCssMinifyOptions([
-    'keepSourceMapComment' => false, //bool
-    'removeImportantComments' => true, //bool
-    'setLineBreakPosition' => 1000, //int
-    'setMaxExecutionTime' => 60, //int
-    'setMemoryLimit' => '128M',
-    'setPcreBacktrackLimit' => 1000000, //int
-    'setPcreRecursionLimit' => 500000, //int
-]);
+//необязательно передавать все параметры, можно только выборочно 
+$environment->setMinifyCSS(
+    new CssMinify([
+        'keepSourceMapComment' => false, //bool
+        'removeImportantComments' => true, //bool
+        'setLineBreakPosition' => 1000, //int
+        'setMaxExecutionTime' => 60, //int
+        'setMemoryLimit' => '128M',
+        'setPcreBacktrackLimit' => 1000000, //int
+        'setPcreRecursionLimit' => 500000, //int
+    ])
+);
 ```
 
 <a id="options_jsminify"></a>
 
 ## Настройки JS Minify
 
-Для передачи параметров для JS Minify используется метод Environment::setJsMinifyOptions(array [])
+По умолчанию в качестве минификатора используется **NullMinify::class**, то есть ничего не сжимается. Для установки
+минификатора, в Environment используется метод **Environment::setMinifyJS(MinifyInterface $minifyImpl)**
 
+Базовая реализация CSS Minify реализована с помощью библиотеки **JShrink**
 Подробнее про [JShrink](https://github.com/tedious/JShrink)
 
+Легко можно реализовать минификацию с помощью других библиотек, реализовав интерфейс 
+*\Enjoys\AssetsCollector\Content\Minify\MinifyInterface::class*
+
 ```php
+
+use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
+
 /** @var \Enjoys\AssetsCollector\Environment $environment */
 //не обязательно передавать все параметры, можно только выборочно 
-$environment->setJsMinifyOptions([
-    'flaggedComments' => false
-]);
+$environment->setJsMinifyOptions(
+    new JsMinify([
+        'flaggedComments' => false
+    ])
+);
 ```

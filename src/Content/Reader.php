@@ -94,13 +94,14 @@ class Reader
      */
     private function getContent()
     {
-        if ($this->path !== false) {
-            if ($this->asset->isUrl()) {
-                return $this->readUrl($this->path);
-            }
-            return $this->readFile($this->path);
+        if ($this->path === false) {
+            return false;
         }
-        return false;
+
+        if ($this->asset->isUrl()) {
+            return $this->readUrl($this->path);
+        }
+        return $this->readFile($this->path);
     }
 
     /**

@@ -70,19 +70,10 @@ class Reader
             return '';
         }
 
-        if ($this->asset->isUrl()) {
-            $replaceRelativeUrls = new ReplaceRelativeUrls($this->content, $path);
-            $replaceRelativeUrls->setLogger($this->logger);
-            $this->content = $replaceRelativeUrls->getContent();
-        } else {
-            $replaceRelativePath = new ReplaceRelativePaths(
-                $this->content,
-                $path,
-                $this->environment
-            );
-            $replaceRelativePath->setLogger($this->logger);
-            $this->content = $replaceRelativePath->getContent();
-        }
+        $replaceRelativeUrls = new ReplaceRelative($this->content, $path, $this->asset, $this->environment);
+        $replaceRelativeUrls->setLogger($this->logger);
+        $this->content = $replaceRelativeUrls->getContent();
+
 
         if ($this->asset->isMinify()) {
             $this->content = MinifyFactory::minify(

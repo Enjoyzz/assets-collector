@@ -5,6 +5,7 @@ namespace Tests\Enjoys\AssetsCollector\CollectStrategy\Strategy;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
+use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
@@ -24,6 +25,7 @@ class OneFileStrategyTest extends TestCase
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../..');
         $this->environment->setBaseUrl('/test/something');
+        $this->environment->setMinifyCSS(new CssMinify());
     }
 
     protected function tearDown(): void

@@ -2,34 +2,28 @@
 
 namespace Enjoys\AssetsCollector;
 
+use Enjoys\AssetsCollector\Content\Minify\Adapters\NullMinify;
+use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
 use Enjoys\AssetsCollector\Exception\PathDirectoryIsNotValid;
+use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 class Environment
 {
-
     private string $projectDir;
     private string $compileDir;
     private string $baseUrl = '';
-
     private int $cacheTime = -1;
-
     private int $strategy = Assets::STRATEGY_MANY_FILES;
     private string $render = Assets::RENDER_HTML;
-
     private ?string $version = null;
     private string $paramVersion = '?v=';
-
-    /**
-     * @var array{css: array, js: array}
-     */
-    private array $minifyOptions = [
-        'css' => [],
-        'js' => []
-    ];
-
     private LoggerInterface $logger;
+    /**
+     * @var array{css: MinifyInterface, js: MinifyInterface}
+     */
+    private array $minify;
 
     /**
      * Environment constructor.
@@ -39,6 +33,11 @@ class Environment
      */
     public function __construct(string $compileDir = '/', string $projectDir = '')
     {
+        $this->minify = [
+            'css' => new NullMinify(),
+            'js' => new NullMinify()
+        ];
+
         $projectDir = realpath($projectDir);
 
         if ($projectDir === false) {
@@ -184,27 +183,25 @@ class Environment
         $this->logger = $logger;
     }
 
-    /**
-     * @return array{css: array, js: array}
-     */
-    public function getMinifyOptions(): array
+    public function setMinifyJS(MinifyInterface $minifyImpl): void
     {
-        return $this->minifyOptions;
+        $this->minify['js'] = $minifyImpl;
+    }
+
+    public function setMinifyCSS(MinifyInterface $minifyImpl): void
+    {
+        $this->minify['css'] = $minifyImpl;
     }
 
     /**
-     * @param array|array[] $options
+     * @param string $type
+     * @return MinifyInterface
      */
-    public function setCssMinifyOptions(array $options): void
+    public function getMinify(string $type): MinifyInterface
     {
-        $this->minifyOptions['css'] = $options;
-    }
-
-    /**
-     * @param array|array[] $options
-     */
-    public function setJsMinifyOptions(array $options): void
-    {
-        $this->minifyOptions['js'] = $options;
+        if (!array_key_exists($type, $this->minify)) {
+            throw new UnexpectedParameters('Possible use only css or js');
+        }
+        return $this->minify[$type];
     }
 }

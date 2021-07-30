@@ -34,7 +34,6 @@ class OneFileStrategy extends StrategyAbstract
         parent::__construct($environment, $assetsCollection, $type);
 
         $this->cacheTime = $environment->getCacheTime();
-        $this->minifyOptions = $environment->getMinifyOptions();
 
         $filename = $this->generateFilename($type);
 
@@ -89,7 +88,7 @@ class OneFileStrategy extends StrategyAbstract
             $output = '';
 
             foreach ($this->assetsCollection as $asset) {
-                $output .= (new Reader($asset, $this->minifyOptions, $this->environment, $this->logger))->getContents();
+                $output .= (new Reader($asset, $this->environment, $this->logger))->getContents();
 
                 $optSymlinks = (array)$asset->getOption(Asset::CREATE_SYMLINK, []);
 

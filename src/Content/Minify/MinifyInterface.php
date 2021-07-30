@@ -6,11 +6,7 @@ namespace Enjoys\AssetsCollector\Content\Minify;
 
 interface MinifyInterface
 {
-    /**
-     * MinifyInterface constructor.
-     * @param string $content
-     * @param array{css: array, js: array} $minifyOptions
-     */
-    public function __construct(string $content, array $minifyOptions);
     public function getContent(): string;
+
+    public function setContent(string $content): void;
 }

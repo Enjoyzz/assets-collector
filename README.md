@@ -1,10 +1,10 @@
 # Assets Collector
 
-![7.4](https://github.com/Enjoyzz/assets-collector/workflows/7.4/badge.svg?branch=master)
-![8.0](https://github.com/Enjoyzz/assets-collector/workflows/8.0/badge.svg)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/build-status/master)
-[![Code Coverage](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)
+![7.4](https://github.com/Enjoyzz/assets-collector/workflows/7.4/badge.svg?branch=1.x)
+![8.0](https://github.com/Enjoyzz/assets-collector/workflows/8.0/badge.svg?branch=1.x)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/quality-score.png?b=1.x)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=1.x)
+[![Build Status](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/build.png?b=1.x)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/build-status/1.x)
+[![Code Coverage](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/coverage.png?b=1.x)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=1.x)
 
 ## Установка
 

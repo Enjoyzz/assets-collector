@@ -12,16 +12,19 @@ use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
  */
 class NullMinify implements MinifyInterface
 {
-    private string $content;
+    private string $content = '';
 
-    public function __construct(string $content, array $minifyOptions)
+    public function __construct()
     {
-        $this->content = $content;
-
     }
 
     public function getContent(): string
     {
         return $this->content;
+    }
+
+    public function setContent(string $content): void
+    {
+        $this->content = $content;
     }
 }

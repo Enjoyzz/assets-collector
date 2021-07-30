@@ -3,6 +3,8 @@
 namespace Tests\Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
+use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +21,8 @@ class ReaderTest extends TestCase
     protected function setUp(): void
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../');
+        $this->environment->setMinifyCSS(new CssMinify([]));
+        $this->environment->setMinifyJS(new JsMinify([]));
     }
 
     protected function tearDown(): void
@@ -28,7 +32,7 @@ class ReaderTest extends TestCase
 
     public function testLocalFile(): void
     {
-        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css'), [], $this->environment);
+        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css'), $this->environment);
         $this->assertSame("body{color:#00008b}\n", $reader->getContents());
     }
 
@@ -36,7 +40,6 @@ class ReaderTest extends TestCase
     {
         $reader = new Reader(
             new Asset('css', __DIR__ . '/../fixtures/test.css', [Asset::MINIFY => false]),
-            [],
             $this->environment
         );
         $this->assertSame(
@@ -52,13 +55,13 @@ CSS,
 
     public function testReturnGetContentReadFalse(): void
     {
-        $reader = new Reader(new Asset('css', '/'), [], $this->environment);
+        $reader = new Reader(new Asset('css', '/'), $this->environment);
         $this->assertSame('', $reader->getContents());
     }
 
     public function testReturnGetContentFileExistsFalse(): void
     {
-        $reader = new Reader(new Asset('css', '/test.css'), [], $this->environment);
+        $reader = new Reader(new Asset('css', '/test.css'), $this->environment);
         $this->assertSame('', $reader->getContents());
     }
 
@@ -66,7 +69,6 @@ CSS,
     {
         $reader = new Reader(
             new Asset('css', __DIR__ . '/../fixtures/sub/css/style.css', [Asset::MINIFY => false]),
-            [],
             $this->environment
         );
         $this->assertSame(

@@ -50,7 +50,6 @@ class Reader
      */
     public function __construct(
         Asset $asset,
-        array $minifyOptions,
         Environment $environment,
         LoggerInterface $logger = null
     ) {
@@ -59,7 +58,6 @@ class Reader
         $this->logger = $logger ?? new NullLogger();
         $this->path = $this->asset->getPath();
         $this->content = $this->getContent();
-        $this->minifyOptions = $minifyOptions;
     }
 
     /**
@@ -81,7 +79,7 @@ class Reader
             $this->content = MinifyFactory::minify(
                 $this->content,
                 $this->asset->getType(),
-                $this->minifyOptions
+                $this->environment
             )->getContent() . "\n";
             $this->logger->info(sprintf('Minify: %s', $this->path));
         }

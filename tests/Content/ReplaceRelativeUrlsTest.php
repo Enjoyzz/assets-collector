@@ -3,12 +3,27 @@
 namespace Tests\Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
-use Enjoys\AssetsCollector\Content\ReplaceRelativeUrls;
+use Enjoys\AssetsCollector\Content\ReplaceRelative;
+use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
 
 class ReplaceRelativeUrlsTest extends TestCase
 {
+    private ?Environment $environment;
 
+
+    /**
+     * @throws \Exception
+     */
+    protected function setUp(): void
+    {
+        $this->environment = new Environment('_compile', __DIR__ . '/../');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->environment = null;
+    }
     public function data()
     {
         return [
@@ -46,7 +61,7 @@ url("data:image")
 url('{$domain}/inner/path/style.css');
 CONTENT;
 
-        $processor = new ReplaceRelativeUrls($content, $url);
+        $processor = new ReplaceRelative($content, $url, new Asset('css', $url, []), $this->environment);
         $this->assertSame($expectContent, $processor->getContent());
     }
 }

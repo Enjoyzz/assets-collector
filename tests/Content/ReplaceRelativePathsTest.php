@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Enjoys\AssetsCollector\Content;
 
+use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
-use Enjoys\AssetsCollector\Content\ReplaceRelativePaths;
+use Enjoys\AssetsCollector\Content\ReplaceRelative;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
 
@@ -62,8 +63,10 @@ class ReplaceRelativePathsTest extends TestCase
      */
     public function testGetContent($data, $path, $expect)
     {
-        $replaceClass = new ReplaceRelativePaths(
-            $data,$path,
+        $replaceClass = new ReplaceRelative(
+            $data,
+            $path,
+            new Asset('css', $path, []),
             $this->config
         );
 

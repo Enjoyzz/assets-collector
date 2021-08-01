@@ -17,7 +17,7 @@ class ReplaceRelativeUrlsTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->environment = new Environment('_compile', __DIR__ . '/../');
+        $this->environment = new Environment('_compile', __DIR__ . '/..');
     }
 
     protected function tearDown(): void

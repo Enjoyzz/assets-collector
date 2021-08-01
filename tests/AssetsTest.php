@@ -9,10 +9,12 @@ use PHPUnit\Framework\TestCase;
 
 class AssetsTest extends TestCase
 {
+    use HelpersTestTrait;
+
     /**
      * @var Environment
      */
-    private Environment $config;
+    private ?Environment $config;
 
 
     protected function setUp(): void
@@ -20,6 +22,13 @@ class AssetsTest extends TestCase
         $this->config = new Environment(__DIR__ . '/_compile', __DIR__ . '/../');
         $this->config->setBaseUrl('/t')
             ->setStrategy(Assets::STRATEGY_MANY_FILES);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
+
+        $this->config = null;
     }
 
     public function testAdd()

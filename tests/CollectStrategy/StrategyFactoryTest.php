@@ -11,13 +11,23 @@ use Enjoys\AssetsCollector\CollectStrategy\StrategyInterface;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 use PHPUnit\Framework\TestCase;
+use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
 class StrategyFactoryTest extends TestCase
 {
+    use HelpersTestTrait;
+
+    private array $constructorEnvironmentArgs = ['_compile', __DIR__.'/..'];
+
+    protected function tearDown(): void
+    {
+        $this->removeDirectoryRecursive(__DIR__.'/../_compile', true);
+    }
 
     public function testStrategyFactoryGood()
     {
         $environment = $this->getMockBuilder(Environment::class)
+            ->setConstructorArgs($this->constructorEnvironmentArgs)
             ->onlyMethods(['getStrategy'])
             ->getMock();
 
@@ -32,6 +42,7 @@ class StrategyFactoryTest extends TestCase
         $this->assertInstanceOf(ManyFilesStrategy::class, $factory);
 
         $environment = $this->getMockBuilder(Environment::class)
+            ->setConstructorArgs($this->constructorEnvironmentArgs)
             ->onlyMethods(['getStrategy'])
             ->getMock();
         $environment->expects($this->any())->method('getStrategy')->willReturn(Assets::STRATEGY_ONE_FILE);
@@ -50,6 +61,7 @@ class StrategyFactoryTest extends TestCase
     {
         $this->expectException(UnexpectedParameters::class);
         $environment = $this->getMockBuilder(Environment::class)
+            ->setConstructorArgs($this->constructorEnvironmentArgs)
             ->onlyMethods(['getStrategy'])
             ->getMock();
         $environment->expects($this->any())->method('getStrategy')->willReturn(99);

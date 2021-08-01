@@ -12,20 +12,20 @@ class HelpersTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive(__DIR__.'/_temp');
+        $this->removeDirectoryRecursive(__DIR__.'/_compile', true);
     }
 
     public function dataErrorPath()
     {
         return [
-            [__DIR__.'/_temp', true],
+            [__DIR__.'/_compile', true],
             ['.', false],
             ['..', false],
             ['...', false],
             [__DIR__.'/...', false],
             [__DIR__.'/..', false],
             [__DIR__.'/.', false],
-            [__DIR__.'/_temp/.s', true],
+            [__DIR__.'/_compile/.s', true],
           //  ['/_te<>mp', false]
         ];
 
@@ -45,8 +45,8 @@ class HelpersTest extends TestCase
 
     public function testCreateSymlinkWhenUpFolderSymlynkAlreadyExist(){
         //$this->expectWarning();
-        Helpers::createSymlink(__DIR__.'/_temp/fixtures/test.css', __DIR__.'/fixtures/test.css');
-        Helpers::createSymlink(__DIR__.'/_temp/fixtures', __DIR__.'/fixtures');
+        Helpers::createSymlink(__DIR__.'/_compile/fixtures/test.css', __DIR__.'/fixtures/test.css');
+        Helpers::createSymlink(__DIR__.'/_compile/fixtures', __DIR__.'/fixtures');
         $this->assertTrue(true);
     }
 }

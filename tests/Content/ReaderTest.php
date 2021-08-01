@@ -8,9 +8,12 @@ use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
+use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
 class ReaderTest extends TestCase
 {
+
+    use HelpersTestTrait;
 
     private ?Environment $environment;
 
@@ -27,6 +30,7 @@ class ReaderTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->removeDirectoryRecursive($this->environment->getCompileDir(), true);
         $this->environment = null;
     }
 

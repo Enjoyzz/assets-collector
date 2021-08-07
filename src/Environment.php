@@ -20,6 +20,7 @@ class Environment
     private ?string $version = null;
     private string $paramVersion = '?v=';
     private LoggerInterface $logger;
+    private int $directoryPermissions = 0775;
     /**
      * @var array{css: MinifyInterface, js: MinifyInterface}
      */
@@ -203,5 +204,21 @@ class Environment
             throw new UnexpectedParameters('Possible use only css or js');
         }
         return $this->minify[$type];
+    }
+
+    /**
+     * @return int
+     */
+    public function getDirectoryPermissions(): int
+    {
+        return $this->directoryPermissions;
+    }
+
+    /**
+     * @param int $directoryPermissions
+     */
+    public function setDirectoryPermissions(int $directoryPermissions): void
+    {
+        $this->directoryPermissions = $directoryPermissions;
     }
 }

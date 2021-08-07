@@ -53,7 +53,7 @@ class OneFileStrategy extends StrategyAbstract
      */
     private function init(): void
     {
-        Helpers::createDirectory(pathinfo($this->filePath, PATHINFO_DIRNAME), 0755, $this->logger);
+        Helpers::createDirectory(pathinfo($this->filePath, PATHINFO_DIRNAME), $this->environment->getDirectoryPermissions(), $this->logger);
 
         if (!file_exists($this->filePath)) {
             Helpers::createEmptyFile($this->filePath, $this->logger);

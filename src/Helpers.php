@@ -61,7 +61,7 @@ class Helpers
      * @return void
      * @throws \Exception
      */
-    public static function createDirectory(string $path, int $permissions = 0777, LoggerInterface $logger = null): void
+    public static function createDirectory(string $path, int $permissions = 0775, LoggerInterface $logger = null): void
     {
         $logger ??= new NullLogger();
 

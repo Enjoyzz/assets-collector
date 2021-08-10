@@ -88,4 +88,28 @@ CSS
             $reader->getContents()
         );
     }
+
+    public function testWithDisableReplaceRelativePath(): void
+    {
+        $reader = new Reader(
+            new Asset(
+                'css',
+                __DIR__ . '/../fixtures/sub/css/style.css',
+                [Asset::MINIFY => false, Asset::REPLACE_RELATIVE_URLS => false]
+            ),
+            $this->environment
+        );
+        $this->assertSame(
+            <<<CSS
+@font-face {
+    src:url('../fonts/font.eot?d7yf1v') format('eot');
+    src:url('./font2.eot');
+    src:url('/font2.eot');
+    src:url('/font3.eot');
+}
+CSS
+            ,
+            $reader->getContents()
+        );
+    }
 }

@@ -11,6 +11,7 @@ class Asset
     use Options;
 
     public const MINIFY = 'minify';
+    public const REPLACE_RELATIVE_URLS = 'reaplaceRelativeUrls';
     public const CREATE_SYMLINK = 'symlinks';
 
     private ?string $id = null;
@@ -23,6 +24,7 @@ class Asset
     private bool $isUrl;
     private string $origPath;
     private bool $minify;
+    private bool $replaceRelativeUrls;
     private string $url = '';
 
 
@@ -32,6 +34,7 @@ class Asset
         $this->type = $type;
         $this->origPath = $path;
         $this->minify = (bool)$this->getOption(self::MINIFY, true);
+        $this->replaceRelativeUrls = (bool)$this->getOption(self::REPLACE_RELATIVE_URLS, true);
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
     }
@@ -123,5 +126,13 @@ class Asset
     private function setId(string $path): void
     {
         $this->id = md5($path);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReplaceRelativeUrls(): bool
+    {
+        return $this->replaceRelativeUrls;
     }
 }

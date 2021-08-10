@@ -65,17 +65,18 @@ class Reader
             return '';
         }
 
-        $replaceRelativeUrls = new ReplaceRelative($this->content, $this->path, $this->asset, $this->environment);
-        $replaceRelativeUrls->setLogger($this->logger);
-        $this->content = $replaceRelativeUrls->getContent();
-
+        if ($this->asset->isReplaceRelativeUrls()) {
+            $replaceRelativeUrls = new ReplaceRelative($this->content, $this->path, $this->asset, $this->environment);
+            $replaceRelativeUrls->setLogger($this->logger);
+            $this->content = $replaceRelativeUrls->getContent();
+        }
 
         if ($this->asset->isMinify()) {
             $this->content = MinifyFactory::minify(
-                $this->content,
-                $this->asset->getType(),
-                $this->environment
-            )->getContent() . "\n";
+                    $this->content,
+                    $this->asset->getType(),
+                    $this->environment
+                )->getContent() . "\n";
             $this->logger->info(sprintf('Minify: %s', $this->path));
         }
         return $this->content;

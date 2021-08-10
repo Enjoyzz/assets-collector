@@ -70,6 +70,7 @@ $assets->add('css', [
     '//example.com/style.css', //сокращенная URL ссылка
     'https://example.com/style.css', //URL ссылка
     ['style.css', \Enjoys\AssetsCollector\Asset::MINIFY => false], //попускает минификацию конкретного файла
+    ['goods/style.css', \Enjoys\AssetsCollector\Asset::REPLACE_RELATIVE_URLS => false], //не заменяет относительные ссылки - оставляет так как есть
 ]);
 ```
 

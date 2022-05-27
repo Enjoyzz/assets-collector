@@ -78,6 +78,12 @@ class Asset
             $this->url = $path;
             return true;
         }
+
+        if (\str_starts_with($path, 'url:') || \str_starts_with($path, 'local:')) {
+            $this->url = str_replace(['url:', 'local:'], '', $path);
+            return true;
+        }
+
         return false;
     }
 

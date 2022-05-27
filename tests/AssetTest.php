@@ -83,6 +83,19 @@ class AssetTest extends TestCase
 
     }
 
+    public function testUrl()
+    {
+        $asset = new Asset('css', 'url:/test.js');
+        $this->assertSame('/test.js', $asset->getPath());
+    }
+
+    public function testLocal()
+    {
+        $asset = new Asset('css', 'local:/test.js');
+        $this->assertSame('/test.js', $asset->getPath());
+    }
+
+
     public function testServerPort()
     {
         $_SERVER['SERVER_PORT'] = 443;

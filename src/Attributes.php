@@ -8,8 +8,14 @@ namespace Enjoys\AssetsCollector;
 
 final class Attributes
 {
+    /**
+     * @var array<string, string|null>|null
+     */
     private ?array $attributes;
 
+    /**
+     * @param array<string, string|null>|null $attributes
+     */
     public function __construct(?array $attributes)
     {
         $this->attributes = $attributes;

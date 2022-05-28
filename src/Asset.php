@@ -29,9 +29,15 @@ class Asset
     private bool $replaceRelativeUrls;
     private string $url = '';
     private bool $notCollect;
+    /**
+     * @var array<string, string|null>|null
+     */
     private ?array $attributes = null;
 
 
+    /**
+     * @psalm-suppress MixedAssignment
+     */
     public function __construct(string $type, string $path, array $params = [])
     {
         $this->setOptions($params);
@@ -144,7 +150,7 @@ class Asset
     }
 
     /**
-     * @return array|null
+     * @return array<string, string|null>|null
      */
     public function getAttributes(): ?array
     {

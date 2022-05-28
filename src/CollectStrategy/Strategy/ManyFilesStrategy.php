@@ -8,8 +8,9 @@ use Enjoys\AssetsCollector\Helpers;
 
 class ManyFilesStrategy extends StrategyAbstract
 {
+
     /**
-     * @return string[]
+     * @return array<string, array<string, string|null>|null>
      */
     public function getResult(): array
     {

@@ -91,8 +91,7 @@ class Assets
     /**
      * @param string $type
      * @param array<Asset> $assetsCollection
-     * @return string[]
-     * @throws \Exception
+     * @return array
      */
     private function getResults(string $type, array $assetsCollection): array
     {

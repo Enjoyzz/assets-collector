@@ -43,7 +43,6 @@ class ReplaceRelative
         $result = preg_replace_callback(
             '/(url\([\'"]?)(?!["\'a-z]+:|[\'"]?\/{2})(.+?[^\'"])([\'"]?\))/i',
             function (array $m) {
-                /** @var string[] $m */
                 $normalizedPath = $this->getNormalizedPath($m[2]);
                 if ($normalizedPath === false) {
                     return $m[1] . $m[2] . $m[3];

@@ -25,8 +25,9 @@ class Js implements RenderInterface
     public function getResult(array $paths): string
     {
         $result = '';
+        /** @var array<string, string|null>|null $attributes */
         foreach ($paths as $path => $attributes) {
-            $result .= sprintf("<script%s src='{$path}{$this->environment->getVersion()}'></script>\n", new Attributes($attributes));
+            $result .= sprintf("<script%s src='{$path}{$this->environment->getVersion()}'></script>\n", (new Attributes($attributes))->__toString());
         }
         return $result;
     }

@@ -227,6 +227,8 @@ HTML
     public function testAttributesWithoutValue()
     {
         $_SERVER['HTTP_SCHEME'] = 'https';
+//        $this->config->setBaseUrl('/t')
+//            ->setStrategy(Assets::STRATEGY_ONE_FILE);
         $assets = new Assets($this->config);
         $assets->add(
             'js',

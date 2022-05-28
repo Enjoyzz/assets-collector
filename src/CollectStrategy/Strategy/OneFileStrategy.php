@@ -70,7 +70,7 @@ class OneFileStrategy extends StrategyAbstract
     }
 
     /**
-     * @return string[]
+     * @return array<string, null>
      */
     public function getResult(): array
     {
@@ -78,7 +78,7 @@ class OneFileStrategy extends StrategyAbstract
             if ($this->isCacheValid()) {
                 $this->logger->info(sprintf('Use cached file: %s', $this->filePath));
                 $this->logger->info(sprintf('Return url: %s', $this->fileUrl));
-                return [$this->fileUrl];
+                return [$this->fileUrl => null];
             }
 
             $output = '';
@@ -99,7 +99,7 @@ class OneFileStrategy extends StrategyAbstract
         }
 
         $this->logger->info(sprintf('Return url: %s', $this->fileUrl));
-        return [$this->fileUrl];
+        return [$this->fileUrl => null];
     }
 
     /**

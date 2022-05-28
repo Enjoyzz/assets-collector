@@ -45,7 +45,7 @@ class OneFileStrategyTest extends TestCase
         ];
         $strategy = new OneFileStrategy($this->environment, $assetsCollection, 'css');
 
-        $this->assertSame(['/test/something/_css/'.md5(serialize($assetsCollection)).'.css'], $strategy->getResult());
+        $this->assertSame(['/test/something/_css/'.md5(serialize($assetsCollection)).'.css' => null], $strategy->getResult());
         $this->assertSame(
             str_replace(
                 "\r",

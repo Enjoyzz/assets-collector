@@ -2,6 +2,7 @@
 
 namespace Enjoys\AssetsCollector\Render\Html;
 
+use Enjoys\AssetsCollector\Attributes;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Render\RenderInterface;
 
@@ -17,15 +18,15 @@ class Js implements RenderInterface
         $this->environment = $environment;
     }
     /**
-     * @param string[] $paths
+     * @param array $paths
      * @return string
      * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
      */
     public function getResult(array $paths): string
     {
         $result = '';
-        foreach ($paths as $path) {
-            $result .= "<script src='{$path}{$this->environment->getVersion()}'></script>\n";
+        foreach ($paths as $path => $attributes) {
+            $result .= sprintf("<script%s src='{$path}{$this->environment->getVersion()}'></script>\n", new Attributes($attributes));
         }
         return $result;
     }

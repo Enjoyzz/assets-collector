@@ -13,9 +13,9 @@ class CssTest extends TestCase
         $css = new Css(new Environment());
         $result = $css->getResult(
             [
-                '1',
-                '2',
-                '//3'
+                '1' => [],
+                '2' => [],
+                '//3' => []
             ]
         );
 

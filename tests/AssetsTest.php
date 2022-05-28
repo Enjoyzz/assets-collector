@@ -2,6 +2,7 @@
 
 namespace Tests\Enjoys\AssetsCollector;
 
+use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
@@ -192,5 +193,34 @@ HTML
             ),
             $assets->get('css')
         );
+    }
+
+    public function testAttributes()
+    {
+        $_SERVER['HTTP_SCHEME'] = 'https';
+        $assets = new Assets($this->config);
+        $assets->add(
+            'js',
+            [
+                [
+                    '//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js',
+                    Asset::ATTRIBUTES => [
+                        'data-main' => './main.js'
+                    ]
+                ]
+            ]
+        );
+        $this->assertSame(
+            str_replace(
+                "\r",
+                "",
+                <<<HTML
+<script data-main='./main.js' src='https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js'></script>
+
+HTML
+            ),
+            $assets->get('js')
+        );
+        unset($_SERVER['HTTP_SCHEME']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Enjoys\AssetsCollector\Render\Html;
 
+use Enjoys\AssetsCollector\Attributes;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Render\RenderInterface;
 
@@ -18,15 +19,16 @@ class Css implements RenderInterface
     }
 
     /**
-     * @param string[] $paths
+     * @param array $paths
      * @return string
      * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
      */
     public function getResult(array $paths): string
     {
         $result = '';
-        foreach ($paths as $path) {
-            $result .= "<link type='text/css' rel='stylesheet' href='{$path}{$this->environment->getVersion()}' />\n";
+        foreach ($paths as $path => $attributes) {
+            $attributes = array_merge(['type' => 'text/css', 'rel' => 'stylesheet'], (array)$attributes);
+            $result .= sprintf("<link%s href='{$path}{$this->environment->getVersion()}' />\n", new Attributes($attributes));
         }
         return $result;
     }

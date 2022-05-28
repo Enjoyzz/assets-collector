@@ -13,6 +13,8 @@ class Asset
     public const MINIFY = 'minify';
     public const REPLACE_RELATIVE_URLS = 'reaplaceRelativeUrls';
     public const CREATE_SYMLINK = 'symlinks';
+    public const NOT_COLLECT = 'notCollect';
+    public const ATTRIBUTES = 'attributes';
 
     private ?string $id = null;
 
@@ -26,6 +28,8 @@ class Asset
     private bool $minify;
     private bool $replaceRelativeUrls;
     private string $url = '';
+    private bool $notCollect;
+    private ?array $attributes = null;
 
 
     public function __construct(string $type, string $path, array $params = [])
@@ -35,8 +39,11 @@ class Asset
         $this->origPath = $path;
         $this->minify = (bool)$this->getOption(self::MINIFY, true);
         $this->replaceRelativeUrls = (bool)$this->getOption(self::REPLACE_RELATIVE_URLS, true);
+        $this->notCollect = (bool)$this->getOption(self::NOT_COLLECT, false);
+        $this->attributes = $this->getOption(self::ATTRIBUTES, null, false);
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
+
     }
 
     /**
@@ -88,7 +95,6 @@ class Asset
     }
 
 
-
     public function isMinify(): bool
     {
         return $this->minify;
@@ -112,18 +118,11 @@ class Asset
         return $this->isUrl;
     }
 
-
-    /**
-     * @return string|null
-     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getOrigPath(): string
     {
         return $this->origPath;
@@ -134,11 +133,21 @@ class Asset
         $this->id = md5($path);
     }
 
-    /**
-     * @return bool
-     */
     public function isReplaceRelativeUrls(): bool
     {
         return $this->replaceRelativeUrls;
+    }
+
+    public function isNotCollect(): bool
+    {
+        return $this->notCollect;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getAttributes(): ?array
+    {
+        return $this->attributes;
     }
 }

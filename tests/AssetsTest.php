@@ -223,4 +223,34 @@ HTML
         );
         unset($_SERVER['HTTP_SCHEME']);
     }
+
+    public function testAttributesWithoutValue()
+    {
+        $_SERVER['HTTP_SCHEME'] = 'https';
+        $assets = new Assets($this->config);
+        $assets->add(
+            'js',
+            [
+                [
+                    'local:/require.min.js',
+                    Asset::ATTRIBUTES => [
+                        'attr_wo_value' => null,
+                        'attr_wo_value2',
+                    ]
+                ]
+            ]
+        );
+        $this->assertSame(
+            str_replace(
+                "\r",
+                "",
+                <<<HTML
+<script attr_wo_value attr_wo_value2 src='/require.min.js'></script>
+
+HTML
+            ),
+            $assets->get('js')
+        );
+        unset($_SERVER['HTTP_SCHEME']);
+    }
 }

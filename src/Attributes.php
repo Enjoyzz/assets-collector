@@ -9,12 +9,12 @@ namespace Enjoys\AssetsCollector;
 final class Attributes
 {
     /**
-     * @var array<string, string|null>|null
+     * @var array<array-key, string|null>|null
      */
     private ?array $attributes;
 
     /**
-     * @param array<string, string|null>|null $attributes
+     * @param array<array-key, string|null>|null $attributes
      */
     public function __construct(?array $attributes)
     {
@@ -28,6 +28,13 @@ final class Attributes
         }
         $result = [];
         foreach ($this->attributes as $key => $value) {
+            if (is_int($key)) {
+                $key = $value;
+                $value = null;
+            }
+            if ($key === null || $key === '') {
+                continue;
+            }
             if ($value === null) {
                 $result[] = sprintf("%s", $key);
                 continue;

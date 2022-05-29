@@ -16,6 +16,11 @@ class OneFileStrategy extends StrategyAbstract
     private bool $fileCreated = false;
 
     /**
+     * @var Asset[]
+     */
+    private array $notCollect = [];
+
+    /**
      * Build constructor.
      * @param Environment $environment
      * @param array<Asset> $assetsCollection
@@ -35,6 +40,18 @@ class OneFileStrategy extends StrategyAbstract
 
         $this->filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $filename;
         $this->fileUrl = $environment->getBaseUrl() . '/' . str_replace(DIRECTORY_SEPARATOR, '/', $filename);
+
+        $this->notCollect = array_filter($assetsCollection, function ($asset){
+            /** @var Asset $asset */
+            return $asset->isNotCollect();
+        });
+
+        $this->assetsCollection = array_filter($assetsCollection, function ($asset){
+            /** @var Asset $asset */
+            return !$asset->isNotCollect();
+        });
+
+
         $this->init();
 
     }
@@ -70,15 +87,17 @@ class OneFileStrategy extends StrategyAbstract
     }
 
     /**
-     * @return array<string, null>
+     * @return array<string, array|null>
      */
     public function getResult(): array
     {
+        $notCollectedResult = (new ManyFilesStrategy($this->environment, $this->notCollect, $this->type))->getResult();
+
         try {
             if ($this->isCacheValid()) {
                 $this->logger->info(sprintf('Use cached file: %s', $this->filePath));
                 $this->logger->info(sprintf('Return url: %s', $this->fileUrl));
-                return [$this->fileUrl => null];
+                return array_merge([$this->fileUrl => null], $notCollectedResult);
             }
 
             $output = '';
@@ -99,7 +118,7 @@ class OneFileStrategy extends StrategyAbstract
         }
 
         $this->logger->info(sprintf('Return url: %s', $this->fileUrl));
-        return [$this->fileUrl => null];
+        return array_merge([$this->fileUrl => null], $notCollectedResult);
     }
 
     /**

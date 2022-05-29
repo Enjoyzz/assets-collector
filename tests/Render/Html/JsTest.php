@@ -13,9 +13,9 @@ class JsTest extends TestCase
         $js = new Js(new Environment());
         $result = $js->getResult(
             [
-                '1',
-                '2',
-                '//3'
+                '1' => null,
+                '2' => null,
+                '//3' => null
             ]
         );
 

@@ -34,8 +34,7 @@
     "phpunit/phpunit": "^9.5",
     "twig/twig": "^3.2",
     "monolog/monolog": "~2.2.0",
-    "vimeo/psalm": "^4.8",
-    "phpstan/phpstan": "^0.12.93"
+    "vimeo/psalm": "^4.8"
   },
   "scripts": {
     "psalm": "psalm --show-info=true --config=psalm.xml"

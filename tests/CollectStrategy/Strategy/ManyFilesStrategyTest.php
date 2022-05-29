@@ -24,7 +24,7 @@ class ManyFilesStrategyTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->environment = new Environment('_compile', __DIR__.'/../..');
+        $this->environment = new Environment('_compile', __DIR__ . '/../..');
         $this->environment->setBaseUrl('/foo');
         $this->assetCollection = new AssetsCollection($this->environment);
     }
@@ -51,9 +51,9 @@ class ManyFilesStrategyTest extends TestCase
 
         $this->assertSame(
             [
-                'http://google.com',
-                'http://yandex.ru',
-                '/foo/fixtures/test.css'
+                'http://google.com' => null,
+                'http://yandex.ru' => null,
+                '/foo/fixtures/test.css' => null
             ],
             $strategy->getResult()
         );

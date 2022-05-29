@@ -2,6 +2,7 @@
 
 namespace Tests\Enjoys\AssetsCollector;
 
+use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
@@ -192,5 +193,66 @@ HTML
             ),
             $assets->get('css')
         );
+    }
+
+    public function testAttributes()
+    {
+        $_SERVER['HTTP_SCHEME'] = 'https';
+        $assets = new Assets($this->config);
+        $assets->add(
+            'js',
+            [
+                [
+                    '//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js',
+                    Asset::ATTRIBUTES => [
+                        'data-main' => './main.js'
+                    ]
+                ]
+            ]
+        );
+        $this->assertSame(
+            str_replace(
+                "\r",
+                "",
+                <<<HTML
+<script data-main='./main.js' src='https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js'></script>
+
+HTML
+            ),
+            $assets->get('js')
+        );
+        unset($_SERVER['HTTP_SCHEME']);
+    }
+
+    public function testAttributesWithoutValue()
+    {
+        $_SERVER['HTTP_SCHEME'] = 'https';
+//        $this->config->setBaseUrl('/t')
+//            ->setStrategy(Assets::STRATEGY_ONE_FILE);
+        $assets = new Assets($this->config);
+        $assets->add(
+            'js',
+            [
+                [
+                    'local:/require.min.js',
+                    Asset::ATTRIBUTES => [
+                        'attr_wo_value' => null,
+                        'attr_wo_value2',
+                    ]
+                ]
+            ]
+        );
+        $this->assertSame(
+            str_replace(
+                "\r",
+                "",
+                <<<HTML
+<script attr_wo_value attr_wo_value2 src='/require.min.js'></script>
+
+HTML
+            ),
+            $assets->get('js')
+        );
+        unset($_SERVER['HTTP_SCHEME']);
     }
 }

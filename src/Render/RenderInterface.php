@@ -4,9 +4,5 @@ namespace Enjoys\AssetsCollector\Render;
 
 interface RenderInterface
 {
-    /**
-     * @param string[] $paths
-     * @return string
-     */
     public function getResult(array $paths): string;
 }

@@ -70,6 +70,8 @@ $assets->add('css', [
     __DIR__ . '/style/style.css', //полный путь
     '//example.com/style.css', //сокращенная URL ссылка
     'https://example.com/style.css', //URL ссылка
+    'url:/assets/css/style.css', // URL ссылка
+    'local:/assets/css/style.css', // URL ссылка (local: и url: идентичны)
     ['style.css', \Enjoys\AssetsCollector\Asset::MINIFY => false], //попускает минификацию конкретного файла
     ['goods/style.css', \Enjoys\AssetsCollector\Asset::REPLACE_RELATIVE_URLS => false], //не заменяет относительные ссылки - оставляет так как есть
 ]);
@@ -97,7 +99,25 @@ $assets->add('css', [
          Asset::CREATE_SYMLINK => [
             __DIR__.'/symlink' => __DIR__.'/../../../target',
             //...
-        ],          
+        ],  
+        
+        // При STRATEGY_MANY_FILES будут добавлены html-аттрибуты,
+        // примерно это будет выглядеть так
+        // <script attribute-key='attribute-value' attribute-without-value attribute-without-value src='...'>
+        Asset::ATTRIBUTES => [
+            'attribute-key' => 'attribute-value',
+            'attribute-without-value' => null,
+            'attribute-without-value-another-method',
+            //...
+        ],
+        
+        // При STRATEGY_ONE_FILE если будет установлена эта опция в true, то именно этот asset в сборку не попадет,
+        // а выведется отдельно
+        Asset::NOT_COLLECT => true,   
+         
+        // При false - не заменяет относительные ссылки - оставляет так как есть.
+        // По-умолчанию true, все относительные ссылки заменяются на абсолютные
+        Asset::REPLACE_RELATIVE_URLS => false       
     ],
     //...
 ]);
@@ -109,7 +129,7 @@ $assets->add('css', [
 
 *Это удобно использовать например в шаблонах twig, где например в самом главном шаблоне подключаются общие стили, а
 потом в дочерних шаблонах подключаются конкретные стили, так вот при push, общие стили будут подключены ниже чем
-конкретные, при unshift - подкюлочены будут сначала стили общие , потом конкретные, хотя twig все равно их будет
+конкретные, при unshift - подключены будут сначала стили общие, потом конкретные, хотя twig все равно их будет
 обрабатывать в обратном порядке - от дочерних шаблонов до общих*
 
 - `push` - дефолтное значение вставляет данные в конец
@@ -230,7 +250,7 @@ $environment->setMinifyCSS(
 use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
 
 /** @var \Enjoys\AssetsCollector\Environment $environment */
-//не обязательно передавать все параметры, можно только выборочно 
+// Необязательно передавать все параметры, можно только выборочно 
 $environment->setJsMinifyOptions(
     new JsMinify([
         'flaggedComments' => false

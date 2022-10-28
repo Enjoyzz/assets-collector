@@ -6,6 +6,7 @@ use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use PHPUnit\Framework\TestCase;
+use Twig\Loader\FilesystemLoader;
 
 class AssetsExtensionTest extends TestCase
 {
@@ -17,6 +18,7 @@ class AssetsExtensionTest extends TestCase
      * @var AssetsExtension
      */
     private AssetsExtension $extension;
+
 
     protected function setUp(): void
     {
@@ -46,7 +48,6 @@ class AssetsExtensionTest extends TestCase
     }
 
 
-
     public function testGetExternJs()
     {
         $this->assertSame(
@@ -60,6 +61,36 @@ class AssetsExtensionTest extends TestCase
         $this->assertSame(
             "<link type='text/css' rel='stylesheet' href='http://google.com' />\n<link type='text/css' rel='stylesheet' href='http://yandex.ru' />\n",
             $this->extension->getExternCss()
+        );
+    }
+
+    public function dataForTestExtensionWithTwigLoader()
+    {
+        return [
+            [
+                new FilesystemLoader('/', __DIR__ . '/../../fixtures/twig_root_path'),
+                "<link type='text/css' rel='stylesheet' href='/fixtures/twig_root_path/test.css' />\n<link type='text/css' rel='stylesheet' href='/fixtures/test.css' />\n"
+            ],
+            [null, "<link type='text/css' rel='stylesheet' href='/fixtures/test.css' />\n"]
+        ];
+    }
+
+    /**
+     * @dataProvider dataForTestExtensionWithTwigLoader
+     */
+    public function testExtensionWithTwigLoader($loader, $expect)
+    {
+        $environment = new Environment('_compile', __DIR__ . '/../..');
+        $assetsCollector = new Assets($environment);
+        $extension = new AssetsExtension($assetsCollector, $loader);
+
+        $extension->asset('css', [
+            'test.css',
+            'tests/fixtures/test.css'
+        ]);
+        $this->assertSame(
+            $expect,
+            $extension->getExternCss()
         );
     }
 }

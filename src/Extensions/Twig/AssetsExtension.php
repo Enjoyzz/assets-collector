@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector\Extensions\Twig;
 
 use Enjoys\AssetsCollector\Assets;
+use Twig\Error\LoaderError;
 use Twig\Extension\AbstractExtension;
+use Twig\Loader\LoaderInterface;
 use Twig\TwigFunction;
 
 /**
@@ -27,10 +29,12 @@ class AssetsExtension extends AbstractExtension
      * @var Assets
      */
     private Assets $assetsCollector;
+    private ?LoaderInterface $loader;
 
-    public function __construct(Assets $assetsCollector)
+    public function __construct(Assets $assetsCollector, LoaderInterface $loader = null)
     {
         $this->assetsCollector = $assetsCollector;
+        $this->loader = $loader;
     }
 
     /**
@@ -46,14 +50,29 @@ class AssetsExtension extends AbstractExtension
     }
 
     /**
-     * @param string $type
-     * @param array<string> $paths
-     * @param string $namespace
-     * @param string $method
+     * @throws LoaderError
      */
-    public function asset(string $type, array $paths = [], string $namespace = Assets::NAMESPACE_COMMON, string $method = 'push'): void
-    {
-        $this->assetsCollector->add($type, $paths, $namespace, $method);
+    public function asset(
+        string $type,
+        array $paths = [],
+        string $namespace = Assets::NAMESPACE_COMMON,
+        string $method = 'push'
+    ): void {
+        $this->assetsCollector->add(
+            $type,
+            array_map(function ($item) {
+                if ($this->loader === null) {
+                    return $item;
+                }
+                $path = (array)$item;
+                if ($this->loader->exists($path[0])) {
+                    $path[0] = $this->loader->getSourceContext($path[0])->getPath();
+                }
+                return $path;
+            }, $paths),
+            $namespace,
+            $method
+        );
     }
 
     /**

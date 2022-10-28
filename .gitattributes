@@ -1,3 +1,5 @@
+* text=auto eol=lf
+
 .* export-ignore
 infection/ export-ignore
 phpunit.xml.dist export-ignore

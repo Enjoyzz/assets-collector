@@ -193,6 +193,20 @@ $twig->addExtension(new \Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension(
  {{  asset('js', ['path/script.js', 'script.js'], 'namespace') }}
 ```
 
+**С версии 2.2.1 поддерживаются пути twig**
+
+Необходимо при инициализации расширения передать загрузчик, который реализует `\Twig\Loader\LoaderInterface`,
+например `\Twig\Loader\FilesystemLoader`
+
+```php
+/** 
+ * @var \Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension $extension 
+ * @var \Enjoys\AssetsCollector\Assets $assets
+ * @var \Twig\Loader\LoaderInterface $loader
+ */
+$extension = new AssetsExtension($assets, $loader));
+```
+
 **Вывод в шаблоне**
 
 ```twig
@@ -206,7 +220,6 @@ $twig->addExtension(new \Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension(
 
 По умолчанию в качестве минификатора используется **NullMinify::class**, то есть ничего не сжимается. Для установки
 минификатора, в Environment используется метод **Environment::setMinifyCSS(MinifyInterface $minifyImpl)**
-
 
 Базовая реализация CSS Minify реализована с помощью библиотеки **tubalmartin\CssMin**
 Подробное описание параметров: https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port#api
@@ -242,7 +255,7 @@ $environment->setMinifyCSS(
 Базовая реализация CSS Minify реализована с помощью библиотеки **JShrink**
 Подробнее про [JShrink](https://github.com/tedious/JShrink)
 
-Легко можно реализовать минификацию с помощью других библиотек, реализовав интерфейс 
+Легко можно реализовать минификацию с помощью других библиотек, реализовав интерфейс
 *\Enjoys\AssetsCollector\Content\Minify\MinifyInterface::class*
 
 ```php

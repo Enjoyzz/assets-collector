@@ -3,6 +3,7 @@
 ![7.4](https://github.com/Enjoyzz/assets-collector/workflows/7.4/badge.svg?branch=master)
 ![8.0](https://github.com/Enjoyzz/assets-collector/workflows/8.0/badge.svg)
 ![8.1](https://github.com/Enjoyzz/assets-collector/workflows/8.1/badge.svg)
+![8.2](https://github.com/Enjoyzz/assets-collector/workflows/8.2/badge.svg)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)

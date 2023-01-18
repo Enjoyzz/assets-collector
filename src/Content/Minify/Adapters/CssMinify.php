@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector\Content\Minify\Adapters;
 
 use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
-use Enjoys\Traits\Options;
 use tubalmartin\CssMin\Minifier as CSSmin;
 
 /**
@@ -14,9 +13,8 @@ use tubalmartin\CssMin\Minifier as CSSmin;
  */
 class CssMinify implements MinifyInterface
 {
-    use Options;
-
     private string $content = '';
+    private array $options;
 
     /**
      * CssMinify constructor.
@@ -24,7 +22,7 @@ class CssMinify implements MinifyInterface
      */
     public function __construct(array $minifyOptions = [])
     {
-        $this->setOptions($minifyOptions);
+        $this->options = $minifyOptions;
     }
 
     public function setContent(string $content): void
@@ -38,16 +36,16 @@ class CssMinify implements MinifyInterface
     public function getContent(): string
     {
         $compressor = new CSSMin();
-        $compressor->keepSourceMapComment((bool)$this->getOption('keepSourceMapComment', false));
+        $compressor->keepSourceMapComment((bool)($this->options['keepSourceMapComment'] ?? false));
         // Remove important comments from output.
-        $compressor->removeImportantComments((bool)$this->getOption('removeImportantComments', true));
+        $compressor->removeImportantComments((bool)($this->options['removeImportantComments'] ?? true));
         // Split long lines in the output approximately every 1000 chars.
-        $compressor->setLineBreakPosition((int)$this->getOption('setLineBreakPosition', 1000));
-        $compressor->setMaxExecutionTime((int)$this->getOption('setMaxExecutionTime', 60));
+        $compressor->setLineBreakPosition((int)($this->options['setLineBreakPosition'] ?? 1000));
+        $compressor->setMaxExecutionTime((int)($this->options['setMaxExecutionTime'] ?? 60));
         // Override any PHP configuration options before calling run() (optional)
-        $compressor->setMemoryLimit((string)$this->getOption('setMemoryLimit', '256M'));
-        $compressor->setPcreBacktrackLimit((int)$this->getOption('setPcreBacktrackLimit', 1000000));
-        $compressor->setPcreRecursionLimit((int)$this->getOption('setPcreRecursionLimit', 500000));
+        $compressor->setMemoryLimit((string)($this->options['setMemoryLimit'] ?? '256M'));
+        $compressor->setPcreBacktrackLimit((int)($this->options['setPcreBacktrackLimit'] ?? 1000000));
+        $compressor->setPcreRecursionLimit((int)($this->options['setPcreRecursionLimit'] ?? 500000));
         // Compress the CSS code!
         return $compressor->run($this->content);
     }

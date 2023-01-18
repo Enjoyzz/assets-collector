@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
+use function getenv;
+use function str_starts_with;
+
 class Asset
 {
 
@@ -36,7 +39,7 @@ class Asset
     /**
      * @psalm-suppress MixedAssignment
      */
-    public function __construct(string $type, string $path, \Enjoys\AssetsCollector\Options $options = null)
+    public function __construct(string $type, string $path, Options $options = null)
     {
         $this->type = $type;
         $this->origPath = $path;
@@ -62,7 +65,7 @@ class Asset
             return $this->url;
         }
 
-        if (false === $projectDir = \getenv('ASSETS_PROJECT_DIRECTORY')) {
+        if (false === $projectDir = getenv('ASSETS_PROJECT_DIRECTORY')) {
             $projectDir = '';
         }
         $paths = [
@@ -81,7 +84,7 @@ class Asset
 
     private function checkIsUrl(string $path): bool
     {
-        if (\str_starts_with($path, '//')) {
+        if (str_starts_with($path, '//')) {
             $this->url = Helpers::getHttpScheme() . ':' . $path;
             return true;
         }
@@ -91,7 +94,7 @@ class Asset
             return true;
         }
 
-        if (\str_starts_with($path, 'url:') || \str_starts_with($path, 'local:')) {
+        if (str_starts_with($path, 'url:') || str_starts_with($path, 'local:')) {
             $this->url = str_replace(['url:', 'local:'], '', $path);
             return true;
         }

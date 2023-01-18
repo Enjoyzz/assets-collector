@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
-use Enjoys\Traits\Options;
-
 class Asset
 {
-    use Options;
 
     public const MINIFY = 'minify';
     public const REPLACE_RELATIVE_URLS = 'reaplaceRelativeUrls';
@@ -33,22 +30,24 @@ class Asset
      * @var array<string, string|null>|null
      */
     private ?array $attributes = null;
+    private Options $options;
 
 
     /**
      * @psalm-suppress MixedAssignment
      */
-    public function __construct(string $type, string $path, array $params = [])
+    public function __construct(string $type, string $path, \Enjoys\AssetsCollector\Options $options = null)
     {
-        $this->setOptions($params);
         $this->type = $type;
         $this->origPath = $path;
-        $this->minify = (bool)$this->getOption(self::MINIFY, true);
-        $this->replaceRelativeUrls = (bool)$this->getOption(self::REPLACE_RELATIVE_URLS, true);
-        $this->notCollect = (bool)$this->getOption(self::NOT_COLLECT, false);
-        $this->attributes = $this->getOption(self::ATTRIBUTES, null, false);
+        $this->options = $options ?? new Options();
+        $this->minify = (bool)$this->options->getOption(self::MINIFY, true);
+        $this->replaceRelativeUrls = (bool)$this->options->getOption(self::REPLACE_RELATIVE_URLS, true);
+        $this->notCollect = (bool)$this->options->getOption(self::NOT_COLLECT, false);
+        $this->attributes = $this->options->getOption(self::ATTRIBUTES, null, false);
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
+
 
     }
 
@@ -155,5 +154,10 @@ class Asset
     public function getAttributes(): ?array
     {
         return $this->attributes;
+    }
+
+    public function getOption(string $key, $default)
+    {
+        return $this->options->getOption($key, $default);
     }
 }

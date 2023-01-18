@@ -75,7 +75,7 @@ class ReplaceRelativePathsTest extends TestCase
         $replaceClass = new ReplaceRelative(
             $data,
             $path,
-            new Asset('css', $path, []),
+            new Asset('css', $path),
             $this->config
         );
 

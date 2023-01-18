@@ -4,6 +4,7 @@ namespace Tests\Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Options;
 use PHPUnit\Framework\TestCase;
 
 class AssetTest extends TestCase
@@ -40,7 +41,7 @@ class AssetTest extends TestCase
      */
     public function test__construct($type, $path, $params, $isUrl, $getPath, $isMinify, $getType, $setId)
     {
-        $asset = new Asset($type, $path, $params);
+        $asset = new Asset($type, $path, new Options($params));
         $this->assertSame($isUrl, $asset->isUrl());
         $this->assertSame($getPath, $asset->getPath());
         $this->assertSame($isMinify, $asset->isMinify());

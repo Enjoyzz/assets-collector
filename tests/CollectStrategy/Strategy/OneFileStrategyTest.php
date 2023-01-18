@@ -7,6 +7,7 @@ use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
 use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Options;
 use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
@@ -68,9 +69,9 @@ CSS
         $assetsCollection = [
             new Asset('css', __DIR__ . '/../../fixtures/test.css'),
             new Asset('css', __DIR__ . '/../../../tests/fixtures/test2.css'),
-            new Asset('css', __DIR__ . '/../../../tests/fixtures/test3.css', [
+            new Asset('css', __DIR__ . '/../../../tests/fixtures/test3.css', new Options([
                 Asset::NOT_COLLECT => true,
-            ]),
+            ])),
         ];
         $strategy = new OneFileStrategy($this->environment, $assetsCollection, 'css');
 

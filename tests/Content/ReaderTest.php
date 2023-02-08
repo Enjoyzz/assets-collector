@@ -80,9 +80,9 @@ CSS,
 @font-face {
     src:url('/fixtures/sub/fonts/font.eot') format('eot');
     src:url('/fixtures/sub/css/font2.eot');
-    src:url('/fixtures/sub/css/font2.eot');
     src:url('/font3.eot');
 }
+
 CSS
             ,
             $reader->getContents()
@@ -102,11 +102,11 @@ CSS
         $this->assertSame(
             <<<CSS
 @font-face {
-    src:url('../fonts/font.eot?d7yf1v') format('eot');
+    src:url('./../fonts/font.eot?d7yf1v') format('eot');
     src:url('./font2.eot');
-    src:url('/font2.eot');
     src:url('/font3.eot');
 }
+
 CSS
             ,
             $reader->getContents()

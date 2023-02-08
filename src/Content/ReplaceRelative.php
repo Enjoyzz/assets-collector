@@ -25,11 +25,11 @@ class ReplaceRelative
 
     public function __construct(string $content, string $path, Asset $asset, Environment $environment)
     {
-        $this->logger = new NullLogger();
         $this->content = $content;
         $this->asset = $asset;
         $this->environment = $environment;
         $this->path = $path;
+        $this->logger = $environment->getLogger();
     }
 
 

@@ -25,26 +25,22 @@ class Asset
     private string $type;
     private bool $isUrl;
     private string $origPath;
-    private bool $minify;
-    private bool $replaceRelativeUrls;
     private string $url = '';
-    private bool $notCollect;
+
+    private AssetOptions $options;
+
+
     /**
-     * @var array<string, string|null>|null
+     * @param string $type
+     * @param string $path
+     * @param array<string, string|bool|array|null> $options
      */
-    private ?array $attributes = null;
-    private Options $options;
-
-
-    public function __construct(string $type, string $path, Options $options = null)
+    public function __construct(string $type, string $path, array $options = [])
     {
         $this->type = $type;
         $this->origPath = $path;
-        $this->options = $options ?? new Options();
-        $this->minify = (bool)$this->options->getOption(self::MINIFY, true);
-        $this->replaceRelativeUrls = (bool)$this->options->getOption(self::REPLACE_RELATIVE_URLS, true);
-        $this->notCollect = (bool)$this->options->getOption(self::NOT_COLLECT, false);
-        $this->attributes = $this->options->getOption(self::ATTRIBUTES);
+        $this->options =  new AssetOptions($options);
+
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
 
@@ -100,7 +96,7 @@ class Asset
 
     public function isMinify(): bool
     {
-        return $this->minify;
+        return $this->options->isMinify();
     }
 
     /**
@@ -144,23 +140,20 @@ class Asset
 
     public function isReplaceRelativeUrls(): bool
     {
-        return $this->replaceRelativeUrls;
+        return $this->options->isReplaceRelativeUrls();
     }
 
     public function isNotCollect(): bool
     {
-        return $this->notCollect;
+        return $this->options->isNotCollect();
     }
 
-    /**
-     * @return array<string, string|null>|null
-     */
     public function getAttributes(): ?array
     {
-        return $this->attributes;
+        return $this->options->getAttributes();
     }
 
-    public function getOptions(): Options
+    public function getOptions(): AssetOptions
     {
         return $this->options;
     }

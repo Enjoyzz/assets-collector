@@ -60,8 +60,9 @@ class Assets
                 $path = array_shift($params);
             }
 
+            /** @var array<string, array|bool|null|string> $params */
             $collection->add(
-                new Asset($type, $path, new Options($params)),
+                new Asset($type, $path, $params),
                 $namespace
             );
         }

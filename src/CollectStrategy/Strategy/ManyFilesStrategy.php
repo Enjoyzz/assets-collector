@@ -10,7 +10,7 @@ class ManyFilesStrategy extends StrategyAbstract
 {
 
     /**
-     * @return array<string, array<string, string|null>|null>
+     * @return array<string, array|null>
      */
     public function getResult(): array
     {

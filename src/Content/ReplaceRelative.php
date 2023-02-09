@@ -87,8 +87,6 @@ class ReplaceRelative
      * @param string $baseUrl
      * @param string $relativeUrl
      * @return false|string
-     * @psalm-suppress MixedReturnStatement
-     * @psalm-suppress MixedInferredReturnType
      */
     private function replaceUrls(string $baseUrl, string $relativeUrl)
     {
@@ -101,6 +99,7 @@ class ReplaceRelative
      * @param string $relativePath
      * @return false|string
      * @throws \Exception
+     * @psalm-suppress PossiblyInvalidArgument
      */
     private function replacePath(string $filePath, string $relativePath)
     {

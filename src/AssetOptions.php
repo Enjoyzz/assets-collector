@@ -87,4 +87,12 @@ final class AssetOptions
     {
         return $this->options[Asset::ATTRIBUTES];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getSymlinks(): array
+    {
+        return $this->options[Asset::CREATE_SYMLINK];
+    }
 }

@@ -46,32 +46,26 @@ class SymlinkTest extends TestCase
         $link1 = $urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v');
         $link2 = $urlConverter->relativeToAbsolute($baseUrl, './font2.eot');
 
-        $this->assertSame($link1, readlink($this->config->getCompileDir().'/tests/fixtures/sub/fonts/font.eot'));
-        $this->assertSame($link2, readlink($this->config->getCompileDir().'/tests/fixtures/sub/css/font2.eot'));
-
+        $this->assertSame($link1, readlink($this->config->getCompileDir() . '/tests/fixtures/sub/fonts/font.eot'));
+        $this->assertSame($link2, readlink($this->config->getCompileDir() . '/tests/fixtures/sub/css/font2.eot'));
     }
 
 
-//    public function _testManyStrategyCreatedSymLinks()
-//    {
-//        $this->config->setStrategy(Assets::STRATEGY_MANY_FILES);
-//        $assets = new Assets($this->config);
-//        $assets->add(
-//            'css',
-//            [
-//                $baseUrl = './fixtures/sub/css/style.css',
-//                __DIR__.'/fixtures/test.css',
-//            ]
-//        );
-//        $assets->get('css');
-//
-//        $urlConverter = new UrlConverter();
-//        $link1 = $urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v');
-//        $link2 = $urlConverter->relativeToAbsolute($baseUrl, './font2.eot');
-//
-//        $this->assertSame($link1, readlink($this->config->getCompileDir().'/tests/fixtures/sub/fonts/font.eot'));
-//        $this->assertSame($link2, readlink($this->config->getCompileDir().'/tests/fixtures/sub/css/font2.eot'));
-//
-//    }
+    public function testManyStrategyCreatedSymLinks()
+    {
+        $this->config->setStrategy(Assets::STRATEGY_MANY_FILES);
+        $assets = new Assets($this->config);
+        $assets->add(
+            'css',
+            [
+                $link1 = __DIR__ . '/fixtures/sub/css/style.css',
+                $link2 = __DIR__ . '/fixtures/test.css',
+            ]
+        );
+        $assets->get('css');
+
+        $this->assertSame($link1, readlink($this->config->getCompileDir() . '/tests/fixtures/sub/css/style.css'));
+        $this->assertSame($link2, readlink($this->config->getCompileDir() . '/tests/fixtures/test.css'));
+    }
 
 }

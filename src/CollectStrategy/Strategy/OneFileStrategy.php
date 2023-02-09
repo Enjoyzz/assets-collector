@@ -41,19 +41,18 @@ class OneFileStrategy extends StrategyAbstract
         $this->filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $filename;
         $this->fileUrl = $environment->getBaseUrl() . '/' . str_replace(DIRECTORY_SEPARATOR, '/', $filename);
 
-        $this->notCollect = array_filter($assets, function ($asset){
+        $this->notCollect = array_filter($assets, function ($asset) {
             /** @var Asset $asset */
             return $asset->isNotCollect();
         });
 
-        $this->assets = array_filter($assets, function ($asset){
+        $this->assets = array_filter($assets, function ($asset) {
             /** @var Asset $asset */
             return !$asset->isNotCollect();
         });
 
 
         $this->init();
-
     }
 
     /**
@@ -62,7 +61,7 @@ class OneFileStrategy extends StrategyAbstract
      */
     private function generateFilename(string $type): string
     {
-        return '_' . $type . DIRECTORY_SEPARATOR . $this->getHashId(). '.' . $type;
+        return '_' . $type . DIRECTORY_SEPARATOR . $this->getHashId() . '.' . $type;
     }
 
     /**
@@ -70,7 +69,11 @@ class OneFileStrategy extends StrategyAbstract
      */
     private function init(): void
     {
-        Helpers::createDirectory(pathinfo($this->filePath, PATHINFO_DIRNAME), $this->environment->getDirectoryPermissions(), $this->logger);
+        Helpers::createDirectory(
+            pathinfo($this->filePath, PATHINFO_DIRNAME),
+            $this->environment->getDirectoryPermissions(),
+            $this->logger
+        );
 
         if (!file_exists($this->filePath)) {
             Helpers::createEmptyFile($this->filePath, $this->logger);
@@ -105,12 +108,11 @@ class OneFileStrategy extends StrategyAbstract
             foreach ($this->assets as $asset) {
                 $output .= (new Reader($asset, $this->environment, $this->logger))->getContents();
 
-                $optSymlinks = (array)$asset->getOptions()->getOption(Asset::CREATE_SYMLINK, []);
 
-                /** @var array<string, string> $optSymlinks */
-                foreach ($optSymlinks as $optLink => $optTarget) {
+                foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }
+
             }
             Helpers::writeFile($this->filePath, $output, 'w', $this->logger);
         } catch (\Exception $e) {

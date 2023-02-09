@@ -51,7 +51,7 @@ class Asset
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
 
-
+        $this->setId($this->path);
     }
 
     /**
@@ -61,7 +61,6 @@ class Asset
     private function getNormalizedPath(string $path)
     {
         if ($this->isUrl()) {
-            $this->setId($this->url);
             return $this->url;
         }
 
@@ -75,11 +74,10 @@ class Asset
 
         foreach ($paths as $path) {
             if (false !== $normalizedPath = realpath($path)) {
-                $this->setId($normalizedPath);
-                break;
+                return $normalizedPath;
             }
         }
-        return $normalizedPath;
+        return false;
     }
 
     private function checkIsUrl(string $path): bool
@@ -136,9 +134,16 @@ class Asset
         return $this->origPath;
     }
 
-    private function setId(string $path): void
+    /**
+     * @param string|false $path
+     * @return void
+     */
+    private function setId($path): void
     {
-        $this->id = md5($path);
+        if ($path === false) {
+            return;
+        }
+        $this->id = md5($path . serialize($this->getOptions()->getOptions()));
     }
 
     public function isReplaceRelativeUrls(): bool

@@ -163,4 +163,9 @@ class Asset
     {
         return $this->options->getOption($key, $default);
     }
+
+    public function getOptions(): Options
+    {
+        return $this->options;
+    }
 }

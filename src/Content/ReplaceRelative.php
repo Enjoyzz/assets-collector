@@ -126,13 +126,14 @@ class ReplaceRelative
             )
         );
 
-        $this->asset->setOption(
+        $this->asset->getOptions()->setOption(
             Asset::CREATE_SYMLINK,
             array_merge(
                 [$this->environment->getCompileDir() . $relativeFullPath => $realpath],
                 $this->asset->getOption(Asset::CREATE_SYMLINK, [])
             )
         );
+
         return $this->environment->getBaseUrl() . $relativeFullPath;
     }
 }

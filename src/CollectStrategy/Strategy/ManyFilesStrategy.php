@@ -38,7 +38,7 @@ class ManyFilesStrategy extends StrategyAbstract
             try {
                 Helpers::createSymlink($this->environment->getCompileDir() . $link, $path, $this->logger);
 
-                $optSymlinks = (array)$asset->getOption(Asset::CREATE_SYMLINK, []);
+                $optSymlinks = (array)$asset->getOptions()->getOption(Asset::CREATE_SYMLINK, []);
 
                 /** @var array<string, string> $optSymlinks */
                 foreach ($optSymlinks as $optLink => $optTarget) {

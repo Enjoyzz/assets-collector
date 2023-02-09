@@ -105,7 +105,7 @@ class OneFileStrategy extends StrategyAbstract
             foreach ($this->assetsCollection as $asset) {
                 $output .= (new Reader($asset, $this->environment, $this->logger))->getContents();
 
-                $optSymlinks = (array)$asset->getOption(Asset::CREATE_SYMLINK, []);
+                $optSymlinks = (array)$asset->getOptions()->getOption(Asset::CREATE_SYMLINK, []);
 
                 /** @var array<string, string> $optSymlinks */
                 foreach ($optSymlinks as $optLink => $optTarget) {

@@ -64,6 +64,7 @@ class AssetsExtension extends AbstractExtension
                 if ($this->loader === null) {
                     return $item;
                 }
+                /** @var string[] $path */
                 $path = (array)$item;
                 if ($this->loader->exists($path[0])) {
                     $path[0] = $this->loader->getSourceContext($path[0])->getPath();

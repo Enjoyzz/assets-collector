@@ -35,6 +35,7 @@ class Helpers
      * @param string $mode
      * @param LoggerInterface|null $logger
      * @return void
+     * @throws \Exception
      */
     public static function writeFile(
         string $file,

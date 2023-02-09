@@ -130,7 +130,7 @@ class ReplaceRelative
             Asset::CREATE_SYMLINK,
             array_merge(
                 [$this->environment->getCompileDir() . $relativeFullPath => $realpath],
-                $this->asset->getOption(Asset::CREATE_SYMLINK, [])
+                $this->asset->getOptions()->getOption(Asset::CREATE_SYMLINK, [])
             )
         );
 

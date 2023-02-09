@@ -36,9 +36,6 @@ class Asset
     private Options $options;
 
 
-    /**
-     * @psalm-suppress MixedAssignment
-     */
     public function __construct(string $type, string $path, Options $options = null)
     {
         $this->type = $type;
@@ -47,7 +44,7 @@ class Asset
         $this->minify = (bool)$this->options->getOption(self::MINIFY, true);
         $this->replaceRelativeUrls = (bool)$this->options->getOption(self::REPLACE_RELATIVE_URLS, true);
         $this->notCollect = (bool)$this->options->getOption(self::NOT_COLLECT, false);
-        $this->attributes = $this->options->getOption(self::ATTRIBUTES, null, false);
+        $this->attributes = $this->options->getOption(self::ATTRIBUTES);
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
 
@@ -136,7 +133,6 @@ class Asset
 
     /**
      * @param string|false $path
-     * @return void
      */
     private function setId($path): void
     {
@@ -162,11 +158,6 @@ class Asset
     public function getAttributes(): ?array
     {
         return $this->attributes;
-    }
-
-    public function getOption(string $key, $default)
-    {
-        return $this->options->getOption($key, $default);
     }
 
     public function getOptions(): Options

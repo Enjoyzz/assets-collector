@@ -37,6 +37,6 @@
         "vimeo/psalm": "^4.8"
     },
     "scripts": {
-        "psalm": "psalm --show-info=true --config=psalm.xml"
+        "psalm": "psalm --show-info=true --config=psalm.xml --no-cache"
     }
 }

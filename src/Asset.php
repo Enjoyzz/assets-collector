@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
-use Enjoys\Traits\Options;
+use function getenv;
+use function str_starts_with;
 
 class Asset
 {
-    use Options;
 
     public const MINIFY = 'minify';
     public const REPLACE_RELATIVE_URLS = 'reaplaceRelativeUrls';
@@ -33,22 +33,24 @@ class Asset
      * @var array<string, string|null>|null
      */
     private ?array $attributes = null;
+    private Options $options;
 
 
     /**
      * @psalm-suppress MixedAssignment
      */
-    public function __construct(string $type, string $path, array $params = [])
+    public function __construct(string $type, string $path, Options $options = null)
     {
-        $this->setOptions($params);
         $this->type = $type;
         $this->origPath = $path;
-        $this->minify = (bool)$this->getOption(self::MINIFY, true);
-        $this->replaceRelativeUrls = (bool)$this->getOption(self::REPLACE_RELATIVE_URLS, true);
-        $this->notCollect = (bool)$this->getOption(self::NOT_COLLECT, false);
-        $this->attributes = $this->getOption(self::ATTRIBUTES, null, false);
+        $this->options = $options ?? new Options();
+        $this->minify = (bool)$this->options->getOption(self::MINIFY, true);
+        $this->replaceRelativeUrls = (bool)$this->options->getOption(self::REPLACE_RELATIVE_URLS, true);
+        $this->notCollect = (bool)$this->options->getOption(self::NOT_COLLECT, false);
+        $this->attributes = $this->options->getOption(self::ATTRIBUTES, null, false);
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
+
 
     }
 
@@ -63,7 +65,7 @@ class Asset
             return $this->url;
         }
 
-        if (false === $projectDir = \getenv('ASSETS_PROJECT_DIRECTORY')) {
+        if (false === $projectDir = getenv('ASSETS_PROJECT_DIRECTORY')) {
             $projectDir = '';
         }
         $paths = [
@@ -82,7 +84,7 @@ class Asset
 
     private function checkIsUrl(string $path): bool
     {
-        if (\str_starts_with($path, '//')) {
+        if (str_starts_with($path, '//')) {
             $this->url = Helpers::getHttpScheme() . ':' . $path;
             return true;
         }
@@ -92,7 +94,7 @@ class Asset
             return true;
         }
 
-        if (\str_starts_with($path, 'url:') || \str_starts_with($path, 'local:')) {
+        if (str_starts_with($path, 'url:') || str_starts_with($path, 'local:')) {
             $this->url = str_replace(['url:', 'local:'], '', $path);
             return true;
         }
@@ -155,5 +157,10 @@ class Asset
     public function getAttributes(): ?array
     {
         return $this->attributes;
+    }
+
+    public function getOption(string $key, $default)
+    {
+        return $this->options->getOption($key, $default);
     }
 }

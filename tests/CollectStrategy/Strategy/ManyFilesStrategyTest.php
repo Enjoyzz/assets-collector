@@ -39,9 +39,9 @@ class ManyFilesStrategyTest extends TestCase
 
     public function testManyFilesStrategy(): void
     {
-        $this->assetCollection->add(new Asset('css', '//google.com', []), 'test');
-        $this->assetCollection->add(new Asset('css', '//yandex.ru', []), 'test');
-        $this->assetCollection->add(new Asset('css', __DIR__ . '/../../fixtures/test.css', []), 'test');
+        $this->assetCollection->add(new Asset('css', '//google.com'), 'test');
+        $this->assetCollection->add(new Asset('css', '//yandex.ru'), 'test');
+        $this->assetCollection->add(new Asset('css', __DIR__ . '/../../fixtures/test.css'), 'test');
 
         $strategy = new ManyFilesStrategy(
             $this->environment,

@@ -135,7 +135,7 @@ class Asset
         if ($path === false) {
             return;
         }
-        $this->id = md5($path . serialize($this->getOptions()->getOptions()));
+        $this->id = md5($path . serialize($this->getOptions()));
     }
 
     public function isReplaceRelativeUrls(): bool

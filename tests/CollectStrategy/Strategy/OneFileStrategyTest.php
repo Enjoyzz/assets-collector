@@ -46,7 +46,7 @@ class OneFileStrategyTest extends TestCase
         ];
         $strategy = new OneFileStrategy($this->environment, $assetsCollection, 'css');
 
-        $this->assertSame(['/test/something/_css/' . $strategy->getCollectionHashId() . '.css' => null],
+        $this->assertSame(['/test/something/_css/' . $strategy->getHashId() . '.css' => null],
                           $strategy->getResult());
         $this->assertSame(
             str_replace(
@@ -76,7 +76,7 @@ CSS
         $strategy = new OneFileStrategy($this->environment, $assetsCollection, 'css');
 
         $this->assertSame([
-                              '/test/something/_css/' . $strategy->getCollectionHashId() . '.css' => null,
+                              '/test/something/_css/' . $strategy->getHashId() . '.css' => null,
                               '/test/something/fixtures/test3.css' => null
                           ],
                           $strategy->getResult());

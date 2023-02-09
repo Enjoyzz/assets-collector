@@ -16,7 +16,7 @@ class ManyFilesStrategy extends StrategyAbstract
     {
         $result = [];
 
-        foreach ($this->assetsCollection as $asset) {
+        foreach ($this->assets as $asset) {
             if (false === $path = $asset->getPath()) {
                 continue;
             }

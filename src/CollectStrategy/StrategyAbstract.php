@@ -13,6 +13,8 @@ abstract class StrategyAbstract implements StrategyInterface
      */
     protected array $assetsCollection;
 
+    protected string $collectionHashId;
+
     /**
      * @var string css|js
      */
@@ -39,8 +41,21 @@ abstract class StrategyAbstract implements StrategyInterface
     ) {
         $this->environment = $environment;
         $this->assetsCollection = $assetsCollection;
+        $this->collectionHashId = $this->generateCollectionHashId();
         $this->type = $type;
         $this->logger = $environment->getLogger();
+    }
+
+    private function generateCollectionHashId(): string
+    {
+        $assetsIds = array_keys($this->assetsCollection);
+        sort($assetsIds);
+        return md5(implode('', $assetsIds));
+    }
+
+    public function getCollectionHashId(): string
+    {
+        return $this->collectionHashId;
     }
 
 }

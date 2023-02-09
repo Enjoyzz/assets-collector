@@ -62,7 +62,7 @@ class OneFileStrategy extends StrategyAbstract
      */
     private function generateFilename(string $type): string
     {
-        return '_' . $type . DIRECTORY_SEPARATOR . md5(serialize($this->assetsCollection)) . '.' . $type;
+        return '_' . $type . DIRECTORY_SEPARATOR . $this->getCollectionHashId(). '.' . $type;
     }
 
     /**

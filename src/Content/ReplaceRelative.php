@@ -39,7 +39,6 @@ class ReplaceRelative
      */
     public function getContent(): string
     {
-
         $result = preg_replace_callback(
             '/(url\([\'"]?)(?!["\'a-z]+:|[\'"]?\/{2})(.+?[^\'"])([\'"]?\))/i',
             function (array $m) {
@@ -127,8 +126,13 @@ class ReplaceRelative
             )
         );
 
-        Helpers::createSymlink($this->environment->getCompileDir() . $relativeFullPath, $realpath, $this->logger);
-
+        $this->asset->setOption(
+            Asset::CREATE_SYMLINK,
+            array_merge(
+                [$this->environment->getCompileDir() . $relativeFullPath => $realpath],
+                $this->asset->getOption(Asset::CREATE_SYMLINK, [])
+            )
+        );
         return $this->environment->getBaseUrl() . $relativeFullPath;
     }
 }

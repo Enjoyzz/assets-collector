@@ -32,7 +32,7 @@ class SymlinkTest extends TestCase
 
     public function testSingleStrategyCreatedSymLinks()
     {
-        $this->config->setStrategy(Assets::STRATEGY_ONE_FILE);
+        $this->config->setStrategy(Assets::STRATEGY_ONE_FILE)->setBaseUrl('/_c');
         $assets = new Assets($this->config);
         $assets->add(
             'css',
@@ -41,6 +41,28 @@ class SymlinkTest extends TestCase
             ]
         );
         $assets->get('css');
+
+        $urlConverter = new UrlConverter();
+        $link1 = $urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v');
+        $link2 = $urlConverter->relativeToAbsolute($baseUrl, './font2.eot');
+
+        $this->assertSame($link1, readlink($this->config->getCompileDir().'/tests/fixtures/sub/fonts/font.eot'));
+        $this->assertSame($link2, readlink($this->config->getCompileDir().'/tests/fixtures/sub/css/font2.eot'));
+
+    }
+
+
+    public function ManyStrategyCreatedSymLinks()
+    {
+        $this->config->setStrategy(Assets::STRATEGY_MANY_FILES);
+        $assets = new Assets($this->config);
+        $assets->add(
+            'css',
+            [
+                $baseUrl = './fixtures/sub/css/style.css',
+            ]
+        );
+      //  dd($assets);
 
         $urlConverter = new UrlConverter();
         $link1 = $urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v');

@@ -93,12 +93,6 @@ class Asset
         return false;
     }
 
-
-    public function isMinify(): bool
-    {
-        return $this->options->isMinify();
-    }
-
     /**
      * @return false|string
      */
@@ -136,21 +130,6 @@ class Asset
             return;
         }
         $this->id = md5($path . serialize($this->getOptions()));
-    }
-
-    public function isReplaceRelativeUrls(): bool
-    {
-        return $this->options->isReplaceRelativeUrls();
-    }
-
-    public function isNotCollect(): bool
-    {
-        return $this->options->isNotCollect();
-    }
-
-    public function getAttributes(): ?array
-    {
-        return $this->options->getAttributes();
     }
 
     public function getOptions(): AssetOptions

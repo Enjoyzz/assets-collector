@@ -22,7 +22,7 @@ class ManyFilesStrategy extends StrategyAbstract
             }
 
             if ($asset->isUrl()) {
-                $result[$path] = $asset->getAttributes();
+                $result[$path] = $asset->getOptions()->getAttributes();
                 continue;
             }
 
@@ -56,7 +56,7 @@ class ManyFilesStrategy extends StrategyAbstract
                 DIRECTORY_SEPARATOR,
                 '/',
                 $link
-            )] = $asset->getAttributes();
+            )] = $asset->getOptions()->getAttributes();
         }
 
         return $result;

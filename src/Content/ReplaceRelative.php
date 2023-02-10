@@ -99,7 +99,6 @@ class ReplaceRelative
      * @param string $relativePath
      * @return false|string
      * @throws \Exception
-     * @psalm-suppress PossiblyInvalidArgument
      */
     private function replacePath(string $filePath, string $relativePath)
     {

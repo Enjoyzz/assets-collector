@@ -44,7 +44,7 @@ class AssetTest extends TestCase
         $asset = new Asset($type, $path, $params);
         $this->assertSame($isUrl, $asset->isUrl());
         $this->assertSame($getPath, $asset->getPath());
-        $this->assertSame($isMinify, $asset->isMinify());
+        $this->assertSame($isMinify, $asset->getOptions()->isMinify());
         $this->assertSame($getType, $asset->getType());
         $this->assertSame($getType, $asset->getType());
         $this->assertSame($setId, !is_null($asset->getId()));

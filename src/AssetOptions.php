@@ -8,6 +8,9 @@ final class AssetOptions
     private bool $reaplaceRelativeUrls = true;
     private bool $notCollect = false;
     private ?array $attributes = null;
+    /**
+     * @var array<string, string>
+     */
     private array $symlinks = [];
 
     /**
@@ -37,25 +40,11 @@ final class AssetOptions
      * @param string $key
      * @param string|bool|array|null $value
      * @return $this
-     * @psalm-suppress InvalidPropertyAssignmentValue
      */
     public function setOption(string $key, $value): AssetOptions
     {
         $this->$key = $value;
         return $this;
-    }
-
-    /**
-     * @param string $key
-     * @param string|bool|array|null $defaults
-     * @return string|bool|array|null
-     */
-    public function getOption(string $key, $defaults = null)
-    {
-        if (isset($this->options[$key])) {
-            return $this->options[$key];
-        }
-        return $defaults;
     }
 
     public function isMinify(): bool

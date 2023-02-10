@@ -65,13 +65,13 @@ class Reader
             return '';
         }
 
-        if ($this->asset->isReplaceRelativeUrls()) {
+        if ($this->asset->getOptions()->isReplaceRelativeUrls()) {
             $replaceRelativeUrls = new ReplaceRelative($this->content, $this->path, $this->asset, $this->environment);
             $replaceRelativeUrls->setLogger($this->logger);
             $this->content = $replaceRelativeUrls->getContent();
         }
 
-        if ($this->asset->isMinify()) {
+        if ($this->asset->getOptions()->isMinify()) {
             $this->content = MinifyFactory::minify(
                     $this->content,
                     $this->asset->getType(),

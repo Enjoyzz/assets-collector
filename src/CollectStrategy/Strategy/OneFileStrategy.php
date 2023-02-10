@@ -43,12 +43,12 @@ class OneFileStrategy extends StrategyAbstract
 
         $this->notCollect = array_filter($assets, function ($asset) {
             /** @var Asset $asset */
-            return $asset->isNotCollect();
+            return $asset->getOptions()->isNotCollect();
         });
 
         $this->assets = array_filter($assets, function ($asset) {
             /** @var Asset $asset */
-            return !$asset->isNotCollect();
+            return !$asset->getOptions()->isNotCollect();
         });
 
 

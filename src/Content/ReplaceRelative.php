@@ -5,16 +5,11 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\Helpers;
 use Enjoys\UrlConverter;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
-/**
- * Class ReplaceRelative
- * @package Enjoys\AssetsCollector\Content
- */
 class ReplaceRelative
 {
     private string $content;
@@ -25,11 +20,11 @@ class ReplaceRelative
 
     public function __construct(string $content, string $path, Asset $asset, Environment $environment)
     {
-        $this->logger = new NullLogger();
         $this->content = $content;
         $this->asset = $asset;
         $this->environment = $environment;
         $this->path = $path;
+        $this->logger = $environment->getLogger();
     }
 
 
@@ -39,7 +34,6 @@ class ReplaceRelative
      */
     public function getContent(): string
     {
-
         $result = preg_replace_callback(
             '/(url\([\'"]?)(?!["\'a-z]+:|[\'"]?\/{2})(.+?[^\'"])([\'"]?\))/i',
             function (array $m) {
@@ -88,8 +82,6 @@ class ReplaceRelative
      * @param string $baseUrl
      * @param string $relativeUrl
      * @return false|string
-     * @psalm-suppress MixedReturnStatement
-     * @psalm-suppress MixedInferredReturnType
      */
     private function replaceUrls(string $baseUrl, string $relativeUrl)
     {
@@ -127,7 +119,13 @@ class ReplaceRelative
             )
         );
 
-        Helpers::createSymlink($this->environment->getCompileDir() . $relativeFullPath, $realpath, $this->logger);
+        $this->asset->getOptions()->setOption(
+            AssetOption::SYMLINKS,
+            array_merge(
+                [$this->environment->getCompileDir() . $relativeFullPath => $realpath],
+                $this->asset->getOptions()->getSymlinks()
+            )
+        );
 
         return $this->environment->getBaseUrl() . $relativeFullPath;
     }

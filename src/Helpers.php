@@ -9,24 +9,23 @@ use function Enjoys\FileSystem\createDirectory;
 use function Enjoys\FileSystem\CreateSymlink;
 use function Enjoys\FileSystem\writeFile;
 
-class Helpers
+final class Helpers
 {
 
     public static function getHttpScheme(): string
     {
-        $scheme = 'http';
         if (isset($_SERVER['HTTP_SCHEME'])) {
-            return (string)$_SERVER['HTTP_SCHEME'];
+            return $_SERVER['HTTP_SCHEME'];
         }
 
-        if (isset($_SERVER['HTTPS']) && \strtolower((string)$_SERVER['HTTPS']) != 'off') {
+        if (isset($_SERVER['HTTPS']) && \strtolower($_SERVER['HTTPS']) != 'off') {
             return 'https';
         }
 
         if (isset($_SERVER['SERVER_PORT']) && 443 == (int)$_SERVER['SERVER_PORT']) {
             return 'https';
         }
-        return $scheme;
+        return 'http';
     }
 
     /**
@@ -35,6 +34,7 @@ class Helpers
      * @param string $mode
      * @param LoggerInterface|null $logger
      * @return void
+     * @throws \Exception
      */
     public static function writeFile(
         string $file,

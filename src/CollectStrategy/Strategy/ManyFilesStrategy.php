@@ -2,7 +2,7 @@
 
 namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
-use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Helpers;
 
@@ -10,19 +10,19 @@ class ManyFilesStrategy extends StrategyAbstract
 {
 
     /**
-     * @return array<string, array<string, string|null>|null>
+     * @return array<string, array|null>
      */
     public function getResult(): array
     {
         $result = [];
 
-        foreach ($this->assetsCollection as $asset) {
+        foreach ($this->assets as $asset) {
             if (false === $path = $asset->getPath()) {
                 continue;
             }
 
             if ($asset->isUrl()) {
-                $result[$path] = $asset->getAttributes();
+                $result[$path] = $asset->getOptions()->getAttributes();
                 continue;
             }
 
@@ -36,12 +36,15 @@ class ManyFilesStrategy extends StrategyAbstract
             );
 
             try {
-                Helpers::createSymlink($this->environment->getCompileDir() . $link, $path, $this->logger);
+                $asset->getOptions()->setOption(
+                    AssetOption::SYMLINKS,
+                    array_merge(
+                        [$this->environment->getCompileDir() . $link => $path],
+                        $asset->getOptions()->getSymlinks()
+                    )
+                );
 
-                $optSymlinks = (array)$asset->getOption(Asset::CREATE_SYMLINK, []);
-
-                /** @var array<string, string> $optSymlinks */
-                foreach ($optSymlinks as $optLink => $optTarget) {
+                foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }
             } catch (\Exception  $e) {
@@ -49,7 +52,11 @@ class ManyFilesStrategy extends StrategyAbstract
             }
 
 
-            $result[$this->environment->getBaseUrl() . str_replace(DIRECTORY_SEPARATOR, '/', $link)] = $asset->getAttributes();
+            $result[$this->environment->getBaseUrl() . str_replace(
+                DIRECTORY_SEPARATOR,
+                '/',
+                $link
+            )] = $asset->getOptions()->getAttributes();
         }
 
         return $result;

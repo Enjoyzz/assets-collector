@@ -6,6 +6,8 @@ use Enjoys\AssetsCollector\Content\Minify\Adapters\NullMinify;
 use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
 use Enjoys\AssetsCollector\Exception\PathDirectoryIsNotValid;
 use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -20,6 +22,8 @@ class Environment
     private ?string $version = null;
     private string $paramVersion = '?v=';
     private LoggerInterface $logger;
+    private ?ClientInterface $httpClient = null;
+    private ?RequestFactoryInterface $requestFactory = null;
     private int $directoryPermissions = 0775;
     /**
      * @var array{css: MinifyInterface, js: MinifyInterface}
@@ -179,9 +183,10 @@ class Environment
         return $this->logger;
     }
 
-    public function setLogger(LoggerInterface $logger): void
+    public function setLogger(LoggerInterface $logger): Environment
     {
         $this->logger = $logger;
+        return $this;
     }
 
     public function setMinifyJS(MinifyInterface $minifyImpl): void
@@ -220,5 +225,29 @@ class Environment
     public function setDirectoryPermissions(int $directoryPermissions): void
     {
         $this->directoryPermissions = $directoryPermissions;
+    }
+
+
+    public function getHttpClient(): ?ClientInterface
+    {
+        return $this->httpClient;
+    }
+
+    public function setHttpClient(?ClientInterface $httpClient): Environment
+    {
+        $this->httpClient = $httpClient;
+        return $this;
+    }
+
+
+    public function getRequestFactory(): ?RequestFactoryInterface
+    {
+        return $this->requestFactory;
+    }
+
+    public function setRequestFactory(?RequestFactoryInterface $requestFactory): Environment
+    {
+        $this->requestFactory = $requestFactory;
+        return $this;
     }
 }

@@ -4,16 +4,31 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
-use Enjoys\Traits\Options;
+use function getenv;
+use function str_starts_with;
 
 class Asset
 {
-    use Options;
 
+    /**
+     * @deprecated use AssetOption::MINIFY
+     */
     public const MINIFY = 'minify';
-    public const REPLACE_RELATIVE_URLS = 'reaplaceRelativeUrls';
+    /**
+     * @deprecated use AssetOption::REPLACE_RELATIVE_URLS
+     */
+    public const REPLACE_RELATIVE_URLS = 'replaceRelativeUrls';
+    /**
+     * @deprecated use AssetOption::SYMLINKS
+     */
     public const CREATE_SYMLINK = 'symlinks';
+    /**
+     * @deprecated use AssetOption::NOT_COLLECT
+     */
     public const NOT_COLLECT = 'notCollect';
+    /**
+     * @deprecated use AssetOption::ATTRIBUTES
+     */
     public const ATTRIBUTES = 'attributes';
 
     private ?string $id = null;
@@ -25,31 +40,26 @@ class Asset
     private string $type;
     private bool $isUrl;
     private string $origPath;
-    private bool $minify;
-    private bool $replaceRelativeUrls;
     private string $url = '';
-    private bool $notCollect;
-    /**
-     * @var array<string, string|null>|null
-     */
-    private ?array $attributes = null;
+
+    private AssetOption $options;
 
 
     /**
-     * @psalm-suppress MixedAssignment
+     * @param string $type
+     * @param string $path
+     * @param array<string, string|bool|array|null> $options
      */
-    public function __construct(string $type, string $path, array $params = [])
+    public function __construct(string $type, string $path, array $options = [])
     {
-        $this->setOptions($params);
         $this->type = $type;
         $this->origPath = $path;
-        $this->minify = (bool)$this->getOption(self::MINIFY, true);
-        $this->replaceRelativeUrls = (bool)$this->getOption(self::REPLACE_RELATIVE_URLS, true);
-        $this->notCollect = (bool)$this->getOption(self::NOT_COLLECT, false);
-        $this->attributes = $this->getOption(self::ATTRIBUTES, null, false);
+        $this->options = new AssetOption($options);
+
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
 
+        $this->setId($this->path);
     }
 
     /**
@@ -59,11 +69,10 @@ class Asset
     private function getNormalizedPath(string $path)
     {
         if ($this->isUrl()) {
-            $this->setId($this->url);
             return $this->url;
         }
 
-        if (false === $projectDir = \getenv('ASSETS_PROJECT_DIRECTORY')) {
+        if (false === $projectDir = getenv('ASSETS_PROJECT_DIRECTORY')) {
             $projectDir = '';
         }
         $paths = [
@@ -73,16 +82,15 @@ class Asset
 
         foreach ($paths as $path) {
             if (false !== $normalizedPath = realpath($path)) {
-                $this->setId($normalizedPath);
-                break;
+                return $normalizedPath;
             }
         }
-        return $normalizedPath;
+        return false;
     }
 
     private function checkIsUrl(string $path): bool
     {
-        if (\str_starts_with($path, '//')) {
+        if (str_starts_with($path, '//')) {
             $this->url = Helpers::getHttpScheme() . ':' . $path;
             return true;
         }
@@ -92,18 +100,12 @@ class Asset
             return true;
         }
 
-        if (\str_starts_with($path, 'url:') || \str_starts_with($path, 'local:')) {
+        if (str_starts_with($path, 'url:') || str_starts_with($path, 'local:')) {
             $this->url = str_replace(['url:', 'local:'], '', $path);
             return true;
         }
 
         return false;
-    }
-
-
-    public function isMinify(): bool
-    {
-        return $this->minify;
     }
 
     /**
@@ -134,26 +136,19 @@ class Asset
         return $this->origPath;
     }
 
-    private function setId(string $path): void
-    {
-        $this->id = md5($path);
-    }
-
-    public function isReplaceRelativeUrls(): bool
-    {
-        return $this->replaceRelativeUrls;
-    }
-
-    public function isNotCollect(): bool
-    {
-        return $this->notCollect;
-    }
-
     /**
-     * @return array<string, string|null>|null
+     * @param string|false $path
      */
-    public function getAttributes(): ?array
+    private function setId($path): void
     {
-        return $this->attributes;
+        if ($path === false) {
+            return;
+        }
+        $this->id = md5($path . serialize($this->getOptions()));
+    }
+
+    public function getOptions(): AssetOption
+    {
+        return $this->options;
     }
 }

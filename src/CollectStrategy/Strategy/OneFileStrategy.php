@@ -23,16 +23,16 @@ class OneFileStrategy extends StrategyAbstract
     /**
      * Build constructor.
      * @param Environment $environment
-     * @param array<Asset> $assetsCollection
+     * @param array<Asset> $assets
      * @param string $type
      * @throws \Exception
      */
     public function __construct(
         Environment $environment,
-        array $assetsCollection,
+        array $assets,
         string $type
     ) {
-        parent::__construct($environment, $assetsCollection, $type);
+        parent::__construct($environment, $assets, $type);
 
         $this->cacheTime = $environment->getCacheTime();
 
@@ -41,19 +41,18 @@ class OneFileStrategy extends StrategyAbstract
         $this->filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $filename;
         $this->fileUrl = $environment->getBaseUrl() . '/' . str_replace(DIRECTORY_SEPARATOR, '/', $filename);
 
-        $this->notCollect = array_filter($assetsCollection, function ($asset){
+        $this->notCollect = array_filter($assets, function ($asset) {
             /** @var Asset $asset */
-            return $asset->isNotCollect();
+            return $asset->getOptions()->isNotCollect();
         });
 
-        $this->assetsCollection = array_filter($assetsCollection, function ($asset){
+        $this->assets = array_filter($assets, function ($asset) {
             /** @var Asset $asset */
-            return !$asset->isNotCollect();
+            return !$asset->getOptions()->isNotCollect();
         });
 
 
         $this->init();
-
     }
 
     /**
@@ -62,7 +61,7 @@ class OneFileStrategy extends StrategyAbstract
      */
     private function generateFilename(string $type): string
     {
-        return '_' . $type . DIRECTORY_SEPARATOR . md5(serialize($this->assetsCollection)) . '.' . $type;
+        return '_' . $type . DIRECTORY_SEPARATOR . $this->getHashId() . '.' . $type;
     }
 
     /**
@@ -70,7 +69,11 @@ class OneFileStrategy extends StrategyAbstract
      */
     private function init(): void
     {
-        Helpers::createDirectory(pathinfo($this->filePath, PATHINFO_DIRNAME), $this->environment->getDirectoryPermissions(), $this->logger);
+        Helpers::createDirectory(
+            pathinfo($this->filePath, PATHINFO_DIRNAME),
+            $this->environment->getDirectoryPermissions(),
+            $this->logger
+        );
 
         if (!file_exists($this->filePath)) {
             Helpers::createEmptyFile($this->filePath, $this->logger);
@@ -102,15 +105,14 @@ class OneFileStrategy extends StrategyAbstract
 
             $output = '';
 
-            foreach ($this->assetsCollection as $asset) {
+            foreach ($this->assets as $asset) {
                 $output .= (new Reader($asset, $this->environment, $this->logger))->getContents();
 
-                $optSymlinks = (array)$asset->getOption(Asset::CREATE_SYMLINK, []);
 
-                /** @var array<string, string> $optSymlinks */
-                foreach ($optSymlinks as $optLink => $optTarget) {
+                foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }
+
             }
             Helpers::writeFile($this->filePath, $output, 'w', $this->logger);
         } catch (\Exception $e) {

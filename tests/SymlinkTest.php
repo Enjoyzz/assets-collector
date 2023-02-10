@@ -43,8 +43,8 @@ class SymlinkTest extends TestCase
         $assets->get('css');
 
         $urlConverter = new UrlConverter();
-        $link1 = $urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v');
-        $link2 = $urlConverter->relativeToAbsolute($baseUrl, './font2.eot');
+        $link1 = realpath($urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v'));
+        $link2 = realpath($urlConverter->relativeToAbsolute($baseUrl, './font2.eot'));
 
         $this->assertSame($link1, readlink($this->config->getCompileDir() . '/tests/fixtures/sub/fonts/font.eot'));
         $this->assertSame($link2, readlink($this->config->getCompileDir() . '/tests/fixtures/sub/css/font2.eot'));
@@ -58,8 +58,8 @@ class SymlinkTest extends TestCase
         $assets->add(
             'css',
             [
-                $link1 = __DIR__ . '/fixtures/sub/css/style.css',
-                $link2 = __DIR__ . '/fixtures/test.css',
+                $link1 = realpath(__DIR__ . '/fixtures/sub/css/style.css'),
+                $link2 = realpath(__DIR__ . '/fixtures/test.css'),
             ]
         );
         $assets->get('css');

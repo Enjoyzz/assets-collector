@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">= 7.4",
+        "php": "^7.4 | ^8.0",
         "symfony/polyfill-php80": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
         "tubalmartin/cssmin": "^4.1",

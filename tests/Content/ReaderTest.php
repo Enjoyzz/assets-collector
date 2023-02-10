@@ -11,6 +11,8 @@ use Enjoys\AssetsCollector\Environment;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Tests\Enjoys\AssetsCollector\ArrayLogger;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
@@ -20,6 +22,8 @@ class ReaderTest extends TestCase
     use HelpersTestTrait;
 
     private ?Environment $environment;
+    private ClientInterface $httpClient;
+    private RequestFactoryInterface $requestFactory;
 
 
     /**
@@ -30,6 +34,19 @@ class ReaderTest extends TestCase
         $this->environment = new Environment('_compile', __DIR__ . '/../');
         $this->environment->setMinifyCSS(new CssMinify([]));
         $this->environment->setMinifyJS(new JsMinify([]));
+
+        $this->httpClient =  new Client(
+            [
+                'verify' => false,
+                'allow_redirects' => true,
+                'headers' => [
+                    'User-Agent' =>
+                        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+                ]
+            ]
+        );
+
+        $this->requestFactory = new HttpFactory();
     }
 
     protected function tearDown(): void
@@ -120,19 +137,8 @@ CSS
     public function testRemoteUrlWithReadHttpClientSuccess()
     {
         $this->environment
-            ->setRequestFactory(new HttpFactory())
-            ->setHttpClient(
-                new Client(
-                    [
-                        'verify' => false,
-                        'allow_redirects' => true,
-                        'headers' => [
-                            'User-Agent' =>
-                                'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
-                        ]
-                    ]
-                )
-            )
+            ->setRequestFactory($this->requestFactory)
+            ->setHttpClient($this->httpClient)
         ;
         $reader = new Reader(
             new Asset(
@@ -149,19 +155,8 @@ CSS
     {
         $this->environment
             ->setLogger($logger = new ArrayLogger())
-            ->setRequestFactory(new HttpFactory())
-            ->setHttpClient(
-                new Client(
-                    [
-                        'verify' => false,
-                        'allow_redirects' => true,
-                        'headers' => [
-                            'User-Agent' =>
-                                'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
-                        ]
-                    ]
-                )
-            )
+            ->setRequestFactory($this->requestFactory)
+            ->setHttpClient($this->httpClient)
         ;
         $reader = new Reader(
             new Asset(

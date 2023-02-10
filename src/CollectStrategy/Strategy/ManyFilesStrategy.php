@@ -10,11 +10,16 @@ use Enjoys\AssetsCollector\Helpers;
 class ManyFilesStrategy extends StrategyAbstract
 {
 
+
+
     /**
      * @return array<string, array|null>
+     * @throws \Exception
      */
     public function getResult(): array
     {
+        $cacheDir = $this->environment->getCompileDir().'/.cache';
+
         $result = [];
 
         foreach ($this->assets as $asset) {
@@ -36,7 +41,15 @@ class ManyFilesStrategy extends StrategyAbstract
                 $path
             );
 
-            (new Reader($asset, $this->environment, $this->logger))->getContents();
+            /**
+             * TODO
+             * @psalm-suppress PossiblyNullOperand
+             */
+            $cacheFile = $cacheDir.'/'.$asset->getId();
+            if(!file_exists($cacheFile) || (filemtime($cacheFile) + $this->environment->getCacheTime()) < time()){
+                (new Reader($asset, $this->environment, $this->logger))->getContents();
+                Helpers::createEmptyFile($cacheFile, $this->logger);
+            }
 
             try {
                 $asset->getOptions()->setOption(
@@ -50,6 +63,9 @@ class ManyFilesStrategy extends StrategyAbstract
                 foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }
+
+
+
             } catch (\Exception  $e) {
                 $this->logger->error($e->getMessage());
             }

@@ -26,7 +26,7 @@ class SymlinkTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
+     //   $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
 
         $this->config = null;
     }
@@ -63,6 +63,8 @@ class SymlinkTest extends TestCase
     public function testManyStrategyCreatedSymLinks()
     {
         $this->config->setStrategy(Assets::STRATEGY_MANY_FILES);
+        $this->config->setLogger($logger = new ArrayLogger());
+        $this->config->setCacheTime(300);
         $assets = new Assets($this->config);
         $assets->add(
             'css',
@@ -72,6 +74,8 @@ class SymlinkTest extends TestCase
             ]
         );
         $assets->get('css');
+
+        $this->assertCount(12, $logger->getLog('info'));
 
         $symlinks = $this->findAllSymlinks($this->config->getCompileDir());
 
@@ -93,6 +97,9 @@ class SymlinkTest extends TestCase
 
             $this->assertTrue(in_array($target, $targets, true));
         }
+
+        $assets->get('css');
+        $this->assertCount(12, $logger->getLog('info'));
 
     }
 

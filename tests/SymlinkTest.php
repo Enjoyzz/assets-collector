@@ -67,17 +67,29 @@ class SymlinkTest extends TestCase
         $assets->add(
             'css',
             $targets = [
-                __DIR__ . '/fixtures/sub/css/style.css',
+                $baseUrl = __DIR__ . '/fixtures/sub/css/style.css',
                __DIR__ . '/fixtures/test.css',
             ]
         );
         $assets->get('css');
 
-        foreach ($this->findAllSymlinks($this->config->getCompileDir()) as $link => $target) {
+        $symlinks = $this->findAllSymlinks($this->config->getCompileDir());
+
+//        dd($symlinks);
+        $this->assertCount(4, $symlinks);
+
+
+        $urlConverter = new UrlConverter();
+        $targets[] = $urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v');
+        $targets[] = $urlConverter->relativeToAbsolute($baseUrl, './font2.eot');
+
+        foreach ($symlinks as $link => $target) {
             $this->assertTrue(in_array($link, [
                 $this->config->getCompileDir() . '/tests/fixtures/sub/css/style.css',
                 $this->config->getCompileDir() . '/tests/fixtures/test.css',
-            ], true));
+                $this->config->getCompileDir() . '/tests/fixtures/sub/fonts/font.eot',
+                $this->config->getCompileDir() . '/tests/fixtures/sub/css/font2.eot',
+            ], true), sprintf('%s not found', $link));
 
             $this->assertTrue(in_array($target, $targets, true));
         }

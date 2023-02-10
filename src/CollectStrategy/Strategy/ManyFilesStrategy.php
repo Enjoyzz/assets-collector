@@ -4,6 +4,7 @@ namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
 use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
+use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Helpers;
 
 class ManyFilesStrategy extends StrategyAbstract
@@ -34,6 +35,8 @@ class ManyFilesStrategy extends StrategyAbstract
                 '',
                 $path
             );
+
+            (new Reader($asset, $this->environment, $this->logger))->getContents();
 
             try {
                 $asset->getOptions()->setOption(

@@ -5,9 +5,8 @@ namespace Enjoys\AssetsCollector\Content;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Content\Minify\MinifyFactory;
 use Enjoys\AssetsCollector\Environment;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -50,7 +49,7 @@ class Reader
     ) {
         $this->environment = $environment;
         $this->asset = $asset;
-        $this->logger = $logger ?? new NullLogger();
+        $this->logger = $logger ?? $this->environment->getLogger();
         $this->path = $this->asset->getPath();
         $this->content = $this->getContent();
     }
@@ -99,26 +98,64 @@ class Reader
     }
 
     /**
-     * @param string $url
      * @return false|string
      */
     private function readUrl(string $url)
     {
+        if (
+            null !== ($httpClient = $this->environment->getHttpClient())
+            && null !== ($requestFactory = $this->environment->getRequestFactory())
+        ) {
+            return $this->readWithPsrHttpClient($url, $httpClient, $requestFactory);
+        }
+
+        return $this->readWithPhpFileGetContents($url);
+    }
+
+    /**
+     * @return false|string
+     * @throws \RuntimeException
+     */
+    private function readWithPhpFileGetContents(string $url)
+    {
         try {
-            $client = new Client(
-                [
-                    'verify' => false,
-                    'allow_redirects' => true,
-                    'headers' => [
-                        'User-Agent' =>
-                            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
-                    ]
-                ]
+            //Clear the most recent error
+            error_clear_last();
+            $content = @file_get_contents($url);
+            /** @var null|string[] $error */
+            $error = error_get_last();
+            if ($error !== null) {
+                throw new \RuntimeException(sprintf("%s", $error['message']));
+            }
+            return $content;
+        } catch (\Throwable $e) {
+            $this->logger->notice($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * @return false|string
+     */
+    private function readWithPsrHttpClient(
+        string $url,
+        ClientInterface $client,
+        RequestFactoryInterface $requestFactory
+    ) {
+        try {
+            $response = $client->sendRequest(
+                $requestFactory->createRequest('get', $url)
             );
-            $response = $client->get($url);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new \RuntimeException(
+                    sprintf('HTTP error: %s - %s', $response->getStatusCode(), $response->getReasonPhrase())
+                );
+            }
+
             $this->logger->info(sprintf('Read: %s', $url));
             return $response->getBody()->getContents();
-        } catch (ClientException | GuzzleException $e) {
+        } catch (\Throwable $e) {
             $this->logger->notice($e->getMessage());
             return false;
         }
@@ -130,19 +167,15 @@ class Reader
      */
     private function readFile(string $filename)
     {
-        //Clear the most recent error
-        error_clear_last();
-
         if (!file_exists($filename)) {
             $this->logger->notice(sprintf("Файла по указанному пути нет: %s", $filename));
             return false;
         }
-        $content = @file_get_contents($filename);
 
-        /** @var null|string[] $error */
-        $error = error_get_last();
-        if ($error !== null) {
-            $this->logger->notice(sprintf("Ошибка чтения содержимого файла: %s", $error['message']));
+        try {
+            $content = $this->readWithPhpFileGetContents($filename);
+        } catch (\RuntimeException $e) {
+            $this->logger->notice(sprintf("Ошибка чтения содержимого файла: %s", $e->getMessage()));
             return false;
         }
 

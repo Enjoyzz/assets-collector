@@ -8,7 +8,10 @@ use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
+use Tests\Enjoys\AssetsCollector\ArrayLogger;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
 class ReaderTest extends TestCase
@@ -112,5 +115,93 @@ CSS
             ,
             $reader->getContents()
         );
+    }
+
+    public function testRemoteUrlWithReadHttpClientSuccess()
+    {
+        $this->environment
+            ->setRequestFactory(new HttpFactory())
+            ->setHttpClient(
+                new Client(
+                    [
+                        'verify' => false,
+                        'allow_redirects' => true,
+                        'headers' => [
+                            'User-Agent' =>
+                                'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+                        ]
+                    ]
+                )
+            )
+        ;
+        $reader = new Reader(
+            new Asset(
+                'css',
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.css',
+                [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
+            ),
+            $this->environment
+        );
+        $this->assertStringContainsString('Bootstrap  v5.2.0 (https://getbootstrap.com/)', $reader->getContents());
+    }
+
+    public function testRemoteUrlWithReadHttpClientFailed()
+    {
+        $this->environment
+            ->setLogger($logger = new ArrayLogger())
+            ->setRequestFactory(new HttpFactory())
+            ->setHttpClient(
+                new Client(
+                    [
+                        'verify' => false,
+                        'allow_redirects' => true,
+                        'headers' => [
+                            'User-Agent' =>
+                                'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+                        ]
+                    ]
+                )
+            )
+        ;
+        $reader = new Reader(
+            new Asset(
+                'css',
+                'https://cdn.jsdelivr.net/invalid_url',
+                [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
+            ),
+            $this->environment
+        );
+        $this->assertNotEmpty($logger->getLog('notice'));
+        $this->assertSame('', $reader->getContents());
+    }
+
+    public function testRemoteUrlWithReadFileGetContentsSuccess()
+    {
+        $reader = new Reader(
+            new Asset(
+                'css',
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.css',
+                [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
+            ),
+            $this->environment
+        );
+        $this->assertStringContainsString('Bootstrap  v5.2.0 (https://getbootstrap.com/)', $reader->getContents());
+    }
+
+    public function testRemoteUrlWithReadFileGetContentsFailed()
+    {
+        $this->environment
+            ->setLogger($logger = new ArrayLogger())
+        ;
+        $reader = new Reader(
+            new Asset(
+                'css',
+                'https://cdn.jsdelivr.net/invalid_url',
+                [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
+            ),
+            $this->environment
+        );
+        $this->assertNotEmpty($logger->getLog('notice'));
+        $this->assertStringContainsString('', $reader->getContents());
     }
 }

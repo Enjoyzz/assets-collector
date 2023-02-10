@@ -2,7 +2,7 @@
 
 namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
-use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Helpers;
 
@@ -37,7 +37,7 @@ class ManyFilesStrategy extends StrategyAbstract
 
             try {
                 $asset->getOptions()->setOption(
-                    Asset::CREATE_SYMLINK,
+                    AssetOption::SYMLINKS,
                     array_merge(
                         [$this->environment->getCompileDir() . $link => $path],
                         $asset->getOptions()->getSymlinks()

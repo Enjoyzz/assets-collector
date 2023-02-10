@@ -73,8 +73,8 @@ $assets->add('css', [
     'https://example.com/style.css', //URL ссылка
     'url:/assets/css/style.css', // URL ссылка
     'local:/assets/css/style.css', // URL ссылка (local: и url: идентичны)
-    ['style.css', \Enjoys\AssetsCollector\Asset::MINIFY => false], //попускает минификацию конкретного файла
-    ['goods/style.css', \Enjoys\AssetsCollector\Asset::REPLACE_RELATIVE_URLS => false], //не заменяет относительные ссылки - оставляет так как есть
+    ['style.css', \Enjoys\AssetsCollector\AssetOption::MINIFY => false], //попускает минификацию конкретного файла
+    ['goods/style.css', \Enjoys\AssetsCollector\AssetOption::REPLACE_RELATIVE_URLS => false], //не заменяет относительные ссылки - оставляет так как есть
 ]);
 ```
 
@@ -84,20 +84,20 @@ $assets->add('css', [
 это параметры
 
 ```php
-use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 
 /** @var \Enjoys\AssetsCollector\Assets $assets */
 $assets->add('css', [
     [
          __DIR__.'/style.css',
          // По-умолчанию все ресурсы минифицируются, если указать явно false, этот ресурс пропустит минификацию
-         Asset::MINIFY => false,
+         AssetOption::MINIFY => false,
          
          // Если нужно создать дополнительные симлинки, то можно указать их в этом параметре, в качества массива,
          // где ключ - сама ссылка, а значение - исходный файл или директория (цель)
          // Это бывает необходимо если в ресурсе есть относительные ссылки, и чтобы был к ним доступ нужно прописать
          // явно все символические ссылки
-         Asset::CREATE_SYMLINK => [
+         AssetOption::SYMLINKS => [
             __DIR__.'/symlink' => __DIR__.'/../../../target',
             //...
         ],  
@@ -105,7 +105,7 @@ $assets->add('css', [
         // При STRATEGY_MANY_FILES будут добавлены html-аттрибуты,
         // примерно это будет выглядеть так
         // <script attribute-key='attribute-value' attribute-without-value attribute-without-value src='...'>
-        Asset::ATTRIBUTES => [
+        AssetOption::ATTRIBUTES => [
             'attribute-key' => 'attribute-value',
             'attribute-without-value' => null,
             'attribute-without-value-another-method',
@@ -114,11 +114,11 @@ $assets->add('css', [
         
         // При STRATEGY_ONE_FILE если будет установлена эта опция в true, то именно этот asset в сборку не попадет,
         // а выведется отдельно
-        Asset::NOT_COLLECT => true,   
+        AssetOption::NOT_COLLECT => true,   
          
         // При false - не заменяет относительные ссылки - оставляет так как есть.
         // По-умолчанию true, все относительные ссылки заменяются на абсолютные
-        Asset::REPLACE_RELATIVE_URLS => false       
+        AssetOption::REPLACE_RELATIVE_URLS => false       
     ],
     //...
 ]);

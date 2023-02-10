@@ -3,11 +3,11 @@
 namespace Tests\Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
 use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\AssetOptions;
 use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
@@ -47,7 +47,7 @@ class OneFileStrategyTest extends TestCase
         $strategy = new OneFileStrategy($this->environment, $assetsCollection, 'css');
 
         $this->assertSame(['/test/something/_css/' . $strategy->getHashId() . '.css' => null],
-                          $strategy->getResult());
+            $strategy->getResult());
         $this->assertSame(
             str_replace(
                 "\r",
@@ -70,16 +70,16 @@ CSS
             new Asset('css', __DIR__ . '/../../fixtures/test.css'),
             new Asset('css', __DIR__ . '/../../../tests/fixtures/test2.css'),
             new Asset('css', __DIR__ . '/../../../tests/fixtures/test3.css', [
-                Asset::NOT_COLLECT => true,
+                AssetOption::NOT_COLLECT => true,
             ]),
         ];
         $strategy = new OneFileStrategy($this->environment, $assetsCollection, 'css');
 
         $this->assertSame([
-                              '/test/something/_css/' . $strategy->getHashId() . '.css' => null,
-                              '/test/something/fixtures/test3.css' => null
-                          ],
-                          $strategy->getResult());
+            '/test/something/_css/' . $strategy->getHashId() . '.css' => null,
+            '/test/something/fixtures/test3.css' => null
+        ],
+            $strategy->getResult());
         $this->assertSame(
             str_replace(
                 "\r",

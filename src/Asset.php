@@ -10,10 +10,25 @@ use function str_starts_with;
 class Asset
 {
 
+    /**
+     * @deprecated use AssetOption::MINIFY
+     */
     public const MINIFY = 'minify';
-    public const REPLACE_RELATIVE_URLS = 'reaplaceRelativeUrls';
+    /**
+     * @deprecated use AssetOption::REPLACE_RELATIVE_URLS
+     */
+    public const REPLACE_RELATIVE_URLS = 'replaceRelativeUrls';
+    /**
+     * @deprecated use AssetOption::SYMLINKS
+     */
     public const CREATE_SYMLINK = 'symlinks';
+    /**
+     * @deprecated use AssetOption::NOT_COLLECT
+     */
     public const NOT_COLLECT = 'notCollect';
+    /**
+     * @deprecated use AssetOption::ATTRIBUTES
+     */
     public const ATTRIBUTES = 'attributes';
 
     private ?string $id = null;
@@ -27,7 +42,7 @@ class Asset
     private string $origPath;
     private string $url = '';
 
-    private AssetOptions $options;
+    private AssetOption $options;
 
 
     /**
@@ -39,7 +54,7 @@ class Asset
     {
         $this->type = $type;
         $this->origPath = $path;
-        $this->options =  new AssetOptions($options);
+        $this->options = new AssetOption($options);
 
         $this->isUrl = $this->checkIsUrl($path);
         $this->path = $this->getNormalizedPath($path);
@@ -132,7 +147,7 @@ class Asset
         $this->id = md5($path . serialize($this->getOptions()));
     }
 
-    public function getOptions(): AssetOptions
+    public function getOptions(): AssetOption
     {
         return $this->options;
     }

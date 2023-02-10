@@ -2,7 +2,7 @@
 
 namespace Tests\Enjoys\AssetsCollector;
 
-use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
@@ -22,7 +22,8 @@ class AssetsTest extends TestCase
     {
         $this->config = new Environment(__DIR__ . '/_compile', __DIR__ . '/../');
         $this->config->setBaseUrl('/t')
-            ->setStrategy(Assets::STRATEGY_MANY_FILES);
+            ->setStrategy(Assets::STRATEGY_MANY_FILES)
+        ;
     }
 
     protected function tearDown(): void
@@ -204,7 +205,7 @@ HTML
             [
                 [
                     '//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js',
-                    Asset::ATTRIBUTES => [
+                    AssetOption::ATTRIBUTES => [
                         'data-main' => './main.js'
                     ]
                 ]
@@ -235,7 +236,7 @@ HTML
             [
                 [
                     'local:/require.min.js',
-                    Asset::ATTRIBUTES => [
+                    AssetOption::ATTRIBUTES => [
                         'attr_wo_value' => null,
                         'attr_wo_value2',
                     ]

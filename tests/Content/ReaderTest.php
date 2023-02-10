@@ -3,11 +3,11 @@
 namespace Tests\Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\AssetOptions;
 use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
@@ -44,7 +44,7 @@ class ReaderTest extends TestCase
     public function testLocalFileNoMinify(): void
     {
         $reader = new Reader(
-            new Asset('css', __DIR__ . '/../fixtures/test.css', [Asset::MINIFY => false]),
+            new Asset('css', __DIR__ . '/../fixtures/test.css', [AssetOption::MINIFY => false]),
             $this->environment
         );
         $this->assertSame(
@@ -73,7 +73,7 @@ CSS,
     public function testWithReplaceRelativePath(): void
     {
         $reader = new Reader(
-            new Asset('css', __DIR__ . '/../fixtures/sub/css/style.css', [Asset::MINIFY => false]),
+            new Asset('css', __DIR__ . '/../fixtures/sub/css/style.css', [AssetOption::MINIFY => false]),
             $this->environment
         );
         $this->assertSame(
@@ -96,7 +96,7 @@ CSS
             new Asset(
                 'css',
                 __DIR__ . '/../fixtures/sub/css/style.css',
-                [Asset::MINIFY => false, Asset::REPLACE_RELATIVE_URLS => false]
+                [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
             $this->environment
         );

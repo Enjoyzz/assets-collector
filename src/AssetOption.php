@@ -2,10 +2,17 @@
 
 namespace Enjoys\AssetsCollector;
 
-final class AssetOptions
+final class AssetOption
 {
+
+    public const MINIFY = 'minify';
+    public const REPLACE_RELATIVE_URLS = 'replaceRelativeUrls';
+    public const SYMLINKS = 'symlinks';
+    public const NOT_COLLECT = 'notCollect';
+    public const ATTRIBUTES = 'attributes';
+
     private bool $minify = true;
-    private bool $reaplaceRelativeUrls = true;
+    private bool $replaceRelativeUrls = true;
     private bool $notCollect = false;
     private ?array $attributes = null;
     /**
@@ -25,7 +32,7 @@ final class AssetOptions
      * @param array<string, string|bool|array|null> $options
      * @return $this
      */
-    public function setOptions(array $options = []): AssetOptions
+    public function setOptions(array $options = []): AssetOption
     {
         foreach ($options as $key => $value) {
             if (!property_exists($this, $key)) {
@@ -41,7 +48,7 @@ final class AssetOptions
      * @param string|bool|array|null $value
      * @return $this
      */
-    public function setOption(string $key, $value): AssetOptions
+    public function setOption(string $key, $value): AssetOption
     {
         $this->$key = $value;
         return $this;
@@ -54,7 +61,7 @@ final class AssetOptions
 
     public function isReplaceRelativeUrls(): bool
     {
-        return $this->reaplaceRelativeUrls;
+        return $this->replaceRelativeUrls;
     }
 
     public function isNotCollect(): bool

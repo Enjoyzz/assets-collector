@@ -5,16 +5,11 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\Helpers;
 use Enjoys\UrlConverter;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
-/**
- * Class ReplaceRelative
- * @package Enjoys\AssetsCollector\Content
- */
 class ReplaceRelative
 {
     private string $content;
@@ -125,7 +120,7 @@ class ReplaceRelative
         );
 
         $this->asset->getOptions()->setOption(
-            Asset::CREATE_SYMLINK,
+            AssetOption::SYMLINKS,
             array_merge(
                 [$this->environment->getCompileDir() . $relativeFullPath => $realpath],
                 $this->asset->getOptions()->getSymlinks()

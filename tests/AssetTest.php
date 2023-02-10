@@ -3,8 +3,8 @@
 namespace Tests\Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\AssetOptions;
 use PHPUnit\Framework\TestCase;
 
 class AssetTest extends TestCase
@@ -29,10 +29,19 @@ class AssetTest extends TestCase
             ['css', '//test', [], true, 'http://test', true, 'css', true],
             ['css', 'http://test', [], true, 'http://test', true, 'css', true],
             ['css', 'https://test', [], true, 'https://test', true, 'css', true],
-            ['css', __DIR__.'/fixtures/test.css', [], false, __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR.'test.css', true, 'css', true],
-            ['css', __DIR__.'/../README.md', [], false, realpath(__DIR__.'/../README.md'), true, 'css', true],
+            [
+                'css',
+                __DIR__ . '/fixtures/test.css',
+                [],
+                false,
+                __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'test.css',
+                true,
+                'css',
+                true
+            ],
+            ['css', __DIR__ . '/../README.md', [], false, realpath(__DIR__ . '/../README.md'), true, 'css', true],
             ['css', '../README.md', [], false, false, true, 'css', false],
-            ['css', '../README.md', [Asset::MINIFY => false], false, false, false, 'css', false],
+            ['css', '../README.md', [AssetOption::MINIFY => false], false, false, false, 'css', false],
         ];
     }
 
@@ -71,7 +80,6 @@ class AssetTest extends TestCase
         $asset = new Asset('css', '//test.com');
         $this->assertSame('https://test.com', $asset->getPath());
         unset($_SERVER['HTTPS']);
-
     }
 
     public function testHttpsFail()
@@ -81,7 +89,6 @@ class AssetTest extends TestCase
         $asset = new Asset('css', '//test.com');
         $this->assertSame('http://test.com', $asset->getPath());
         unset($_SERVER['HTTPS']);
-
     }
 
     public function testUrl()
@@ -103,7 +110,6 @@ class AssetTest extends TestCase
         $asset = new Asset('css', '//test.com');
         $this->assertSame('https://test.com', $asset->getPath());
         unset($_SERVER['SERVER_PORT']);
-
     }
 
     public function testServerPortFail()
@@ -115,7 +121,6 @@ class AssetTest extends TestCase
         $this->assertSame(true, $asset->isUrl());
         $this->assertSame('http://test.com', $asset->getPath());
         unset($_SERVER['SERVER_PORT']);
-
     }
 
 }

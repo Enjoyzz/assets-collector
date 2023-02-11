@@ -63,21 +63,6 @@ class Reader
             $this->logger->notice(sprintf('Nothing return: path is `%s`', $this->asset->getOrigPath()));
             return '';
         }
-
-        if ($this->asset->getOptions()->isReplaceRelativeUrls()) {
-            $replaceRelativeUrls = new ReplaceRelative($this->content, $this->path, $this->asset, $this->environment);
-            $replaceRelativeUrls->setLogger($this->logger);
-            $this->content = $replaceRelativeUrls->getContent();
-        }
-
-        if ($this->asset->getOptions()->isMinify()) {
-            $this->content = MinifyFactory::minify(
-                    $this->content,
-                    $this->asset->getType(),
-                    $this->environment
-                )->getContent() . "\n";
-            $this->logger->info(sprintf('Minify: %s', $this->path));
-        }
         return $this->content;
     }
 
@@ -189,5 +174,37 @@ class Reader
     public function setLogger($logger): void
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    public function replaceRelativeUrlsAndCreatedSymlinks(): Reader
+    {
+        if ($this->asset->getOptions()->isReplaceRelativeUrls()) {
+            $replaceRelativeUrls = new ReplaceRelative($this->content, $this->path, $this->asset, $this->environment);
+            $replaceRelativeUrls->setLogger($this->logger);
+            $this->content = $replaceRelativeUrls->getContent();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return void
+     */
+    public function minify(): Reader
+    {
+        if ($this->asset->getOptions()->isMinify()) {
+            $this->content = MinifyFactory::minify(
+                    $this->content,
+                    $this->asset->getType(),
+                    $this->environment
+                )->getContent() . "\n";
+            $this->logger->info(sprintf('Minify: %s', $this->path));
+        }
+
+        return $this;
     }
 }

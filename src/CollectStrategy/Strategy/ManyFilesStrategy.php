@@ -47,7 +47,7 @@ class ManyFilesStrategy extends StrategyAbstract
              */
             $cacheFile = $cacheDir.'/'.$asset->getId();
             if(!file_exists($cacheFile) || (filemtime($cacheFile) + $this->environment->getCacheTime()) < time()){
-                (new Reader($asset, $this->environment, $this->logger))->getContents();
+                (new Reader($asset, $this->environment, $this->logger))->replaceRelativeUrlsAndCreatedSymlinks();
                 Helpers::createEmptyFile($cacheFile, $this->logger);
             }
 

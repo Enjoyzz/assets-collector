@@ -58,6 +58,7 @@ class ReaderTest extends TestCase
     public function testLocalFile(): void
     {
         $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css'), $this->environment);
+        $reader->minify();
         $this->assertSame("body{color:#00008b}\n", $reader->getContents());
     }
 
@@ -96,6 +97,7 @@ CSS,
             new Asset('css', __DIR__ . '/../fixtures/sub/css/style.css', [AssetOption::MINIFY => false]),
             $this->environment
         );
+        $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify();
         $this->assertSame(
             <<<CSS
 @font-face {
@@ -108,6 +110,16 @@ CSS
             ,
             $reader->getContents()
         );
+    }
+
+    public function xtestWithReplaceRelativeUrlWithOneFileStrategy(): void
+    {
+      //  $this->environment->setStrategy(Assets::STRATEGY_ONE_FILE);
+        $reader = new Reader(
+            new Asset('css', 'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css', [AssetOption::MINIFY => false]),
+            $this->environment
+        );
+        $this->assertStringContainsString('https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/fonts/fontawesome-webfont.eot', $reader->getContents());
     }
 
     public function testWithDisableReplaceRelativePath(): void

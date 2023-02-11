@@ -75,7 +75,7 @@ class SymlinkTest extends TestCase
         );
         $assets->get('css');
 
-        $this->assertCount(12, $logger->getLog('info'));
+        $this->assertCount(10, $logger->getLog('info'));
 
         $symlinks = $this->findAllSymlinks($this->config->getCompileDir());
 
@@ -99,7 +99,7 @@ class SymlinkTest extends TestCase
         }
 
         $assets->get('css');
-        $this->assertCount(12, $logger->getLog('info'));
+        $this->assertCount(10, $logger->getLog('info'));
 
     }
 

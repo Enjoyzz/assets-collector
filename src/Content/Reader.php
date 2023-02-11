@@ -177,11 +177,14 @@ class Reader
     }
 
     /**
-     * @return void
      * @throws \Exception
      */
     public function replaceRelativeUrlsAndCreatedSymlinks(): Reader
     {
+        if ($this->content === false || $this->path === false) {
+            return $this;
+        }
+
         if ($this->asset->getOptions()->isReplaceRelativeUrls()) {
             $replaceRelativeUrls = new ReplaceRelative($this->content, $this->path, $this->asset, $this->environment);
             $replaceRelativeUrls->setLogger($this->logger);
@@ -191,11 +194,11 @@ class Reader
         return $this;
     }
 
-    /**
-     * @return void
-     */
     public function minify(): Reader
     {
+        if ($this->content === false || $this->path === false) {
+            return $this;
+        }
         if ($this->asset->getOptions()->isMinify()) {
             $this->content = MinifyFactory::minify(
                     $this->content,

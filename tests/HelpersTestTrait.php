@@ -33,4 +33,27 @@ trait HelpersTestTrait
         }
     }
 
+    private function findAllSymlinks(string $directory): array
+    {
+        $result = [];
+        if (!file_exists($directory)) {
+            return $result;
+        }
+        $di = new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS);
+        $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
+
+
+        /** @var \SplFileInfo $file */
+        foreach ($ri as $file) {
+            if (!$file->isLink()) {
+                continue;
+            }
+
+            $symlink = realpath($file->getPath()) . DIRECTORY_SEPARATOR . $file->getFilename();
+
+            $result[$symlink] = readlink($symlink);
+        }
+        return $result;
+    }
+
 }

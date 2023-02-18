@@ -21,11 +21,12 @@ class SymlinkTest extends TestCase
     {
         $this->config = new Environment(__DIR__ . '/_compile', __DIR__ . '/../');
         $this->config->setLogger(new ArrayLogger());
+        $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
     }
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
+     //   $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
 
         $this->config = null;
     }
@@ -43,29 +44,63 @@ class SymlinkTest extends TestCase
         $assets->get('css');
 
         $urlConverter = new UrlConverter();
-        $link1 = $urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v');
-        $link2 = $urlConverter->relativeToAbsolute($baseUrl, './font2.eot');
+        $targets = [
+            $urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v'),
+            $urlConverter->relativeToAbsolute($baseUrl, './font2.eot')
+        ];
 
-        $this->assertSame($link1, readlink($this->config->getCompileDir() . '/tests/fixtures/sub/fonts/font.eot'));
-        $this->assertSame($link2, readlink($this->config->getCompileDir() . '/tests/fixtures/sub/css/font2.eot'));
+        foreach ($this->findAllSymlinks($this->config->getCompileDir()) as $link => $target) {
+            $this->assertTrue(in_array($link, [
+                $this->config->getCompileDir() . '/tests/fixtures/sub/fonts/font.eot',
+                $this->config->getCompileDir() . '/tests/fixtures/sub/css/font2.eot',
+            ], true));
+
+            $this->assertTrue(in_array($target, $targets, true));
+        }
     }
 
 
     public function testManyStrategyCreatedSymLinks()
     {
         $this->config->setStrategy(Assets::STRATEGY_MANY_FILES);
+        $this->config->setLogger($logger = new ArrayLogger());
+        $this->config->setCacheTime(300);
         $assets = new Assets($this->config);
         $assets->add(
             'css',
-            [
-                $link1 = __DIR__ . '/fixtures/sub/css/style.css',
-                $link2 = __DIR__ . '/fixtures/test.css',
+            $targets = [
+                $baseUrl = __DIR__ . '/fixtures/sub/css/style.css',
+               __DIR__ . '/fixtures/test.css',
             ]
         );
         $assets->get('css');
 
-        $this->assertSame($link1, readlink($this->config->getCompileDir() . '/tests/fixtures/sub/css/style.css'));
-        $this->assertSame($link2, readlink($this->config->getCompileDir() . '/tests/fixtures/test.css'));
+        $this->assertCount(10, $logger->getLog('info'));
+
+        $symlinks = $this->findAllSymlinks($this->config->getCompileDir());
+
+//        dd($symlinks);
+        $this->assertCount(4, $symlinks);
+
+
+        $urlConverter = new UrlConverter();
+        $targets[] = $urlConverter->relativeToAbsolute($baseUrl, '../fonts/font.eot?d7yf1v');
+        $targets[] = $urlConverter->relativeToAbsolute($baseUrl, './font2.eot');
+
+        foreach ($symlinks as $link => $target) {
+            $this->assertTrue(in_array($link, [
+                $this->config->getCompileDir() . '/tests/fixtures/sub/css/style.css',
+                $this->config->getCompileDir() . '/tests/fixtures/test.css',
+                $this->config->getCompileDir() . '/tests/fixtures/sub/fonts/font.eot',
+                $this->config->getCompileDir() . '/tests/fixtures/sub/css/font2.eot',
+            ], true), sprintf('%s not found', $link));
+
+            $this->assertTrue(in_array($target, $targets, true));
+        }
+
+        $assets->get('css');
+        $this->assertCount(10, $logger->getLog('info'));
+
     }
 
 }

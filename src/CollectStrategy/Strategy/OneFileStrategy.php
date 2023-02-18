@@ -106,13 +106,13 @@ class OneFileStrategy extends StrategyAbstract
             $output = '';
 
             foreach ($this->assets as $asset) {
-                $output .= (new Reader($asset, $this->environment, $this->logger))->getContents();
+                $reader = new Reader($asset, $this->environment, $this->logger);
+                $output .= $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify()->getContents();
 
 
                 foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }
-
             }
             Helpers::writeFile($this->filePath, $output, 'w', $this->logger);
         } catch (\Exception $e) {

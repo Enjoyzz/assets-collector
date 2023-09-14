@@ -14,7 +14,7 @@
         "symfony/polyfill-php80": "^1.0",
         "tubalmartin/cssmin": "^4.1",
         "tedivm/jshrink": "^1.6.2 | ~1.5.0",
-        "psr/log": "^1.1",
+        "psr/log": "^1.0 | ^2.0 | ^3.0",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
         "enjoys/url-converter": "*",

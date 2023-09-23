@@ -35,6 +35,9 @@ final class Attributes
             if ($key === null || $key === '') {
                 continue;
             }
+            if ($value === false) {
+                continue;
+            }
             if ($value === null) {
                 $result[] = sprintf("%s", $key);
                 continue;

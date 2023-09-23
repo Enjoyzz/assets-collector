@@ -20,9 +20,9 @@ class CssTest extends TestCase
         );
 
         $expect = <<<HTML
-<link type='text/css' rel='stylesheet' href='1' />
-<link type='text/css' rel='stylesheet' href='2' />
-<link type='text/css' rel='stylesheet' href='//3' />
+<link type='text/css' rel='stylesheet' href='1'>
+<link type='text/css' rel='stylesheet' href='2'>
+<link type='text/css' rel='stylesheet' href='//3'>
 
 HTML;
 

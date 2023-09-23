@@ -29,7 +29,7 @@ class Css implements RenderInterface
         /** @var array<string, string|null>|null $attributes */
         foreach ($paths as $path => $attributes) {
             $attributes = array_merge(['type' => 'text/css', 'rel' => 'stylesheet'], (array)$attributes);
-            $result .= sprintf("<link%s href='{$path}{$this->environment->getVersion()}' />\n", (new Attributes($attributes))->__toString());
+            $result .= sprintf("<link%s href='{$path}{$this->environment->getVersion()}'>\n", (new Attributes($attributes))->__toString());
         }
         return $result;
     }

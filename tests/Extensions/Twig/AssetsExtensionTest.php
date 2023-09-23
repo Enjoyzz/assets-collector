@@ -2,6 +2,8 @@
 
 namespace Tests\Enjoys\AssetsCollector\Extensions\Twig;
 
+use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
@@ -69,9 +71,9 @@ class AssetsExtensionTest extends TestCase
         return [
             [
                 new FilesystemLoader('/', __DIR__ . '/../../fixtures/twig_root_path'),
-                "<link type='text/css' rel='stylesheet' href='/fixtures/twig_root_path/test.css' />\n<link type='text/css' rel='stylesheet' href='/fixtures/test.css' />\n"
+                "<link rel='stylesheet' href='http://yandex.ru' />\n<link type='text/css' rel='stylesheet' href='/fixtures/twig_root_path/test.css' />\n<link type='text/css' rel='stylesheet' href='/fixtures/test.css' />\n"
             ],
-            [null, "<link type='text/css' rel='stylesheet' href='/fixtures/test.css' />\n"]
+            [null, "<link rel='stylesheet' href='http://yandex.ru' />\n<link type='text/css' rel='stylesheet' href='/fixtures/test.css' />\n"]
         ];
     }
 
@@ -85,6 +87,14 @@ class AssetsExtensionTest extends TestCase
         $extension = new AssetsExtension($assetsCollector, $loader);
 
         $extension->asset('css', [
+            [
+                '//yandex.ru',
+                AssetOption::NOT_COLLECT => true,
+                AssetOption::MINIFY => false,
+                AssetOption::ATTRIBUTES => [
+                    'type' => false
+                ]
+            ],
             'test.css',
             'tests/fixtures/test.css'
         ]);

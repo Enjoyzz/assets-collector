@@ -40,7 +40,7 @@ class AssetsExtensionTest extends TestCase
     public function testAsset()
     {
         $this->assertSame(
-            "<link type='text/css' rel='stylesheet' href='http://google.com' />\n<link type='text/css' rel='stylesheet' href='http://yandex.ru' />\n",
+            "<link type='text/css' rel='stylesheet' href='http://google.com'>\n<link type='text/css' rel='stylesheet' href='http://yandex.ru'>\n",
             $this->assetsCollector->get('css')
         );
         $this->assertSame(
@@ -61,7 +61,7 @@ class AssetsExtensionTest extends TestCase
     public function testGetExternCss()
     {
         $this->assertSame(
-            "<link type='text/css' rel='stylesheet' href='http://google.com' />\n<link type='text/css' rel='stylesheet' href='http://yandex.ru' />\n",
+            "<link type='text/css' rel='stylesheet' href='http://google.com'>\n<link type='text/css' rel='stylesheet' href='http://yandex.ru'>\n",
             $this->extension->getExternCss()
         );
     }
@@ -71,9 +71,9 @@ class AssetsExtensionTest extends TestCase
         return [
             [
                 new FilesystemLoader('/', __DIR__ . '/../../fixtures/twig_root_path'),
-                "<link rel='stylesheet' href='http://yandex.ru' />\n<link type='text/css' rel='stylesheet' href='/fixtures/twig_root_path/test.css' />\n<link type='text/css' rel='stylesheet' href='/fixtures/test.css' />\n"
+                "<link rel='stylesheet' href='http://yandex.ru'>\n<link type='text/css' rel='stylesheet' href='/fixtures/twig_root_path/test.css'>\n<link type='text/css' rel='stylesheet' href='/fixtures/test.css'>\n"
             ],
-            [null, "<link rel='stylesheet' href='http://yandex.ru' />\n<link type='text/css' rel='stylesheet' href='/fixtures/test.css' />\n"]
+            [null, "<link rel='stylesheet' href='http://yandex.ru'>\n<link type='text/css' rel='stylesheet' href='/fixtures/test.css'>\n"]
         ];
     }
 

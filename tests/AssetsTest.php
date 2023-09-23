@@ -58,10 +58,10 @@ class AssetsTest extends TestCase
                 "\r",
                 "",
                 <<<HTML
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css' />
-<link type='text/css' rel='stylesheet' href='http://server.com/style.css' />
-<link type='text/css' rel='stylesheet' href='http://secure.com/style.css' />
-<link type='text/css' rel='stylesheet' href='https://notsecure.com/style.css' />
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css'>
+<link type='text/css' rel='stylesheet' href='http://server.com/style.css'>
+<link type='text/css' rel='stylesheet' href='http://secure.com/style.css'>
+<link type='text/css' rel='stylesheet' href='https://notsecure.com/style.css'>
 
 HTML
             ),
@@ -107,9 +107,9 @@ HTML
                 "\r",
                 "",
                 <<<HTML
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css' />
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test2.css' />
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test3.css' />
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css'>
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test2.css'>
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test3.css'>
 
 HTML
             ),
@@ -143,9 +143,9 @@ HTML
                 "\r",
                 "",
                 <<<HTML
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test3.css' />
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css' />
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test2.css' />
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test3.css'>
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css'>
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test2.css'>
 
 HTML
             ),
@@ -188,7 +188,7 @@ HTML
                 "\r",
                 "",
                 <<<HTML
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css' />
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css'>
 
 HTML
             ),

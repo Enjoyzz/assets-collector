@@ -7,6 +7,7 @@ use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 use Enjoys\AssetsCollector\Render\Html\Css;
 use Enjoys\AssetsCollector\Render\Html\Js;
+use Enjoys\AssetsCollector\RenderInterface;
 
 class RenderFactory
 {

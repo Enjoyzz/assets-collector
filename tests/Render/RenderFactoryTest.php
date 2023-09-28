@@ -6,7 +6,7 @@ use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 use Enjoys\AssetsCollector\Render\Html\Css;
 use Enjoys\AssetsCollector\Render\RenderFactory;
-use Enjoys\AssetsCollector\Render\RenderInterface;
+use Enjoys\AssetsCollector\RenderInterface;
 use PHPUnit\Framework\TestCase;
 
 class RenderFactoryTest extends TestCase

@@ -4,7 +4,7 @@ namespace Enjoys\AssetsCollector\Render\Html;
 
 use Enjoys\AssetsCollector\Attributes;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\Render\RenderInterface;
+use Enjoys\AssetsCollector\RenderInterface;
 
 class Css implements RenderInterface
 {

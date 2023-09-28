@@ -1,6 +1,6 @@
 <?php
 
-namespace Enjoys\AssetsCollector\Render;
+namespace Enjoys\AssetsCollector;
 
 interface RenderInterface
 {

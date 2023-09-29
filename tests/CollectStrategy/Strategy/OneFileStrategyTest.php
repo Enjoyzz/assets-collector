@@ -10,6 +10,7 @@ use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
+use tubalmartin\CssMin\Minifier as CSSmin;
 
 class OneFileStrategyTest extends TestCase
 {
@@ -26,7 +27,10 @@ class OneFileStrategyTest extends TestCase
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../..');
         $this->environment->setBaseUrl('/test/something');
-        $this->environment->setMinifyCSS(new CssMinify());
+        $this->environment->setMinifyCssCallback(function ($content){
+            $compressor = new CSSMin();
+            return $compressor->run($content);
+        });
     }
 
     protected function tearDown(): void

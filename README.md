@@ -8,6 +8,9 @@
 [![Build Status](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)
 
+
+
+
 ## Установка
 
 ```
@@ -233,17 +236,25 @@ use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 
 /** @var \Enjoys\AssetsCollector\Environment $environment */
 //необязательно передавать все параметры, можно только выборочно 
-$environment->setMinifyCSS(
-    new CssMinify([
-        'keepSourceMapComment' => false, //bool
-        'removeImportantComments' => true, //bool
-        'setLineBreakPosition' => 1000, //int
-        'setMaxExecutionTime' => 60, //int
-        'setMemoryLimit' => '128M',
-        'setPcreBacktrackLimit' => 1000000, //int
-        'setPcreRecursionLimit' => 500000, //int
-    ])
-);
+//$environment->setMinifyCSS(
+//    new CssMinify([
+//        'keepSourceMapComment' => false, //bool
+//        'removeImportantComments' => true, //bool
+//        'setLineBreakPosition' => 1000, //int
+//        'setMaxExecutionTime' => 60, //int
+//        'setMemoryLimit' => '128M',
+//        'setPcreBacktrackLimit' => 1000000, //int
+//        'setPcreRecursionLimit' => 500000, //int
+//    ])
+//);
+$environment->setMinifyCssCallback(function (string $content): string {
+    //...
+});
+$environment->setMinifyCssCallback(new class implements \Enjoys\AssetsCollector\MinifyInterface {
+    public function minify(string $content): string {
+        // ...
+    }
+});
 ```
 
 <a id="options_jsminify"></a>
@@ -265,9 +276,18 @@ use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
 
 /** @var \Enjoys\AssetsCollector\Environment $environment */
 // Необязательно передавать все параметры, можно только выборочно 
-$environment->setJsMinifyOptions(
-    new JsMinify([
-        'flaggedComments' => false
-    ])
-);
+//$environment->setJsMinifyOptions(
+//    new JsMinify([
+//        'flaggedComments' => false
+//    ])
+//);
+
+$environment->setMinifyJsCallback(function (string $content): string {
+    //...
+});
+$environment->setMinifyJsCallback(new class implements \Enjoys\AssetsCollector\Minify {
+    public function minify(string $content): string {
+        // ...
+    }
+});
 ```

@@ -29,6 +29,10 @@ class Environment
      */
     private array $minify;
 
+    private \Closure|Minify|null $minifyCssCallback = null;
+
+    private \Closure|Minify|null $minifyJsCallback = null;
+
     /**
      * Environment constructor.
      * @param string $compileDir
@@ -248,5 +252,36 @@ class Environment
     {
         $this->requestFactory = $requestFactory;
         return $this;
+    }
+
+    public function setMinifyCssCallback(MinifyInterface|\Closure|null $minifyCssCallback): Environment
+    {
+        $this->minifyCssCallback = $minifyCssCallback;
+        return $this;
+    }
+
+    public function getMinifyCssCallback(): Minify|\Closure|null
+    {
+        return $this->minifyCssCallback;
+    }
+
+    public function setMinifyJsCallback(Minify|\Closure|null $minifyJsCallback): Environment
+    {
+        $this->minifyJsCallback = $minifyJsCallback;
+        return $this;
+    }
+
+    public function getMinifyJsCallback(): Minify|\Closure|null
+    {
+        return $this->minifyJsCallback;
+    }
+
+    public function getMinifyCallback(string $type): Minify|\Closure|null
+    {
+        return match ($type){
+           'css' => $this->getMinifyCssCallback(),
+           'js' => $this->getMinifyJsCallback(),
+           default => throw new UnexpectedParameters('Possible use only css or js')
+        };
     }
 }

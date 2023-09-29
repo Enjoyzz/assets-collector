@@ -10,11 +10,13 @@ use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
+use JShrink\Minifier;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Tests\Enjoys\AssetsCollector\ArrayLogger;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
+use tubalmartin\CssMin\Minifier as CSSmin;
 
 class ReaderTest extends TestCase
 {
@@ -32,7 +34,18 @@ class ReaderTest extends TestCase
     protected function setUp(): void
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../');
-        $this->environment->setMinifyCSS(new CssMinify([]));
+        $this->environment->setMinifyCssCallback(function ($content){
+            $compressor = new CSSMin();
+            return $compressor->run($content);
+        });
+        $this->environment->setMinifyJsCallback(function ($content){
+            return (string)Minifier::minify(
+                $content,
+                [
+                    'flaggedComments' =>  false
+                ]
+            );
+        });
         $this->environment->setMinifyJS(new JsMinify([]));
 
         $this->httpClient =  new Client(

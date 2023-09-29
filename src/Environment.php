@@ -24,10 +24,6 @@ class Environment
     private ?ClientInterface $httpClient = null;
     private ?RequestFactoryInterface $requestFactory = null;
     private int $directoryPermissions = 0775;
-    /**
-     * @var array{css: MinifyInterface, js: MinifyInterface}
-     */
-    private array $minify;
 
     private \Closure|Minify|null $minifyCssCallback = null;
 
@@ -41,11 +37,6 @@ class Environment
      */
     public function __construct(string $compileDir = '/', string $projectDir = '')
     {
-        $this->minify = [
-            'css' => new NullMinify(),
-            'js' => new NullMinify()
-        ];
-
         $projectDir = realpath($projectDir);
 
         if ($projectDir === false) {
@@ -192,27 +183,7 @@ class Environment
         return $this;
     }
 
-    public function setMinifyJS(MinifyInterface $minifyImpl): void
-    {
-        $this->minify['js'] = $minifyImpl;
-    }
 
-    public function setMinifyCSS(MinifyInterface $minifyImpl): void
-    {
-        $this->minify['css'] = $minifyImpl;
-    }
-
-    /**
-     * @param string $type
-     * @return MinifyInterface
-     */
-    public function getMinify(string $type): MinifyInterface
-    {
-        if (!array_key_exists($type, $this->minify)) {
-            throw new UnexpectedParameters('Possible use only css or js');
-        }
-        return $this->minify[$type];
-    }
 
     /**
      * @return int
@@ -254,7 +225,7 @@ class Environment
         return $this;
     }
 
-    public function setMinifyCssCallback(MinifyInterface|\Closure|null $minifyCssCallback): Environment
+    public function setMinifyCssCallback(Minify|\Closure|null $minifyCssCallback): Environment
     {
         $this->minifyCssCallback = $minifyCssCallback;
         return $this;

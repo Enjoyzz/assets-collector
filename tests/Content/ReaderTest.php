@@ -46,7 +46,6 @@ class ReaderTest extends TestCase
                 ]
             );
         });
-        $this->environment->setMinifyJS(new JsMinify([]));
 
         $this->httpClient =  new Client(
             [

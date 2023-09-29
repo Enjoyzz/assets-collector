@@ -220,68 +220,34 @@ $extension = new AssetsExtension($assets, $loader));
 
 <a id="options_cssminify"></a>
 
-## Настройки CSS Minify
+## Настройки Minify
 
-По умолчанию в качестве минификатора используется **NullMinify::class**, то есть ничего не сжимается. Для установки
-минификатора, в Environment используется метод **Environment::setMinifyCSS(MinifyInterface $minifyImpl)**
+По умолчанию в качестве минификатора CSS и JS ничего не используется, то есть ничего не сжимается. Для настройки
+минификатора, в Environment используется метод **Environment::setMinifyCssCallback(Minify|\Closure|null $minify)**
+и  **Environment::setMinifyJsCallback(Minify|\Closure|null $minify)**
 
 Базовая реализация CSS Minify реализована с помощью библиотеки **tubalmartin\CssMin**
 Подробное описание параметров: https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port#api
 
-Легко можно реализовать минификацию с помощью других библиотек, реализовав интерфейс
-*\Enjoys\AssetsCollector\Content\Minify\MinifyInterface::class*
+Проще всего передать в класс анонимную функцию (\Closure(string): string), но также можно передать объект класса, реализовавший интерфейс
+*\Enjoys\AssetsCollector\Minify::class* для сложных случаев.
+
 
 ```php
-use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
-
 /** @var \Enjoys\AssetsCollector\Environment $environment */
-//необязательно передавать все параметры, можно только выборочно 
-//$environment->setMinifyCSS(
-//    new CssMinify([
-//        'keepSourceMapComment' => false, //bool
-//        'removeImportantComments' => true, //bool
-//        'setLineBreakPosition' => 1000, //int
-//        'setMaxExecutionTime' => 60, //int
-//        'setMemoryLimit' => '128M',
-//        'setPcreBacktrackLimit' => 1000000, //int
-//        'setPcreRecursionLimit' => 500000, //int
-//    ])
-//);
+
+// css
 $environment->setMinifyCssCallback(function (string $content): string {
-    //...
+    return (new CSSMin())->run($content);
 });
-$environment->setMinifyCssCallback(new class implements \Enjoys\AssetsCollector\MinifyInterface {
+
+$environment->setMinifyCssCallback(new class implements \Enjoys\AssetsCollector\Minify {
     public function minify(string $content): string {
-        // ...
+        return (new CSSMin())->run($content);
     }
 });
-```
 
-<a id="options_jsminify"></a>
-
-## Настройки JS Minify
-
-По умолчанию в качестве минификатора используется **NullMinify::class**, то есть ничего не сжимается. Для установки
-минификатора, в Environment используется метод **Environment::setMinifyJS(MinifyInterface $minifyImpl)**
-
-Базовая реализация CSS Minify реализована с помощью библиотеки **JShrink**
-Подробнее про [JShrink](https://github.com/tedious/JShrink)
-
-Легко можно реализовать минификацию с помощью других библиотек, реализовав интерфейс
-*\Enjoys\AssetsCollector\Content\Minify\MinifyInterface::class*
-
-```php
-
-use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
-
-/** @var \Enjoys\AssetsCollector\Environment $environment */
-// Необязательно передавать все параметры, можно только выборочно 
-//$environment->setJsMinifyOptions(
-//    new JsMinify([
-//        'flaggedComments' => false
-//    ])
-//);
-
+// js
 $environment->setMinifyJsCallback(function (string $content): string {
     //...
 });
@@ -291,3 +257,8 @@ $environment->setMinifyJsCallback(new class implements \Enjoys\AssetsCollector\M
     }
 });
 ```
+Список third-party минификаторов:
+- CSS
+  - **YUI-CSS-compressor-PHP-port** [tubalmartin/cssmin](https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port)
+- JS
+  - **JShrink** [tedivm/jshrink](https://github.com/tedious/JShrink)

@@ -2,13 +2,15 @@
 
 namespace Enjoys\AssetsCollector;
 
-use Enjoys\AssetsCollector\Content\Minify\Adapters\NullMinify;
+use Closure;
 use Enjoys\AssetsCollector\Exception\PathDirectoryIsNotValid;
 use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+
+use function putenv;
 
 class Environment
 {
@@ -25,9 +27,15 @@ class Environment
     private ?RequestFactoryInterface $requestFactory = null;
     private int $directoryPermissions = 0775;
 
-    private \Closure|Minify|null $minifyCssCallback = null;
+    /**
+     * @var Closure(string):string|Minify|null
+     */
+    private Closure|Minify|null $minifyCssCallback = null;
 
-    private \Closure|Minify|null $minifyJsCallback = null;
+    /**
+     * @var Closure(string):string|Minify|null
+     */
+    private Closure|Minify|null $minifyJsCallback = null;
 
     /**
      * Environment constructor.
@@ -45,7 +53,7 @@ class Environment
             );
         }
         $this->projectDir = $projectDir;
-        \putenv("ASSETS_PROJECT_DIRECTORY={$this->projectDir}/");
+        putenv("ASSETS_PROJECT_DIRECTORY={$this->projectDir}/");
 
         $this->compileDir = $this->setCompileDir($compileDir);
         $this->logger = new NullLogger();
@@ -225,29 +233,47 @@ class Environment
         return $this;
     }
 
-    public function setMinifyCssCallback(Minify|\Closure|null $minifyCssCallback): Environment
+    /**
+     * @param Minify|Closure(string):string|null $minifyCssCallback
+     * @return $this
+     */
+    public function setMinifyCssCallback(Minify|Closure|null $minifyCssCallback): Environment
     {
         $this->minifyCssCallback = $minifyCssCallback;
         return $this;
     }
 
-    public function getMinifyCssCallback(): Minify|\Closure|null
+    /**
+     * @return Minify|Closure(string):string|null
+     */
+    public function getMinifyCssCallback(): Minify|Closure|null
     {
         return $this->minifyCssCallback;
     }
 
-    public function setMinifyJsCallback(Minify|\Closure|null $minifyJsCallback): Environment
+    /**
+     * @param Minify|Closure(string):string|null $minifyJsCallback
+     * @return $this
+     */
+    public function setMinifyJsCallback(Minify|Closure|null $minifyJsCallback): Environment
     {
         $this->minifyJsCallback = $minifyJsCallback;
         return $this;
     }
 
-    public function getMinifyJsCallback(): Minify|\Closure|null
+    /**
+     * @return Minify|Closure(string):string|null
+     */
+    public function getMinifyJsCallback(): Minify|Closure|null
     {
         return $this->minifyJsCallback;
     }
 
-    public function getMinifyCallback(string $type): Minify|\Closure|null
+    /**
+     * @param string $type
+     * @return Minify|Closure(string):string|null
+     */
+    public function getMinifyCallback(string $type): Minify|Closure|null
     {
         return match ($type){
            'css' => $this->getMinifyCssCallback(),

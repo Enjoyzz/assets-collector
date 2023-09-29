@@ -7,6 +7,7 @@ use Psr\Log\NullLogger;
 
 use function Enjoys\FileSystem\createDirectory;
 use function Enjoys\FileSystem\CreateSymlink;
+use function Enjoys\FileSystem\makeSymlink;
 use function Enjoys\FileSystem\writeFile;
 
 final class Helpers
@@ -81,7 +82,7 @@ final class Helpers
         $logger ??= new NullLogger();
 
         try {
-            if (CreateSymlink($link, $target)) {
+            if (makeSymlink($link, $target)) {
                 $logger->info(sprintf('Created symlink: %s', $link));
             }
         } catch (\Exception $e) {

@@ -198,26 +198,24 @@ class Reader
 
     public function minify(): Reader
     {
-        if ($this->content === false || $this->path === false) {
+        if ($this->content === false || $this->path === false || !$this->asset->getOptions()->isMinify()) {
             return $this;
         }
-        if ($this->asset->getOptions()->isMinify()) {
-            $minifyCallback = $this->environment->getMinifyCallback($this->asset->getType());
 
-            if ($minifyCallback === null){
-                return $this;
-            }
+        $minifyCallback = $this->environment->getMinifyCallback($this->asset->getType());
 
-
-            if ($minifyCallback instanceof Minify){
-                $this->content = $minifyCallback->minify($this->content). "\n";
-            }
-
-            $this->content = $minifyCallback($this->content). "\n";
-
-            $this->logger->info(sprintf('Minify: %s', $this->path));
+        if ($minifyCallback === null) {
+            return $this;
         }
 
+        $this->logger->info(sprintf('Minify: %s', $this->path));
+
+        if ($minifyCallback instanceof Minify) {
+            $this->content = $minifyCallback->minify($this->content) . "\n";
+            return $this;
+        }
+
+        $this->content = $minifyCallback($this->content) . "\n";
         return $this;
     }
 }

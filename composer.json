@@ -11,8 +11,6 @@
     ],
     "require": {
         "php": "^8.0",
-        "tubalmartin/cssmin": "^4.1",
-        "tedivm/jshrink": "^1.6.2 | ~1.5.0",
         "psr/log": "^1.0 | ^2.0 | ^3.0",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
@@ -33,8 +31,10 @@
         "symfony/var-dumper": "^6.0",
         "phpunit/phpunit": "^9.5",
         "twig/twig": "^3.2",
-        "vimeo/psalm": "^4.8",
-        "guzzlehttp/guzzle": "^7.2"
+        "vimeo/psalm": "^5.0",
+        "guzzlehttp/guzzle": "^7.2",
+        "tubalmartin/cssmin": "^4.1",
+        "tedivm/jshrink": "^1.6.2 | ~1.5.0"
     },
     "scripts": {
         "psalm": "psalm --show-info=true --config=psalm.xml --no-cache"

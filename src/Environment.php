@@ -3,7 +3,6 @@
 namespace Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\Content\Minify\Adapters\NullMinify;
-use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
 use Enjoys\AssetsCollector\Exception\PathDirectoryIsNotValid;
 use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
 use Psr\Http\Client\ClientInterface;

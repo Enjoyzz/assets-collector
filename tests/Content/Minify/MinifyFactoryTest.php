@@ -3,11 +3,10 @@
 namespace Tests\Enjoys\AssetsCollector\Content\Minify;
 
 use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
-use Enjoys\AssetsCollector\Content\Minify\Adapters\NullMinify;
 use Enjoys\AssetsCollector\Content\Minify\MinifyFactory;
-use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
+use Enjoys\AssetsCollector\MinifyInterface;
 use PHPUnit\Framework\TestCase;
 
 class MinifyFactoryTest extends TestCase

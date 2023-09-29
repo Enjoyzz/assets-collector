@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector\Content\Minify;
 
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\MinifyInterface;
 
 /**
  * Class MinifyFactory

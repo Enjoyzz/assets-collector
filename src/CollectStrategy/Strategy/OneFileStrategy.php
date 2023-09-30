@@ -3,6 +3,7 @@
 namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
@@ -30,7 +31,7 @@ class OneFileStrategy extends StrategyAbstract
     public function __construct(
         Environment $environment,
         array $assets,
-        string $type
+        AssetType $type
     ) {
         parent::__construct($environment, $assets, $type);
 
@@ -59,9 +60,11 @@ class OneFileStrategy extends StrategyAbstract
      * @param string $type css|js
      * @return string
      */
-    private function generateFilename(string $type): string
+    private function generateFilename(string|AssetType $type): string
     {
-        return '_' . $type . DIRECTORY_SEPARATOR . $this->getHashId() . '.' . $type;
+        $type = AssetType::normalize($type);
+
+        return '_' . $type->value . DIRECTORY_SEPARATOR . $this->getHashId() . '.' . $type->value;
     }
 
     /**

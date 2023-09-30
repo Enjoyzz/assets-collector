@@ -4,6 +4,7 @@ namespace Tests\Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
 use Enjoys\AssetsCollector\Content\Reader;
@@ -138,7 +139,7 @@ CSS
     {
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 __DIR__ . '/../fixtures/sub/css/style.css',
                 [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
@@ -166,7 +167,7 @@ CSS
         ;
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.css',
                 [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
@@ -184,7 +185,7 @@ CSS
         ;
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 'https://cdn.jsdelivr.net/invalid_url',
                 [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
@@ -198,7 +199,7 @@ CSS
     {
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.css',
                 [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
@@ -214,7 +215,7 @@ CSS
         ;
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 'https://cdn.jsdelivr.net/invalid_url',
                 [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),

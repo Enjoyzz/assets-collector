@@ -4,6 +4,7 @@ namespace Tests\Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetsCollection;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use phpDocumentor\Reflection\Types\This;
 use PHPUnit\Framework\TestCase;
@@ -25,19 +26,19 @@ class AssetsCollectionTest extends TestCase
     {
         $collection = new AssetsCollection($this->environment);
         $collection->add(new Asset('css', 'http://test.test/style.css'),  'common');
-        $this->assertCount(1, $collection->get('css', 'common'));
+        $this->assertCount(1, $collection->get(AssetType::CSS, 'common'));
 
         $collection->add(new Asset('css', 'http://test.test/style.css'),  'common');
-        $this->assertCount(1, $collection->get('css', 'common'));
+        $this->assertCount(1, $collection->get(AssetType::CSS, 'common'));
 
 //        $collection->add(new Asset('css', 'tests/fixtures/test.css', []),  'common');
 //        $this->assertCount(2, $collection->get('css', 'common'));
 
         $collection->add(new Asset( 'css', __DIR__.'/fixtures/test.css'),  'common');
-        $this->assertCount(2, $collection->get('css', 'common'));
+        $this->assertCount(2, $collection->get(AssetType::CSS, 'common'));
 
         $collection->add(new Asset('css', __DIR__.'/fixtures/notexist.css'), 'common');
-        $this->assertCount(2, $collection->get('css', 'common'));
+        $this->assertCount(2, $collection->get(AssetType::CSS, 'common'));
 
         $this->assertSame([], $collection->get('css', 'empty_namespace'));
     }

@@ -95,12 +95,6 @@ class EnvironmentTest extends TestCase
     }
 
 
-    public function testGetRender()
-    {
-        $environment = new Environment();
-        $this->assertSame(Assets::RENDER_HTML, $environment->getRender());
-    }
-
     public function testSetLogger()
     {
         $environment = new Environment();

@@ -3,6 +3,7 @@
 namespace Enjoys\AssetsCollector\CollectStrategy;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use Psr\Log\LoggerInterface;
 
@@ -15,10 +16,6 @@ abstract class StrategyAbstract implements StrategyInterface
 
     protected string $hashId;
 
-    /**
-     * @var string css or js
-     */
-    protected string $type;
 
     /**
      * @var Environment
@@ -37,12 +34,16 @@ abstract class StrategyAbstract implements StrategyInterface
     public function __construct(
         Environment $environment,
         array $assets,
-        string $type
+        protected AssetType|string $type
     ) {
+
+        if (is_string($type)){
+            $this->type = AssetType::from($type);
+        }
+
         $this->environment = $environment;
         $this->assets = $assets;
         $this->hashId = $this->generateHashId();
-        $this->type = $type;
         $this->logger = $environment->getLogger();
     }
 

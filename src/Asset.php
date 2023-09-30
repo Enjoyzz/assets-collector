@@ -13,7 +13,6 @@ class Asset
     private ?string $id = null;
 
     private string|false $path;
-    private string $type;
     private bool $isUrl;
     private string $origPath;
     private string $url = '';
@@ -26,9 +25,11 @@ class Asset
      * @param string $path
      * @param array<string, string|bool|array|null> $options
      */
-    public function __construct(string $type, string $path, array $options = [])
+    public function __construct(private AssetType|string $type, string $path, array $options = [])
     {
-        $this->type = $type;
+        if (is_string($type)){
+            $this->type = AssetType::from($type);
+        }
         $this->origPath = $path;
         $this->options = new AssetOption($options);
 
@@ -85,7 +86,7 @@ class Asset
         return $this->path;
     }
 
-    public function getType(): string
+    public function getType(): AssetType
     {
         return $this->type;
     }

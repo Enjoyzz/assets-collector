@@ -3,6 +3,7 @@
 namespace Tests\Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\UrlConverter;
 use PHPUnit\Framework\TestCase;
@@ -67,7 +68,7 @@ class SymlinkTest extends TestCase
         $this->config->setCacheTime(300);
         $assets = new Assets($this->config);
         $assets->add(
-            'css',
+            AssetType::CSS,
             $targets = [
                 $baseUrl = __DIR__ . '/fixtures/sub/css/style.css',
                __DIR__ . '/fixtures/test.css',

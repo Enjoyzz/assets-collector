@@ -6,6 +6,7 @@ namespace Tests\Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Content\ReplaceRelative;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
@@ -75,7 +76,7 @@ class ReplaceRelativePathsTest extends TestCase
         $replaceClass = new ReplaceRelative(
             $data,
             $path,
-            new Asset('css', $path),
+            new Asset(AssetType::CSS, $path),
             $this->config
         );
 

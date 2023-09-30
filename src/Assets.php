@@ -6,7 +6,6 @@ namespace Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\CollectStrategy\StrategyFactory;
 use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
-use Enjoys\AssetsCollector\Render\RenderFactory;
 use Psr\Log\LoggerInterface;
 
 class Assets
@@ -24,18 +23,12 @@ class Assets
     private AssetsCollection $assetsCollection;
 
     /**
-     * @var Environment
-     */
-    private Environment $environment;
-
-    /**
      * @var LoggerInterface
      */
     private LoggerInterface $logger;
 
-    public function __construct(Environment $environment)
+    public function __construct(private Environment $environment)
     {
-        $this->environment = $environment;
         $this->logger = $this->environment->getLogger();
         $this->assetsCollection = new AssetsCollection($this->environment);
     }
@@ -47,8 +40,10 @@ class Assets
      * @param string $method
      * @return $this
      */
-    public function add(string $type, $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
+    public function add(AssetType|string $type, $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
     {
+        $type = AssetType::normalize($type);
+
         $collection = new AssetsCollection($this->environment);
         /** @var array|string $path */
         foreach ((array)$paths as $path) {
@@ -82,11 +77,14 @@ class Assets
      * @return string
      * @throws \Exception
      */
-    public function get(string $type, string $namespace = self::NAMESPACE_COMMON): string
+    public function get(AssetType|string $type, string $namespace = self::NAMESPACE_COMMON): string
     {
+        if (is_string($type)){
+            $type = AssetType::from($type);
+        }
         $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
 //        return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);
-        return $this->getEnvironment()->getRenderer(\strtolower($type))->getResult($paths);
+        return $this->getEnvironment()->getRenderer($type)->getResult($paths);
     }
 
 
@@ -95,7 +93,7 @@ class Assets
      * @param array<Asset> $assetsCollection
      * @return array
      */
-    private function getResults(string $type, array $assetsCollection): array
+    private function getResults(AssetType $type, array $assetsCollection): array
     {
         $strategy = StrategyFactory::getStrategy(
             $this->environment,

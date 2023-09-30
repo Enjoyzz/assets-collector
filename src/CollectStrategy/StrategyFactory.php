@@ -4,6 +4,7 @@ namespace Enjoys\AssetsCollector\CollectStrategy;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\ManyFilesStrategy;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
 use Enjoys\AssetsCollector\Environment;
@@ -27,8 +28,12 @@ class StrategyFactory
     public static function getStrategy(
         Environment $environment,
         array $assetsCollection,
-        string $type
+        AssetType|string $type
     ): StrategyInterface {
+        if (is_string($type)){
+            $type = AssetType::from($type);
+        }
+        
         $strategy = $environment->getStrategy();
         if (!isset(self::STRATEGY[$strategy])) {
             throw new UnexpectedParameters('Invalid strategy');

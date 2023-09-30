@@ -19,7 +19,6 @@ class Environment
     private string $baseUrl = '';
     private int $cacheTime = -1;
     private int $strategy = Assets::STRATEGY_MANY_FILES;
-    private string $render = Assets::RENDER_HTML;
     private ?string $version = null;
     private string $paramVersion = '?v=';
     private LoggerInterface $logger;
@@ -169,10 +168,6 @@ class Environment
         return $this->strategy;
     }
 
-    public function getRender(): string
-    {
-        return $this->render;
-    }
 
     /**
      * @param int $strategy
@@ -276,18 +271,22 @@ class Environment
      * @param string $type
      * @return Minify|Closure(string):string|null
      */
-    public function getMinifyCallback(string $type): Minify|Closure|null
+    public function getMinifyCallback(string|AssetType $type): Minify|Closure|null
     {
-        return match ($type) {
+        $type = AssetType::normalize($type);
+
+        return match ($type->value) {
             'css' => $this->getMinifyCssCallback(),
             'js' => $this->getMinifyJsCallback(),
             default => throw new UnexpectedParameters('Possible use only css or js')
         };
     }
 
-    public function getRenderer(string $type): RenderInterface
+    public function getRenderer(AssetType|string $type): RenderInterface
     {
-        $renderer = match ($type) {
+        $type = AssetType::normalize($type);
+
+        $renderer = match ($type->value) {
             'css' => $this->getRenderCss(),
             'js' => $this->getRenderJs(),
             default => throw new UnexpectedParameters('Possible use only css or js')

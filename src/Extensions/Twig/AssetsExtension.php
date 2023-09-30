@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector\Extensions\Twig;
 
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Twig\Error\LoaderError;
 use Twig\Extension\AbstractExtension;
 use Twig\Loader\LoaderInterface;
@@ -53,11 +54,14 @@ class AssetsExtension extends AbstractExtension
      * @throws LoaderError
      */
     public function asset(
-        string $type,
+        string|AssetType $type,
         array $paths = [],
         string $namespace = Assets::NAMESPACE_COMMON,
         string $method = 'push'
     ): void {
+        if (is_string($type)){
+            $type = AssetType::from($type);
+        }
         $this->assetsCollector->add(
             $type,
             array_map(function ($item) {

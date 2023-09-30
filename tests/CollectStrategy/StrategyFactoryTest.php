@@ -4,6 +4,7 @@ namespace Tests\Enjoys\AssetsCollector\CollectStrategy;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\ManyFilesStrategy;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyFactory;
@@ -35,8 +36,8 @@ class StrategyFactoryTest extends TestCase
 
         $factory = StrategyFactory::getStrategy(
             $environment,
-            [new Asset('css', '//test.com')],
-            'css'
+            [new Asset(AssetType::CSS, '//test.com')],
+            AssetType::CSS
         );
         $this->assertInstanceOf(StrategyInterface::class, $factory);
         $this->assertInstanceOf(ManyFilesStrategy::class, $factory);
@@ -69,7 +70,7 @@ class StrategyFactoryTest extends TestCase
         StrategyFactory::getStrategy(
             $environment,
             [new Asset('css', '//test.com')],
-            'css'
+            AssetType::CSS
         );
     }
 }

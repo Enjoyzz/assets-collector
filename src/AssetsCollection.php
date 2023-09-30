@@ -34,12 +34,12 @@ class AssetsCollection
         }
 
 
-        $this->assets[$asset->getType()][$namespace][$assetId] = $asset;
+        $this->assets[$asset->getType()->value][$namespace][$assetId] = $asset;
     }
 
     public function has(Asset $asset, string $namespace): bool
     {
-        if (isset($this->assets[$asset->getType()][$namespace][$asset->getId()])) {
+        if (isset($this->assets[$asset->getType()->value][$namespace][$asset->getId()])) {
             return true;
         }
         return false;
@@ -50,12 +50,14 @@ class AssetsCollection
      * @param string $namespace
      * @return Asset[]
      */
-    public function get(string $type, string $namespace): array
+    public function get(AssetType|string $type, string $namespace): array
     {
-        if (!isset($this->assets[$type][$namespace])) {
+        $type = AssetType::normalize($type);
+
+        if (!isset($this->assets[$type->value][$namespace])) {
             return [];
         }
-        return $this->assets[$type][$namespace];
+        return $this->assets[$type->value][$namespace];
     }
 
     public function push(AssetsCollection $collection): void

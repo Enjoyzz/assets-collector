@@ -10,33 +10,9 @@ use function str_starts_with;
 class Asset
 {
 
-    /**
-     * @deprecated use AssetOption::MINIFY
-     */
-    public const MINIFY = 'minify';
-    /**
-     * @deprecated use AssetOption::REPLACE_RELATIVE_URLS
-     */
-    public const REPLACE_RELATIVE_URLS = 'replaceRelativeUrls';
-    /**
-     * @deprecated use AssetOption::SYMLINKS
-     */
-    public const CREATE_SYMLINK = 'symlinks';
-    /**
-     * @deprecated use AssetOption::NOT_COLLECT
-     */
-    public const NOT_COLLECT = 'notCollect';
-    /**
-     * @deprecated use AssetOption::ATTRIBUTES
-     */
-    public const ATTRIBUTES = 'attributes';
-
     private ?string $id = null;
 
-    /**
-     * @var string|false
-     */
-    private $path;
+    private string|false $path;
     private string $type;
     private bool $isUrl;
     private string $origPath;
@@ -62,11 +38,7 @@ class Asset
         $this->setId($this->path);
     }
 
-    /**
-     * @param string $path
-     * @return false|string
-     */
-    private function getNormalizedPath(string $path)
+    private function getNormalizedPath(string $path): false|string
     {
         if ($this->isUrl()) {
             return $this->url;
@@ -108,10 +80,7 @@ class Asset
         return false;
     }
 
-    /**
-     * @return false|string
-     */
-    public function getPath()
+    public function getPath(): false|string
     {
         return $this->path;
     }
@@ -136,10 +105,7 @@ class Asset
         return $this->origPath;
     }
 
-    /**
-     * @param string|false $path
-     */
-    private function setId($path): void
+    private function setId(false|string $path): void
     {
         if ($path === false) {
             return;

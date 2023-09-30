@@ -58,19 +58,11 @@ class AssetsCollection
         return $this->assets[$type][$namespace];
     }
 
-    /**
-     * @param AssetsCollection $collection
-     * @psalm-suppress MixedPropertyTypeCoercion
-     */
     public function push(AssetsCollection $collection): void
     {
         $this->assets = array_merge_recursive_distinct($this->getAssets(), $collection->getAssets());
     }
 
-    /**
-     * @param AssetsCollection $collection
-     * @psalm-suppress MixedPropertyTypeCoercion
-     */
     public function unshift(AssetsCollection $collection): void
     {
         $this->assets = array_merge_recursive_distinct($collection->getAssets(), $this->getAssets());

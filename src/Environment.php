@@ -37,6 +37,10 @@ class Environment
      */
     private Closure|Minify|null $minifyJsCallback = null;
 
+    private Closure|RenderInterface|null $renderCss = null;
+
+    private Closure|RenderInterface|null $renderJs = null;
+
     /**
      * Environment constructor.
      * @param string $compileDir
@@ -192,7 +196,6 @@ class Environment
     }
 
 
-
     /**
      * @return int
      */
@@ -275,10 +278,81 @@ class Environment
      */
     public function getMinifyCallback(string $type): Minify|Closure|null
     {
-        return match ($type){
-           'css' => $this->getMinifyCssCallback(),
-           'js' => $this->getMinifyJsCallback(),
-           default => throw new UnexpectedParameters('Possible use only css or js')
+        return match ($type) {
+            'css' => $this->getMinifyCssCallback(),
+            'js' => $this->getMinifyJsCallback(),
+            default => throw new UnexpectedParameters('Possible use only css or js')
         };
+    }
+
+    public function getRenderer(string $type): RenderInterface
+    {
+        $renderer = match ($type) {
+            'css' => $this->getRenderCss(),
+            'js' => $this->getRenderJs(),
+            default => throw new UnexpectedParameters('Possible use only css or js')
+        };
+
+        if ($renderer instanceof RenderInterface) {
+            return $renderer;
+        }
+
+        return new class($renderer) implements RenderInterface {
+
+            /**
+             * @param Closure(array): string $renderer
+             */
+            public function __construct(private \Closure $renderer)
+            {
+            }
+
+            public function getResult(array $paths): string
+            {
+                return call_user_func($this->renderer, $paths);
+            }
+        };
+    }
+
+    private function getRenderCss(): RenderInterface|\Closure
+    {
+        return $this->renderCss ?? function (array $paths): string {
+            $result = '';
+            /** @var array<string, string|null>|null $attributes */
+            foreach ($paths as $path => $attributes) {
+                $attributes = array_merge(['type' => 'text/css', 'rel' => 'stylesheet'], (array)$attributes);
+                $result .= sprintf(
+                    "<link%s href='{$path}{$this->getVersion()}'>\n",
+                    (new Attributes($attributes))->__toString()
+                );
+            }
+            return $result;
+        };
+    }
+
+    private function getRenderJs(): RenderInterface|\Closure
+    {
+        return $this->renderJs ?? function (array $paths): string {
+            $result = '';
+            /** @var array<string, string|null>|null $attributes */
+            foreach ($paths as $path => $attributes) {
+                $result .= sprintf(
+                    "<script%s src='{$path}{$this->getVersion()}'></script>\n",
+                    (new Attributes($attributes))->__toString()
+                );
+            }
+            return $result;
+        };
+    }
+
+    public function setRenderCss(Closure|RenderInterface|null $renderCss): Environment
+    {
+        $this->renderCss = $renderCss;
+        return $this;
+    }
+
+    public function setRenderJs(Closure|RenderInterface|null $renderJs): Environment
+    {
+        $this->renderJs = $renderJs;
+        return $this;
     }
 }

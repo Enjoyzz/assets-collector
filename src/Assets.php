@@ -85,7 +85,8 @@ class Assets
     public function get(string $type, string $namespace = self::NAMESPACE_COMMON): string
     {
         $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
-        return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);
+//        return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);
+        return $this->getEnvironment()->getRenderer(\strtolower($type))->getResult($paths);
     }
 
 

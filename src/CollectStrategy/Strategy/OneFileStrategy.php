@@ -106,7 +106,7 @@ class OneFileStrategy extends StrategyAbstract
             $output = '';
 
             foreach ($this->assets as $asset) {
-                $reader = new Reader($asset, $this->environment, $this->logger);
+                $reader = new Reader($asset, $this->environment);
                 $output .= $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify()->getContents();
 
 

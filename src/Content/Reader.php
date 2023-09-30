@@ -18,21 +18,13 @@ use Psr\Log\NullLogger;
  */
 class Reader
 {
-    /**
-     * @var Asset
-     */
-    private Asset $asset;
+
 
     /**
      * @var false|string
      */
     private $content;
-    /**
-     * @var false|string
-     */
-    private $path;
 
-    private Environment $environment;
     /**
      * @var LoggerInterface|NullLogger
      */
@@ -42,17 +34,12 @@ class Reader
      * Reader constructor.
      * @param Asset $asset
      * @param Environment $environment
-     * @param LoggerInterface|null $logger
      */
     public function __construct(
-        Asset $asset,
-        Environment $environment,
-        LoggerInterface $logger = null
+        private Asset $asset,
+        private Environment $environment,
     ) {
-        $this->environment = $environment;
-        $this->asset = $asset;
-        $this->logger = $logger ?? $this->environment->getLogger();
-        $this->path = $this->asset->getPath();
+        $this->logger = $this->environment->getLogger();
         $this->content = $this->getContent();
     }
 
@@ -61,7 +48,7 @@ class Reader
      */
     public function getContents(): string
     {
-        if ($this->content === false || $this->path === false) {
+        if ($this->content === false || $this->asset->getPath() === false) {
             $this->logger->notice(sprintf('Nothing return: path is `%s`', $this->asset->getOrigPath()));
             return '';
         }
@@ -74,14 +61,14 @@ class Reader
      */
     private function getContent()
     {
-        if ($this->path === false) {
+        if ($this->asset->getPath() === false) {
             return false;
         }
 
         if ($this->asset->isUrl()) {
-            return $this->readUrl($this->path);
+            return $this->readUrl($this->asset->getPath());
         }
-        return $this->readFile($this->path);
+        return $this->readFile($this->asset->getPath());
     }
 
     /**
@@ -183,12 +170,12 @@ class Reader
      */
     public function replaceRelativeUrlsAndCreatedSymlinks(): Reader
     {
-        if ($this->content === false || $this->path === false) {
+        if ($this->content === false || $this->asset->getPath() === false) {
             return $this;
         }
 
         if ($this->asset->getOptions()->isReplaceRelativeUrls()) {
-            $replaceRelativeUrls = new ReplaceRelative($this->content, $this->path, $this->asset, $this->environment);
+            $replaceRelativeUrls = new ReplaceRelative($this->content, $this->asset->getPath(), $this->asset, $this->environment);
             $replaceRelativeUrls->setLogger($this->logger);
             $this->content = $replaceRelativeUrls->getContent();
         }
@@ -198,7 +185,7 @@ class Reader
 
     public function minify(): Reader
     {
-        if ($this->content === false || $this->path === false || !$this->asset->getOptions()->isMinify()) {
+        if ($this->content === false || $this->asset->getPath() === false || !$this->asset->getOptions()->isMinify()) {
             return $this;
         }
 
@@ -208,7 +195,7 @@ class Reader
             return $this;
         }
 
-        $this->logger->info(sprintf('Minify: %s', $this->path));
+        $this->logger->info(sprintf('Minify: %s', $this->asset->getPath()));
 
         if ($minifyCallback instanceof Minify) {
             $this->content = $minifyCallback->minify($this->content) . "\n";

@@ -19,17 +19,17 @@ class Asset
 
     private AssetOption $options;
 
+    private AssetType $type;
 
     /**
-     * @param string $type
+     * @param AssetType|string $type
      * @param string $path
      * @param array<string, string|bool|array|null> $options
      */
-    public function __construct(private AssetType|string $type, string $path, array $options = [])
+    public function __construct(AssetType|string $type, string $path, array $options = [])
     {
-        if (is_string($type)){
-            $this->type = AssetType::from($type);
-        }
+        $this->type = AssetType::normalize($type);
+
         $this->origPath = $path;
         $this->options = new AssetOption($options);
 

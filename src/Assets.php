@@ -34,13 +34,13 @@ class Assets
     }
 
     /**
-     * @param string $type
-     * @param string|array $paths
+     * @param AssetType|string $type
+     * @param array|string $paths
      * @param string $namespace
      * @param string $method
      * @return $this
      */
-    public function add(AssetType|string $type, $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
+    public function add(AssetType|string $type, array|string $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
     {
         $type = AssetType::normalize($type);
 
@@ -72,16 +72,14 @@ class Assets
     }
 
     /**
-     * @param string $type
+     * @param AssetType|string $type
      * @param string $namespace
      * @return string
-     * @throws \Exception
      */
     public function get(AssetType|string $type, string $namespace = self::NAMESPACE_COMMON): string
     {
-        if (is_string($type)){
-            $type = AssetType::from($type);
-        }
+        $type = AssetType::normalize($type);
+
         $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
 //        return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);
         return $this->getEnvironment()->getRenderer($type)->getResult($paths);
@@ -89,12 +87,14 @@ class Assets
 
 
     /**
-     * @param string $type
+     * @param AssetType|string $type
      * @param array<Asset> $assetsCollection
      * @return array
      */
-    private function getResults(AssetType $type, array $assetsCollection): array
+    private function getResults(AssetType|string $type, array $assetsCollection): array
     {
+        $type = AssetType::normalize($type);
+
         $strategy = StrategyFactory::getStrategy(
             $this->environment,
             $assetsCollection,

@@ -189,7 +189,7 @@ class Reader
             return $this;
         }
 
-        $minifyCallback = $this->environment->getMinifyCallback($this->asset->getType());
+        $minifyCallback = $this->environment->getMinify($this->asset->getType());
 
         if ($minifyCallback === null) {
             return $this;
@@ -197,12 +197,7 @@ class Reader
 
         $this->logger->info(sprintf('Minify: %s', $this->asset->getPath()));
 
-        if ($minifyCallback instanceof Minify) {
-            $this->content = $minifyCallback->minify($this->content) . "\n";
-            return $this;
-        }
-
-        $this->content = $minifyCallback($this->content) . "\n";
+        $this->content = $minifyCallback->minify($this->content) . "\n";
         return $this;
     }
 }

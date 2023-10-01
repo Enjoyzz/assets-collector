@@ -29,12 +29,12 @@ class Environment
     /**
      * @var Closure(string):string|Minify|null
      */
-    private Closure|Minify|null $minifyCssCallback = null;
+    private Closure|Minify|null $cssMinify = null;
 
     /**
      * @var Closure(string):string|Minify|null
      */
-    private Closure|Minify|null $minifyJsCallback = null;
+    private Closure|Minify|null $jsMinify = null;
 
     private Closure|RenderInterface|null $renderCss = null;
 
@@ -232,54 +232,64 @@ class Environment
     }
 
     /**
-     * @param Minify|Closure(string):string|null $minifyCssCallback
+     * @param Minify|Closure(string):string|null $cssMinify
      * @return $this
      */
-    public function setMinifyCssCallback(Minify|Closure|null $minifyCssCallback): Environment
+    public function setCssMinify(Minify|Closure|null $cssMinify): Environment
     {
-        $this->minifyCssCallback = $minifyCssCallback;
+        $this->cssMinify = $cssMinify;
         return $this;
     }
 
     /**
-     * @return Minify|Closure(string):string|null
-     */
-    public function getMinifyCssCallback(): Minify|Closure|null
-    {
-        return $this->minifyCssCallback;
-    }
-
-    /**
-     * @param Minify|Closure(string):string|null $minifyJsCallback
+     * @param Minify|Closure(string):string|null $jsMinify
      * @return $this
      */
-    public function setMinifyJsCallback(Minify|Closure|null $minifyJsCallback): Environment
+    public function setJsMinify(Minify|Closure|null $jsMinify): Environment
     {
-        $this->minifyJsCallback = $minifyJsCallback;
+        $this->jsMinify = $jsMinify;
         return $this;
     }
 
-    /**
-     * @return Minify|Closure(string):string|null
-     */
-    public function getMinifyJsCallback(): Minify|Closure|null
-    {
-        return $this->minifyJsCallback;
-    }
+
 
     /**
-     * @param string $type
-     * @return Minify|Closure(string):string|null
+     * @param string|AssetType $type
+     * @return Minify|null
      */
-    public function getMinifyCallback(string|AssetType $type): Minify|Closure|null
+    public function getMinify(string|AssetType $type): Minify|null
     {
         $type = AssetType::normalize($type);
 
-        return match ($type->value) {
-            'css' => $this->getMinifyCssCallback(),
-            'js' => $this->getMinifyJsCallback(),
-            default => throw new UnexpectedParameters('Possible use only css or js')
+        $minify = match ($type->value) {
+            'css' => $this->cssMinify,
+            'js' => $this->jsMinify,
+            default => null
         };
+
+        if ($minify === null) {
+            return null;
+        }
+
+        if ($minify instanceof Minify) {
+            return $minify;
+        }
+
+        return new class($minify) implements Minify {
+
+            /**
+             * @param Closure(string): string $minify
+             */
+            public function __construct(private readonly \Closure $minify)
+            {
+            }
+
+            public function minify(string $content): string
+            {
+                return call_user_func($this->minify, $content);
+            }
+        };
+
     }
 
     public function getRenderer(AssetType|string $type): RenderInterface

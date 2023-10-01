@@ -28,7 +28,7 @@ class OneFileStrategyTest extends TestCase
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../..');
         $this->environment->setBaseUrl('/test/something');
-        $this->environment->setMinifyCssCallback(function ($content){
+        $this->environment->setCssMinify(function ($content){
             $compressor = new CSSMin();
             return $compressor->run($content);
         });

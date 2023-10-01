@@ -232,26 +232,25 @@ $extension = new AssetsExtension($assets, $loader));
 Проще всего передать в класс анонимную функцию (\Closure(string): string), но также можно передать объект класса, реализовавший интерфейс
 *\Enjoys\AssetsCollector\Minify::class* для сложных случаев.
 
-
 ```php
 /** @var \Enjoys\AssetsCollector\Environment $environment */
 
 // css
-$environment->setMinifyCssCallback(function (string $content): string {
+$environment->setCssMinify(function (string $content): string {
     return (new CSSMin())->run($content);
 });
 
-$environment->setMinifyCssCallback(new class implements \Enjoys\AssetsCollector\Minify {
+$environment->setCssMinify(new class implements \Enjoys\AssetsCollector\Minify {
     public function minify(string $content): string {
         return (new CSSMin())->run($content);
     }
 });
 
 // js
-$environment->setMinifyJsCallback(function (string $content): string {
+$environment->setJsMinify(function (string $content): string {
     //...
 });
-$environment->setMinifyJsCallback(new class implements \Enjoys\AssetsCollector\Minify {
+$environment->setJsMinify(new class implements \Enjoys\AssetsCollector\Minify {
     public function minify(string $content): string {
         // ...
     }

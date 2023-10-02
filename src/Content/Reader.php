@@ -5,7 +5,7 @@ namespace Enjoys\AssetsCollector\Content;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Content\Minify\MinifyFactory;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\Minify;
+use Enjoys\AssetsCollector\Minifier;
 use Enjoys\AssetsCollector\MinifyInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -189,15 +189,15 @@ class Reader
             return $this;
         }
 
-        $minifyCallback = $this->environment->getMinify($this->asset->getType());
+        $minifier = $this->environment->getMinifier($this->asset->getType());
 
-        if ($minifyCallback === null) {
+        if ($minifier === null) {
             return $this;
         }
 
         $this->logger->info(sprintf('Minify: %s', $this->asset->getPath()));
 
-        $this->content = $minifyCallback->minify($this->content) . "\n";
+        $this->content = $minifier->minify($this->content) . "\n";
         return $this;
     }
 }

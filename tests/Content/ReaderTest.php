@@ -35,11 +35,11 @@ class ReaderTest extends TestCase
     protected function setUp(): void
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../');
-        $this->environment->setCssMinify(function ($content){
+        $this->environment->setMinifier(AssetType::CSS, function ($content){
             $compressor = new CSSMin();
             return $compressor->run($content);
         });
-        $this->environment->setJsMinify(function ($content){
+        $this->environment->setMinifier(AssetType::JS, function ($content){
             return (string)Minifier::minify(
                 $content,
                 [

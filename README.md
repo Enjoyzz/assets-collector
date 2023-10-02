@@ -223,38 +223,26 @@ $extension = new AssetsExtension($assets, $loader));
 ## Настройки Minify
 
 По умолчанию в качестве минификатора CSS и JS ничего не используется, то есть ничего не сжимается. Для настройки
-минификатора, в Environment используется метод **Environment::setMinifyCssCallback(Minify|\Closure|null $minify)**
-и  **Environment::setMinifyJsCallback(Minify|\Closure|null $minify)**
-
-Базовая реализация CSS Minify реализована с помощью библиотеки **tubalmartin\CssMin**
-Подробное описание параметров: https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port#api
+минификатора, в Environment используется метод **Environment::setMinifier(AssetsType $type, Minify|\Closure|null $minifier)**
 
 Проще всего передать в класс анонимную функцию (\Closure(string): string), но также можно передать объект класса, реализовавший интерфейс
 *\Enjoys\AssetsCollector\Minify::class* для сложных случаев.
 
 ```php
 /** @var \Enjoys\AssetsCollector\Environment $environment */
+use Enjoys\AssetsCollector\AssetType;
 
 // css
-$environment->setCssMinify(function (string $content): string {
+$environment->setMinifier(AssetType::CSS, function (string $content): string {
     return (new CSSMin())->run($content);
 });
 
-$environment->setCssMinify(new class implements \Enjoys\AssetsCollector\Minify {
+$environment->setMinifier(AssetType::CSS, new class implements \Enjoys\AssetsCollector\Minifier {
     public function minify(string $content): string {
         return (new CSSMin())->run($content);
     }
 });
 
-// js
-$environment->setJsMinify(function (string $content): string {
-    //...
-});
-$environment->setJsMinify(new class implements \Enjoys\AssetsCollector\Minify {
-    public function minify(string $content): string {
-        // ...
-    }
-});
 ```
 Список third-party минификаторов:
 - CSS

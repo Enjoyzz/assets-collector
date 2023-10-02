@@ -26,19 +26,15 @@ class Environment
     private ?RequestFactoryInterface $requestFactory = null;
     private int $directoryPermissions = 0775;
 
-    /**
-     * @var Closure(string):string|Minify|null
-     */
-    private Closure|Minify|null $cssMinify = null;
-
-    /**
-     * @var Closure(string):string|Minify|null
-     */
-    private Closure|Minify|null $jsMinify = null;
 
     private Closure|RenderInterface|null $renderCss = null;
 
     private Closure|RenderInterface|null $renderJs = null;
+
+    /**
+     * @var array<string, Closure|Minifier|null>
+     */
+    private array $minifiers = [];
 
     /**
      * Environment constructor.
@@ -231,33 +227,45 @@ class Environment
         return $this;
     }
 
-    /**
-     * @param Minify|Closure(string):string|null $cssMinify
-     * @return $this
-     */
-    public function setCssMinify(Minify|Closure|null $cssMinify): Environment
+    public function setMinifier(AssetType $type, Minifier|Closure|null $minifier): static
     {
-        $this->cssMinify = $cssMinify;
+        $this->minifiers[$type->value] = $minifier;
         return $this;
     }
 
-    /**
-     * @param Minify|Closure(string):string|null $jsMinify
-     * @return $this
-     */
-    public function setJsMinify(Minify|Closure|null $jsMinify): Environment
+    public function getMinifier(AssetType $type): ?Minifier
     {
-        $this->jsMinify = $jsMinify;
-        return $this;
-    }
+        $minifier = $this->minifiers[$type->value] ?? null;
+        if ($minifier === null) {
+            return null;
+        }
 
+        if ($minifier instanceof Minifier) {
+            return $minifier;
+        }
+
+        return new class($minifier) implements Minifier {
+
+            /**
+             * @param Closure(string): string $minifier
+             */
+            public function __construct(private readonly \Closure $minifier)
+            {
+            }
+
+            public function minify(string $content): string
+            {
+                return call_user_func($this->minifier, $content);
+            }
+        };
+    }
 
 
     /**
      * @param string|AssetType $type
-     * @return Minify|null
+     * @return Minifier|null
      */
-    public function getMinify(string|AssetType $type): Minify|null
+    public function getMinify(string|AssetType $type): Minifier|null
     {
         $type = AssetType::normalize($type);
 
@@ -271,11 +279,11 @@ class Environment
             return null;
         }
 
-        if ($minify instanceof Minify) {
+        if ($minify instanceof Minifier) {
             return $minify;
         }
 
-        return new class($minify) implements Minify {
+        return new class($minify) implements Minifier {
 
             /**
              * @param Closure(string): string $minify
@@ -289,7 +297,6 @@ class Environment
                 return call_user_func($this->minify, $content);
             }
         };
-
     }
 
     public function getRenderer(AssetType|string $type): RenderInterface

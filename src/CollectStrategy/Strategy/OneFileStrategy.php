@@ -123,7 +123,7 @@ class OneFileStrategy extends StrategyAbstract
         }
 
         $this->logger->info(sprintf('Return url: %s', $this->fileUrl));
-        return array_merge([$this->fileUrl => null], $notCollectedResult);
+        return array_merge([$this->addVersion($this->fileUrl) => null], $notCollectedResult);
     }
 
     /**

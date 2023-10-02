@@ -5,6 +5,7 @@ namespace Enjoys\AssetsCollector\CollectStrategy;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
+use GuzzleHttp\Psr7\Uri;
 use Psr\Log\LoggerInterface;
 
 abstract class StrategyAbstract implements StrategyInterface
@@ -36,8 +37,7 @@ abstract class StrategyAbstract implements StrategyInterface
         array $assets,
         protected AssetType|string $type
     ) {
-
-        if (is_string($type)){
+        if (is_string($type)) {
             $this->type = AssetType::from($type);
         }
 
@@ -57,6 +57,15 @@ abstract class StrategyAbstract implements StrategyInterface
     public function getHashId(): string
     {
         return $this->hashId;
+    }
+
+    public function addVersion(string $path): string
+    {
+        $url = new Uri($path);
+        parse_str($url->getQuery(), $query);
+        return $url->withQuery(
+            http_build_query(array_merge($query, $this->environment->getVersionQuery()))
+        )->__toString();
     }
 
 }

@@ -11,14 +11,13 @@ class ManyFilesStrategy extends StrategyAbstract
 {
 
 
-
     /**
      * @return array<string, array|null>
      * @throws \Exception
      */
     public function getResult(): array
     {
-        $cacheDir = $this->environment->getCompileDir().'/.cache';
+        $cacheDir = $this->environment->getCompileDir() . '/.cache';
 
         $result = [];
 
@@ -28,7 +27,7 @@ class ManyFilesStrategy extends StrategyAbstract
             }
 
             if ($asset->isUrl()) {
-                $result[$path] = $asset->getOptions()->getAttributes();
+                $result[$this->addVersion($path)] = $asset->getOptions()->getAttributes();
                 continue;
             }
 
@@ -45,8 +44,8 @@ class ManyFilesStrategy extends StrategyAbstract
              * TODO
              * @psalm-suppress PossiblyNullOperand
              */
-            $cacheFile = $cacheDir.'/'.$asset->getId();
-            if(!file_exists($cacheFile) || (filemtime($cacheFile) + $this->environment->getCacheTime()) < time()){
+            $cacheFile = $cacheDir . '/' . $asset->getId();
+            if (!file_exists($cacheFile) || (filemtime($cacheFile) + $this->environment->getCacheTime()) < time()) {
                 (new Reader($asset, $this->environment))->replaceRelativeUrlsAndCreatedSymlinks();
                 Helpers::createEmptyFile($cacheFile, $this->logger);
             }
@@ -63,18 +62,17 @@ class ManyFilesStrategy extends StrategyAbstract
                 foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }
-
-
-
             } catch (\Exception  $e) {
                 $this->logger->error($e->getMessage());
             }
 
 
-            $result[$this->environment->getBaseUrl() . str_replace(
-                DIRECTORY_SEPARATOR,
-                '/',
-                $link
+            $result[$this->addVersion(
+                $this->environment->getBaseUrl() . str_replace(
+                    DIRECTORY_SEPARATOR,
+                    '/',
+                    $link
+                )
             )] = $asset->getOptions()->getAttributes();
         }
 

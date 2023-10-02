@@ -20,7 +20,7 @@ class Environment
     private int $cacheTime = -1;
     private int $strategy = Assets::STRATEGY_MANY_FILES;
     private ?string $version = null;
-    private string $paramVersion = '?v=';
+    private string $paramVersion = 'v';
     private LoggerInterface $logger;
     private ?ClientInterface $httpClient = null;
     private ?RequestFactoryInterface $requestFactory = null;
@@ -128,7 +128,7 @@ class Environment
         if ($this->version === null) {
             return null;
         }
-        return $this->paramVersion . $this->version;
+        return $this->paramVersion . '=' . $this->version;
     }
 
     /**
@@ -270,55 +270,22 @@ class Environment
     public function getRenderer(AssetType $type): Renderer
     {
         $renderer = $this->renderers[$type->value]
-            ?? $this->getDefaultRenderer($type)
+            ?? RenderFactory::getDefaultRenderer($type)
             ?? throw new UnexpectedParameters('Possible use only css or js');
 
         if ($renderer instanceof Renderer) {
             return $renderer;
         }
 
-        return new class($renderer) implements Renderer {
-
-            /**
-             * @param Closure(array): string $renderer
-             */
-            public function __construct(private \Closure $renderer)
-            {
-            }
-
-            public function render(array $paths): string
-            {
-                return call_user_func($this->renderer, $paths);
-            }
-        };
+        return RenderFactory::createFromClosure($renderer);
     }
 
-    private function getDefaultRenderer(AssetType $type): ?Closure
+    public function getVersionQuery(): array
     {
-        return match ($type) {
-            AssetType::CSS => function (array $paths): string {
-                $result = '';
-                /** @var array<string, string|null>|null $attributes */
-                foreach ($paths as $path => $attributes) {
-                    $attributes = array_merge(['type' => 'text/css', 'rel' => 'stylesheet'], (array)$attributes);
-                    $result .= sprintf(
-                        "<link%s href='{$path}{$this->getVersion()}'>\n",
-                        (new Attributes($attributes))->__toString()
-                    );
-                }
-                return $result;
-            },
-            AssetType::JS => function (array $paths): string {
-                $result = '';
-                /** @var array<string, string|null>|null $attributes */
-                foreach ($paths as $path => $attributes) {
-                    $result .= sprintf(
-                        "<script%s src='{$path}{$this->getVersion()}'></script>\n",
-                        (new Attributes($attributes))->__toString()
-                    );
-                }
-                return $result;
-            }
-        };
+        if ($this->version === null) {
+            return [];
+        }
+        return [$this->paramVersion => $this->version];
     }
+
 }

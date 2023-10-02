@@ -49,19 +49,23 @@ class AssetsTest extends TestCase
             'js',
             [
                 'not/exists.js',
-                'http://localhost/script.js',
-                ['https://localhost/script.js']
+                'http://localhost/script.js?foo=bar&baz=bar',
+                ['https://localhost/script.js?xyz[]=1&xyz[]=2']
             ]
         );
+
+        $assets->getEnvironment()->setParamVersion('version');
+        $assets->getEnvironment()->setVersion(2);
+
         $this->assertSame(
             str_replace(
                 "\r",
                 "",
                 <<<HTML
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css'>
-<link type='text/css' rel='stylesheet' href='http://server.com/style.css'>
-<link type='text/css' rel='stylesheet' href='http://secure.com/style.css'>
-<link type='text/css' rel='stylesheet' href='https://notsecure.com/style.css'>
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css?version=2'>
+<link type='text/css' rel='stylesheet' href='http://server.com/style.css?version=2'>
+<link type='text/css' rel='stylesheet' href='http://secure.com/style.css?version=2'>
+<link type='text/css' rel='stylesheet' href='https://notsecure.com/style.css?version=2'>
 
 HTML
             ),
@@ -69,15 +73,15 @@ HTML
         );
 
 
-        $assets->getEnvironment()->setParamVersion('?v=');
+        $assets->getEnvironment()->setParamVersion('v');
         $assets->getEnvironment()->setVersion(1);
         $this->assertSame(
             str_replace(
                 "\r",
                 "",
                 <<<HTML
-<script src='http://localhost/script.js?v=1'></script>
-<script src='https://localhost/script.js?v=1'></script>
+<script src='http://localhost/script.js?foo=bar&baz=bar&v=1'></script>
+<script src='https://localhost/script.js?xyz%5B0%5D=1&xyz%5B1%5D=2&v=1'></script>
 
 HTML
             ),

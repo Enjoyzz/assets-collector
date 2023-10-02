@@ -25,19 +25,19 @@ class AssetsCollectionTest extends TestCase
     public function testAdd()
     {
         $collection = new AssetsCollection($this->environment);
-        $collection->add(new Asset('css', 'http://test.test/style.css'),  'common');
+        $collection->add(new Asset(AssetType::CSS, 'http://test.test/style.css'),  'common');
         $this->assertCount(1, $collection->get(AssetType::CSS, 'common'));
 
-        $collection->add(new Asset('css', 'http://test.test/style.css'),  'common');
+        $collection->add(new Asset(AssetType::CSS, 'http://test.test/style.css'),  'common');
         $this->assertCount(1, $collection->get(AssetType::CSS, 'common'));
 
 //        $collection->add(new Asset('css', 'tests/fixtures/test.css', []),  'common');
 //        $this->assertCount(2, $collection->get('css', 'common'));
 
-        $collection->add(new Asset( 'css', __DIR__.'/fixtures/test.css'),  'common');
+        $collection->add(new Asset( AssetType::CSS, __DIR__.'/fixtures/test.css'),  'common');
         $this->assertCount(2, $collection->get(AssetType::CSS, 'common'));
 
-        $collection->add(new Asset('css', __DIR__.'/fixtures/notexist.css'), 'common');
+        $collection->add(new Asset(AssetType::CSS, __DIR__.'/fixtures/notexist.css'), 'common');
         $this->assertCount(2, $collection->get(AssetType::CSS, 'common'));
 
         $this->assertSame([], $collection->get('css', 'empty_namespace'));

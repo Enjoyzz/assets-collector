@@ -4,6 +4,7 @@ namespace Tests\Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetsCollection;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\ManyFilesStrategy;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
@@ -39,9 +40,9 @@ class ManyFilesStrategyTest extends TestCase
 
     public function testManyFilesStrategy(): void
     {
-        $this->assetCollection->add(new Asset('css', '//google.com'), 'test');
-        $this->assetCollection->add(new Asset('css', '//yandex.ru'), 'test');
-        $this->assetCollection->add(new Asset('css', __DIR__ . '/../../fixtures/test.css'), 'test');
+        $this->assetCollection->add(new Asset(AssetType::CSS, '//google.com'), 'test');
+        $this->assetCollection->add(new Asset(AssetType::CSS, '//yandex.ru'), 'test');
+        $this->assetCollection->add(new Asset(AssetType::CSS, __DIR__ . '/../../fixtures/test.css'), 'test');
 
         $strategy = new ManyFilesStrategy(
             $this->environment,

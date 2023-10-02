@@ -50,7 +50,7 @@ class StrategyFactoryTest extends TestCase
 
         $factory = StrategyFactory::getStrategy(
             $environment,
-            [new Asset('css', '//test.com')],
+            [new Asset(AssetType::CSS, '//test.com')],
             'css'
         );
 
@@ -69,7 +69,7 @@ class StrategyFactoryTest extends TestCase
 
         StrategyFactory::getStrategy(
             $environment,
-            [new Asset('css', '//test.com')],
+            [new Asset(AssetType::CSS, '//test.com')],
             AssetType::CSS
         );
     }

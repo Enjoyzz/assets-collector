@@ -70,7 +70,7 @@ class ReaderTest extends TestCase
 
     public function testLocalFile(): void
     {
-        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css'), $this->environment);
+        $reader = new Reader(new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css'), $this->environment);
         $reader->minify();
         $this->assertSame("body{color:#00008b}\n", $reader->getContents());
     }
@@ -78,7 +78,7 @@ class ReaderTest extends TestCase
     public function testLocalFileNoMinify(): void
     {
         $reader = new Reader(
-            new Asset('css', __DIR__ . '/../fixtures/test.css', [AssetOption::MINIFY => false]),
+            new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css', [AssetOption::MINIFY => false]),
             $this->environment
         );
         $this->assertSame(
@@ -94,20 +94,20 @@ CSS,
 
     public function testReturnGetContentReadFalse(): void
     {
-        $reader = new Reader(new Asset('css', '/'), $this->environment);
+        $reader = new Reader(new Asset(AssetType::CSS, '/'), $this->environment);
         $this->assertSame('', $reader->getContents());
     }
 
     public function testReturnGetContentFileExistsFalse(): void
     {
-        $reader = new Reader(new Asset('css', '/test.css'), $this->environment);
+        $reader = new Reader(new Asset(AssetType::CSS, '/test.css'), $this->environment);
         $this->assertSame('', $reader->getContents());
     }
 
     public function testWithReplaceRelativePath(): void
     {
         $reader = new Reader(
-            new Asset('css', __DIR__ . '/../fixtures/sub/css/style.css', [AssetOption::MINIFY => false]),
+            new Asset(AssetType::CSS, __DIR__ . '/../fixtures/sub/css/style.css', [AssetOption::MINIFY => false]),
             $this->environment
         );
         $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify();
@@ -129,7 +129,7 @@ CSS
     {
       //  $this->environment->setStrategy(Assets::STRATEGY_ONE_FILE);
         $reader = new Reader(
-            new Asset('css', 'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css', [AssetOption::MINIFY => false]),
+            new Asset(AssetType::CSS, 'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css', [AssetOption::MINIFY => false]),
             $this->environment
         );
         $this->assertStringContainsString('https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/fonts/fontawesome-webfont.eot', $reader->getContents());

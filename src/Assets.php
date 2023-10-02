@@ -82,7 +82,7 @@ class Assets
 
         $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
 //        return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);
-        return $this->getEnvironment()->getRenderer($type)->getResult($paths);
+        return $this->getEnvironment()->getRenderer($type)->render($paths);
     }
 
 

@@ -27,14 +27,15 @@ class Environment
     private int $directoryPermissions = 0775;
 
 
-    private Closure|RenderInterface|null $renderCss = null;
-
-    private Closure|RenderInterface|null $renderJs = null;
-
     /**
      * @var array<string, Closure|Minifier|null>
      */
     private array $minifiers = [];
+
+    /**
+     * @var array<string, Closure|Renderer|null>
+     */
+    private array $renderers = [];
 
     /**
      * Environment constructor.
@@ -260,60 +261,23 @@ class Environment
         };
     }
 
-
-    /**
-     * @param string|AssetType $type
-     * @return Minifier|null
-     */
-    public function getMinify(string|AssetType $type): Minifier|null
+    public function setRenderer(AssetType $type, Renderer|Closure|null $renderer): static
     {
-        $type = AssetType::normalize($type);
-
-        $minify = match ($type->value) {
-            'css' => $this->cssMinify,
-            'js' => $this->jsMinify,
-            default => null
-        };
-
-        if ($minify === null) {
-            return null;
-        }
-
-        if ($minify instanceof Minifier) {
-            return $minify;
-        }
-
-        return new class($minify) implements Minifier {
-
-            /**
-             * @param Closure(string): string $minify
-             */
-            public function __construct(private readonly \Closure $minify)
-            {
-            }
-
-            public function minify(string $content): string
-            {
-                return call_user_func($this->minify, $content);
-            }
-        };
+        $this->renderers[$type->value] = $renderer;
+        return $this;
     }
 
-    public function getRenderer(AssetType|string $type): RenderInterface
+    public function getRenderer(AssetType $type): Renderer
     {
-        $type = AssetType::normalize($type);
+        $renderer = $this->renderers[$type->value]
+            ?? $this->getDefaultRenderer($type)
+            ?? throw new UnexpectedParameters('Possible use only css or js');
 
-        $renderer = match ($type->value) {
-            'css' => $this->getRenderCss(),
-            'js' => $this->getRenderJs(),
-            default => throw new UnexpectedParameters('Possible use only css or js')
-        };
-
-        if ($renderer instanceof RenderInterface) {
+        if ($renderer instanceof Renderer) {
             return $renderer;
         }
 
-        return new class($renderer) implements RenderInterface {
+        return new class($renderer) implements Renderer {
 
             /**
              * @param Closure(array): string $renderer
@@ -322,53 +286,39 @@ class Environment
             {
             }
 
-            public function getResult(array $paths): string
+            public function render(array $paths): string
             {
                 return call_user_func($this->renderer, $paths);
             }
         };
     }
 
-    private function getRenderCss(): RenderInterface|\Closure
+    private function getDefaultRenderer(AssetType $type): ?Closure
     {
-        return $this->renderCss ?? function (array $paths): string {
-            $result = '';
-            /** @var array<string, string|null>|null $attributes */
-            foreach ($paths as $path => $attributes) {
-                $attributes = array_merge(['type' => 'text/css', 'rel' => 'stylesheet'], (array)$attributes);
-                $result .= sprintf(
-                    "<link%s href='{$path}{$this->getVersion()}'>\n",
-                    (new Attributes($attributes))->__toString()
-                );
+        return match ($type) {
+            AssetType::CSS => function (array $paths): string {
+                $result = '';
+                /** @var array<string, string|null>|null $attributes */
+                foreach ($paths as $path => $attributes) {
+                    $attributes = array_merge(['type' => 'text/css', 'rel' => 'stylesheet'], (array)$attributes);
+                    $result .= sprintf(
+                        "<link%s href='{$path}{$this->getVersion()}'>\n",
+                        (new Attributes($attributes))->__toString()
+                    );
+                }
+                return $result;
+            },
+            AssetType::JS => function (array $paths): string {
+                $result = '';
+                /** @var array<string, string|null>|null $attributes */
+                foreach ($paths as $path => $attributes) {
+                    $result .= sprintf(
+                        "<script%s src='{$path}{$this->getVersion()}'></script>\n",
+                        (new Attributes($attributes))->__toString()
+                    );
+                }
+                return $result;
             }
-            return $result;
         };
-    }
-
-    private function getRenderJs(): RenderInterface|\Closure
-    {
-        return $this->renderJs ?? function (array $paths): string {
-            $result = '';
-            /** @var array<string, string|null>|null $attributes */
-            foreach ($paths as $path => $attributes) {
-                $result .= sprintf(
-                    "<script%s src='{$path}{$this->getVersion()}'></script>\n",
-                    (new Attributes($attributes))->__toString()
-                );
-            }
-            return $result;
-        };
-    }
-
-    public function setRenderCss(Closure|RenderInterface|null $renderCss): Environment
-    {
-        $this->renderCss = $renderCss;
-        return $this;
-    }
-
-    public function setRenderJs(Closure|RenderInterface|null $renderJs): Environment
-    {
-        $this->renderJs = $renderJs;
-        return $this;
     }
 }

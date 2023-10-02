@@ -236,29 +236,7 @@ class Environment
 
     public function getMinifier(AssetType $type): ?Minifier
     {
-        $minifier = $this->minifiers[$type->value] ?? null;
-        if ($minifier === null) {
-            return null;
-        }
-
-        if ($minifier instanceof Minifier) {
-            return $minifier;
-        }
-
-        return new class($minifier) implements Minifier {
-
-            /**
-             * @param Closure(string): string $minifier
-             */
-            public function __construct(private readonly \Closure $minifier)
-            {
-            }
-
-            public function minify(string $content): string
-            {
-                return call_user_func($this->minifier, $content);
-            }
-        };
+        return MinifierFactory::get($this->minifiers[$type->value] ?? null);
     }
 
     public function setRenderer(AssetType $type, Renderer|Closure|null $renderer): static
@@ -273,11 +251,10 @@ class Environment
             ?? RenderFactory::getDefaultRenderer($type)
             ?? throw new UnexpectedParameters('Possible use only css or js');
 
-        if ($renderer instanceof Renderer) {
-            return $renderer;
+        if ($renderer instanceof \Closure) {
+            return RenderFactory::createFromClosure($renderer);
         }
-
-        return RenderFactory::createFromClosure($renderer);
+        return $renderer;
     }
 
     public function getVersionQuery(): array

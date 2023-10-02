@@ -57,13 +57,11 @@ class OneFileStrategy extends StrategyAbstract
     }
 
     /**
-     * @param string $type css|js
+     * @param AssetType $type css|js
      * @return string
      */
-    private function generateFilename(string|AssetType $type): string
+    private function generateFilename(AssetType $type): string
     {
-        $type = AssetType::normalize($type);
-
         return '_' . $type->value . DIRECTORY_SEPARATOR . $this->getHashId() . '.' . $type->value;
     }
 

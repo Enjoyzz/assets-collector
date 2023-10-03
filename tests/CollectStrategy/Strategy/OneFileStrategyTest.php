@@ -28,7 +28,7 @@ class OneFileStrategyTest extends TestCase
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../..');
         $this->environment->setBaseUrl('/test/something');
-        $this->environment->setMinifier(AssetType::CSS, function ($content){
+        $this->environment->setMinifier(AssetType::CSS, function ($content) {
             $compressor = new CSSMin();
             return $compressor->run($content);
         });
@@ -51,8 +51,13 @@ class OneFileStrategyTest extends TestCase
         ];
         $strategy = new OneFileStrategy($this->environment, $assetsCollection, AssetType::CSS);
 
-        $this->assertSame(['/test/something/_css/' . $strategy->getHashId() . '.css' => null],
-            $strategy->getResult());
+        $this->assertSame(['/test/something/_css/' . $strategy->getHashId() . '.css'],
+            array_map(function ($i){
+                return $i->getAttributeCollection()->get(AssetType::CSS->getSrcAttribute());
+            }, $strategy->getResult(), [])
+        );
+
+
         $this->assertSame(
             str_replace(
                 "\r",
@@ -81,10 +86,13 @@ CSS
         $strategy = new OneFileStrategy($this->environment, $assetsCollection, AssetType::CSS);
 
         $this->assertSame([
-            '/test/something/_css/' . $strategy->getHashId() . '.css' => null,
-            '/test/something/fixtures/test3.css' => null
+            '/test/something/_css/' . $strategy->getHashId() . '.css',
+            '/test/something/fixtures/test3.css'
         ],
-            $strategy->getResult());
+            array_map(function ($i) {
+                return $i->getAttributeCollection()->get(AssetType::CSS->getSrcAttribute());
+            }, $strategy->getResult())
+        );
         $this->assertSame(
             str_replace(
                 "\r",

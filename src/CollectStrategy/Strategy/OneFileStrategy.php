@@ -3,7 +3,9 @@
 namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\AssetType;
+use Enjoys\AssetsCollector\AttributeCollection;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
@@ -91,7 +93,7 @@ class OneFileStrategy extends StrategyAbstract
     }
 
     /**
-     * @return array<string, array|null>
+     * @return Asset[]
      */
     public function getResult(): array
     {
@@ -121,7 +123,12 @@ class OneFileStrategy extends StrategyAbstract
         }
 
         $this->logger->info(sprintf('Return url: %s', $this->fileUrl));
-        return array_merge([$this->addVersion($this->fileUrl) => null], $notCollectedResult);
+
+        return array_merge([new Asset($this->type, $this->fileUrl, [
+            AssetOption::ATTRIBUTES => [
+                $this->type->getSrcAttribute() => $this->fileUrl
+            ]
+        ])], $notCollectedResult);
     }
 
     /**

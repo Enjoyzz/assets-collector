@@ -6,26 +6,45 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector;
 
 
-final class Attributes
+final class AttributeCollection
 {
-    /**
-     * @var array<array-key, string|null|false>|null
-     */
-    private ?array $attributes;
 
     /**
      * @param array<array-key, string|null|false>|null $attributes
      */
-    public function __construct(?array $attributes)
+    public function __construct(private array $attributes = [])
     {
-        $this->attributes = $attributes;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->attributes === [];
+    }
+
+    public function set(string $key, string|null|false $value, bool $replace = false): AttributeCollection
+    {
+        if ($replace === false && array_key_exists($key, $this->attributes)) {
+            return $this;
+        }
+
+        $this->attributes[$key] = $value;
+        return $this;
+    }
+
+    public function get(string $key): string|null|false
+    {
+        if (array_key_exists($key, $this->attributes)) {
+            return $this->attributes[$key];
+        }
+        return false;
     }
 
     public function __toString(): string
     {
-        if ($this->attributes === null) {
+        if ($this->isEmpty()) {
             return '';
         }
+
         $result = [];
         foreach ($this->attributes as $key => $value) {
             if ($value === false) {
@@ -49,4 +68,11 @@ final class Attributes
 
         return (empty($result)) ? '' : ' ' . implode(" ", $result);
     }
+
+    public function getArray(): array
+    {
+        return $this->attributes;
+    }
+
+
 }

@@ -2,7 +2,9 @@
 
 namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
+use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
+use Enjoys\AssetsCollector\AttributeCollection;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Helpers;
@@ -12,22 +14,21 @@ class ManyFilesStrategy extends StrategyAbstract
 
 
     /**
-     * @return array<string, array|null>
+     * @return array<string, Asset>
      * @throws \Exception
      */
     public function getResult(): array
     {
         $cacheDir = $this->environment->getCompileDir() . '/.cache';
 
-        $result = [];
+//        $result = [];
 
         foreach ($this->assets as $asset) {
-            if (false === $path = $asset->getPath()) {
-                continue;
-            }
+            $path = $asset->getPath();
+            $assetAttributeCollection = $asset->getAttributeCollection();
 
             if ($asset->isUrl()) {
-                $result[$this->addVersion($path)] = $asset->getOptions()->getAttributes();
+                $assetAttributeCollection->set($this->type->getSrcAttribute(), $this->addVersion($path));
                 continue;
             }
 
@@ -67,15 +68,15 @@ class ManyFilesStrategy extends StrategyAbstract
             }
 
 
-            $result[$this->addVersion(
+            $assetAttributeCollection->set($this->type->getSrcAttribute(),$this->addVersion(
                 $this->environment->getBaseUrl() . str_replace(
                     DIRECTORY_SEPARATOR,
                     '/',
                     $link
                 )
-            )] = $asset->getOptions()->getAttributes();
+            ));
         }
 
-        return $result;
+        return $this->assets;
     }
 }

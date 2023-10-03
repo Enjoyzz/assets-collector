@@ -18,4 +18,12 @@ enum AssetType: string
             'JS', 'Js', 'js' => AssetType::JS,
         };
     }
+
+    public function getSrcAttribute(): string
+    {
+        return match($this) {
+            AssetType::CSS => 'href',
+            AssetType::JS => 'src'
+        };
+    }
 }

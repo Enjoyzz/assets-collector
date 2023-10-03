@@ -47,16 +47,18 @@ class ManyFilesStrategyTest extends TestCase
         $strategy = new ManyFilesStrategy(
             $this->environment,
             $this->assetCollection->get('css', 'test'),
-            'css'
+            AssetType::CSS
         );
 
         $this->assertSame(
             [
-                'http://google.com' => null,
-                'http://yandex.ru' => null,
-                '/foo/fixtures/test.css' => null
+                'http://google.com',
+                'http://yandex.ru',
+                '/foo/fixtures/test.css',
             ],
-            $strategy->getResult()
+            array_map(function ($i){
+                return $i->getAttributeCollection()->get(AssetType::CSS->getSrcAttribute());
+            }, $strategy->getResult(), [])
         );
     }
 }

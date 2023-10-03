@@ -18,15 +18,23 @@ final class RenderFactory
 
     private static function defaultCssRenderer(): \Closure
     {
-        return function (array $paths): string {
+        /**
+         * @param Asset[] $assets
+         * @return string
+         */
+        return function (array $assets): string {
             $result = '';
-            /** @var array<string, string|null>|null $attributes */
-            foreach ($paths as $path => $attributes) {
-                $attributes = array_merge(['type' => 'text/css', 'rel' => 'stylesheet'], (array)$attributes);
+            foreach ($assets as $asset) {
+                $attributes = $asset->getAttributeCollection()
+                    ->set('type', 'text/css')
+                    ->set('rel', 'stylesheet')
+                    ->getArray();
+
+                krsort($attributes);
+
                 $result .= sprintf(
-                    "<link%s href='%s'>\n",
-                    (new Attributes($attributes))->__toString(),
-                    $path
+                    "<link%s>\n",
+                    new AttributeCollection($attributes)
                 );
             }
             return $result;
@@ -35,19 +43,20 @@ final class RenderFactory
 
     private static function defaultJsRenderer(): \Closure
     {
-        return function (array $paths): string {
+        /**
+         * @param Asset[] $assets
+         * @return string
+         */
+        return function (array $assets): string {
             $result = '';
-            /** @var array<string, string|null>|null $attributes */
-            foreach ($paths as $path => $attributes) {
+            foreach ($assets as $asset) {
                 $result .= sprintf(
-                    "<script%s src='%s'></script>\n",
-                    (new Attributes($attributes))->__toString(),
-                    $path
+                    "<script%s></script>\n",
+                    $asset->getAttributeCollection()
                 );
             }
             return $result;
         };
-
     }
 
     public static function createFromClosure(\Closure $closure): Renderer

@@ -18,6 +18,7 @@ class Asset
     private string $url = '';
 
     private AssetOption $options;
+    private AttributeCollection $attributeCollection;
 
     /**
      * @param AssetType $type
@@ -27,6 +28,9 @@ class Asset
     public function __construct(private readonly AssetType $type, string $path, array $options = [])
     {
         $this->origPath = $path;
+
+        $this->attributeCollection = new AttributeCollection($options[AssetOption::ATTRIBUTES] ?? []);
+
         $this->options = new AssetOption($options);
 
         $this->isUrl = $this->checkIsUrl($path);
@@ -114,4 +118,11 @@ class Asset
     {
         return $this->options;
     }
+
+    public function getAttributeCollection(): AttributeCollection
+    {
+        return $this->attributeCollection;
+    }
+
+
 }

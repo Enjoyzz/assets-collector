@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enjoys\AssetsCollector\CollectStrategy;
 
 use Enjoys\AssetsCollector\Asset;
@@ -29,20 +31,20 @@ abstract class StrategyAbstract implements StrategyInterface
     /**
      * StrategyAbstract constructor.
      * @param Environment $environment
-     * @param array<Asset> $assets
-     * @param string $type
+     * @param Asset[] $assets
+     * @param AssetType $type
      */
     public function __construct(
         Environment $environment,
         array $assets,
-        protected AssetType|string $type
+        protected AssetType $type
     ) {
-        if (is_string($type)) {
-            $this->type = AssetType::from($type);
-        }
-
         $this->environment = $environment;
-        $this->assets = $assets;
+
+        $this->assets = array_filter($assets, function (Asset $asset) {
+            return $asset->getPath() !== false;
+        });
+
         $this->hashId = $this->generateHashId();
         $this->logger = $environment->getLogger();
     }

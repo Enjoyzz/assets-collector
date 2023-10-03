@@ -14,7 +14,6 @@ final class AssetOption
     private bool $minify = true;
     private bool $replaceRelativeUrls = true;
     private bool $notCollect = false;
-    private ?array $attributes = null;
     /**
      * @var array<string, string>
      */
@@ -67,11 +66,6 @@ final class AssetOption
     public function isNotCollect(): bool
     {
         return $this->notCollect;
-    }
-
-    public function getAttributes(): ?array
-    {
-        return $this->attributes;
     }
 
     /**

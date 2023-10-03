@@ -7,7 +7,6 @@ use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
-use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;

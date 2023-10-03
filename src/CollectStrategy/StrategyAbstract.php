@@ -12,18 +12,9 @@ use Psr\Log\LoggerInterface;
 
 abstract class StrategyAbstract implements StrategyInterface
 {
-    /**
-     * @var Asset[]
-     */
-    protected array $assets;
 
     protected string $hashId;
 
-
-    /**
-     * @var Environment
-     */
-    protected Environment $environment;
 
     protected LoggerInterface $logger;
 
@@ -35,16 +26,10 @@ abstract class StrategyAbstract implements StrategyInterface
      * @param AssetType $type
      */
     public function __construct(
-        Environment $environment,
-        array $assets,
+        protected Environment $environment,
+        protected array $assets,
         protected AssetType $type
     ) {
-        $this->environment = $environment;
-
-        $this->assets = array_filter($assets, function (Asset $asset) {
-            return $asset->getPath() !== false;
-        });
-
         $this->hashId = $this->generateHashId();
         $this->logger = $environment->getLogger();
     }

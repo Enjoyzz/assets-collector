@@ -4,27 +4,28 @@ namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
-use Enjoys\AssetsCollector\AttributeCollection;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Helpers;
+use Exception;
 
 class ManyFilesStrategy extends StrategyAbstract
 {
 
 
     /**
-     * @return array<string, Asset>
-     * @throws \Exception
+     * @return Asset[]
+     * @throws Exception
      */
     public function getResult(): array
     {
         $cacheDir = $this->environment->getCompileDir() . '/.cache';
 
-//        $result = [];
-
         foreach ($this->assets as $asset) {
-            $path = $asset->getPath();
+            if(false === $path = $asset->getPath()){
+                continue;
+            }
+
             $assetAttributeCollection = $asset->getAttributeCollection();
 
             if ($asset->isUrl()) {
@@ -41,11 +42,7 @@ class ManyFilesStrategy extends StrategyAbstract
                 $path
             );
 
-            /**
-             * TODO
-             * @psalm-suppress PossiblyNullOperand
-             */
-            $cacheFile = $cacheDir . '/' . $asset->getId();
+            $cacheFile = $cacheDir . '/' . ($asset->getId() ?? '');
             if (!file_exists($cacheFile) || (filemtime($cacheFile) + $this->environment->getCacheTime()) < time()) {
                 (new Reader($asset, $this->environment))->replaceRelativeUrlsAndCreatedSymlinks();
                 Helpers::createEmptyFile($cacheFile, $this->logger);
@@ -63,7 +60,7 @@ class ManyFilesStrategy extends StrategyAbstract
                 foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     Helpers::createSymlink($optLink, $optTarget, $this->logger);
                 }
-            } catch (\Exception  $e) {
+            } catch (Exception  $e) {
                 $this->logger->error($e->getMessage());
             }
 
@@ -77,6 +74,8 @@ class ManyFilesStrategy extends StrategyAbstract
             ));
         }
 
-        return $this->assets;
+        return array_filter($this->assets, function (Asset $asset) {
+            return $asset->getPath() !== false;
+        });
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
+use Closure;
+
 final class RenderFactory
 {
 
@@ -16,7 +18,10 @@ final class RenderFactory
         };
     }
 
-    private static function defaultCssRenderer(): \Closure
+    /**
+     * @return Closure(Asset[]): string
+     */
+    private static function defaultCssRenderer(): Closure
     {
         /**
          * @param Asset[] $assets
@@ -34,14 +39,17 @@ final class RenderFactory
 
                 $result .= sprintf(
                     "<link%s>\n",
-                    new AttributeCollection($attributes)
+                    (new AttributeCollection($attributes))->__toString()
                 );
             }
             return $result;
         };
     }
 
-    private static function defaultJsRenderer(): \Closure
+    /**
+     * @return Closure(Asset[]): string
+     */
+    private static function defaultJsRenderer(): Closure
     {
         /**
          * @param Asset[] $assets
@@ -52,27 +60,31 @@ final class RenderFactory
             foreach ($assets as $asset) {
                 $result .= sprintf(
                     "<script%s></script>\n",
-                    $asset->getAttributeCollection()
+                    $asset->getAttributeCollection()->__toString()
                 );
             }
             return $result;
         };
     }
 
-    public static function createFromClosure(\Closure $closure): Renderer
+    /**
+     * @param Closure(Asset[]): string $closure
+     * @return Renderer
+     */
+    public static function createFromClosure(Closure $closure): Renderer
     {
         return new class($closure) implements Renderer {
 
             /**
-             * @param Closure(array): string $renderer
+             * @param Closure(Asset[]): string $renderer
              */
-            public function __construct(private readonly \Closure $renderer)
+            public function __construct(private readonly Closure $renderer)
             {
             }
 
-            public function render(array $paths): string
+            public function render(array $assets): string
             {
-                return call_user_func($this->renderer, $paths);
+                return call_user_func($this->renderer, $assets);
             }
         };
     }

@@ -4,30 +4,36 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
+use Closure;
+
 final class MinifierFactory
 {
 
-    public static function get(\Closure|Minifier|null $minifier): ?Minifier
+    /**
+     * @param Closure(string):string|Minifier|null $minifier
+     * @return Minifier|null
+     */
+    public static function get(Closure|Minifier|null $minifier): ?Minifier
     {
-        if ($minifier instanceof \Closure){
-            return self::createFromClosure($minifier);
-        }
-
-        if ($minifier instanceof Minifier){
+        if ($minifier instanceof Minifier || $minifier === null){
             return $minifier;
         }
 
-        return null;
+        return self::createFromClosure($minifier);
     }
 
-    public static function createFromClosure(\Closure $closure): Minifier
+    /**
+     * @param Closure(string): string $closure
+     * @return Minifier
+     */
+    public static function createFromClosure(Closure $closure): Minifier
     {
         return new class($closure) implements Minifier {
 
             /**
              * @param Closure(string): string $minifier
              */
-            public function __construct(private readonly \Closure $minifier)
+            public function __construct(private readonly Closure $minifier)
             {
             }
 

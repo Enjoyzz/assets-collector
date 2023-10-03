@@ -10,7 +10,7 @@ final class AttributeCollection
 {
 
     /**
-     * @param array<array-key, string|null|false>|null $attributes
+     * @param array<array-key, string|null|false> $attributes
      */
     public function __construct(private array $attributes = [])
     {
@@ -69,6 +69,10 @@ final class AttributeCollection
         return (empty($result)) ? '' : ' ' . implode(" ", $result);
     }
 
+
+    /**
+     * @return array<array-key, string|null|false>
+     */
     public function getArray(): array
     {
         return $this->attributes;

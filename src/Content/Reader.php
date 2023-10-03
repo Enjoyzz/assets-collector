@@ -3,14 +3,13 @@
 namespace Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
-use Enjoys\AssetsCollector\Content\Minify\MinifyFactory;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\Minifier;
-use Enjoys\AssetsCollector\MinifyInterface;
+use Exception;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
+use RuntimeException;
+use Throwable;
 
 /**
  * Class Reader
@@ -20,14 +19,9 @@ class Reader
 {
 
 
-    /**
-     * @var false|string
-     */
-    private $content;
+    private false|string $content;
 
-    /**
-     * @var LoggerInterface|NullLogger
-     */
+
     private LoggerInterface $logger;
 
     /**
@@ -36,15 +30,15 @@ class Reader
      * @param Environment $environment
      */
     public function __construct(
-        private Asset $asset,
-        private Environment $environment,
+        private readonly Asset $asset,
+        private readonly Environment $environment,
     ) {
         $this->logger = $this->environment->getLogger();
         $this->content = $this->getContent();
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getContents(): string
     {
@@ -56,25 +50,20 @@ class Reader
     }
 
 
-    /**
-     * @return false|string
-     */
-    private function getContent()
+    private function getContent(): false|string
     {
-        if ($this->asset->getPath() === false) {
+        if (false === $path = $this->asset->getPath()) {
             return false;
         }
 
         if ($this->asset->isUrl()) {
-            return $this->readUrl($this->asset->getPath());
+            return $this->readUrl($path);
         }
-        return $this->readFile($this->asset->getPath());
+        return $this->readFile($path);
     }
 
-    /**
-     * @return false|string
-     */
-    private function readUrl(string $url)
+
+    private function readUrl(string $url): false|string
     {
         if (
             null !== ($httpClient = $this->environment->getHttpClient())
@@ -87,10 +76,9 @@ class Reader
     }
 
     /**
-     * @return false|string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    private function readWithPhpFileGetContents(string $url)
+    private function readWithPhpFileGetContents(string $url): false|string
     {
         try {
             //Clear the most recent error
@@ -99,47 +87,41 @@ class Reader
             /** @var null|string[] $error */
             $error = error_get_last();
             if ($error !== null) {
-                throw new \RuntimeException(sprintf("%s", $error['message']));
+                throw new RuntimeException(sprintf("%s", $error['message']));
             }
             return $content;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->notice($e->getMessage());
             return false;
         }
     }
 
-    /**
-     * @return false|string
-     */
+
     private function readWithPsrHttpClient(
         string $url,
         ClientInterface $client,
         RequestFactoryInterface $requestFactory
-    ) {
+    ): false|string {
         try {
             $response = $client->sendRequest(
                 $requestFactory->createRequest('get', $url)
             );
 
             if ($response->getStatusCode() !== 200) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf('HTTP error: %s - %s', $response->getStatusCode(), $response->getReasonPhrase())
                 );
             }
 
             $this->logger->info(sprintf('Read: %s', $url));
             return $response->getBody()->getContents();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->notice($e->getMessage());
             return false;
         }
     }
 
-    /**
-     * @param string $filename
-     * @return false|string
-     */
-    private function readFile(string $filename)
+    private function readFile(string $filename): false|string
     {
         if (!file_exists($filename)) {
             $this->logger->notice(sprintf("Файла по указанному пути нет: %s", $filename));
@@ -148,7 +130,7 @@ class Reader
 
         try {
             $content = $this->readWithPhpFileGetContents($filename);
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->logger->notice(sprintf("Ошибка чтения содержимого файла: %s", $e->getMessage()));
             return false;
         }
@@ -157,25 +139,22 @@ class Reader
         return $content;
     }
 
-    /**
-     * @param LoggerInterface|NullLogger $logger
-     */
-    public function setLogger($logger): void
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function replaceRelativeUrlsAndCreatedSymlinks(): Reader
     {
-        if ($this->content === false || $this->asset->getPath() === false) {
+        if ($this->content === false || false === $path = $this->asset->getPath()) {
             return $this;
         }
 
         if ($this->asset->getOptions()->isReplaceRelativeUrls()) {
-            $replaceRelativeUrls = new ReplaceRelative($this->content, $this->asset->getPath(), $this->asset, $this->environment);
+            $replaceRelativeUrls = new ReplaceRelative($this->content, $path, $this->asset, $this->environment);
             $replaceRelativeUrls->setLogger($this->logger);
             $this->content = $replaceRelativeUrls->getContent();
         }
@@ -185,7 +164,7 @@ class Reader
 
     public function minify(): Reader
     {
-        if ($this->content === false || $this->asset->getPath() === false || !$this->asset->getOptions()->isMinify()) {
+        if ($this->content === false || (false === $path = $this->asset->getPath()) || !$this->asset->getOptions()->isMinify()) {
             return $this;
         }
 
@@ -195,7 +174,7 @@ class Reader
             return $this;
         }
 
-        $this->logger->info(sprintf('Minify: %s', $this->asset->getPath()));
+        $this->logger->info(sprintf('Minify: %s', $path));
 
         $this->content = $minifier->minify($this->content) . "\n";
         return $this;

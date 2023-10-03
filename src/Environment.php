@@ -28,12 +28,12 @@ class Environment
 
 
     /**
-     * @var array<string, Closure|Minifier|null>
+     * @var array<string, Closure(string):string|Minifier|null>
      */
     private array $minifiers = [];
 
     /**
-     * @var array<string, Closure|Renderer|null>
+     * @var array<string, Closure(Asset[]):string|Renderer|null>
      */
     private array $renderers = [];
 
@@ -228,6 +228,11 @@ class Environment
         return $this;
     }
 
+    /**
+     * @param AssetType $type
+     * @param Minifier|Closure(string):string|null $minifier
+     * @return $this
+     */
     public function setMinifier(AssetType $type, Minifier|Closure|null $minifier): static
     {
         $this->minifiers[$type->value] = $minifier;
@@ -239,7 +244,12 @@ class Environment
         return MinifierFactory::get($this->minifiers[$type->value] ?? null);
     }
 
-    public function setRenderer(AssetType $type, Renderer|Closure|null $renderer): static
+    /**
+     * @param AssetType $type
+     * @param Renderer|Closure(Asset[]):string|null $renderer
+     * @return $this
+     */
+    public function setRenderer(AssetType $type, Renderer|Closure|null $renderer): Environment
     {
         $this->renderers[$type->value] = $renderer;
         return $this;
@@ -248,13 +258,13 @@ class Environment
     public function getRenderer(AssetType $type): Renderer
     {
         $renderer = $this->renderers[$type->value]
-            ?? RenderFactory::getDefaultRenderer($type)
-            ?? throw new UnexpectedParameters('Possible use only css or js');
+            ?? RenderFactory::getDefaultRenderer($type);
 
-        if ($renderer instanceof \Closure) {
-            return RenderFactory::createFromClosure($renderer);
+        if ($renderer instanceof Renderer) {
+            return $renderer;
         }
-        return $renderer;
+        return RenderFactory::createFromClosure($renderer);
+
     }
 
     public function getVersionQuery(): array

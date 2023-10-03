@@ -20,15 +20,17 @@ class Asset
     private AssetOption $options;
     private AttributeCollection $attributeCollection;
 
+
     /**
      * @param AssetType $type
      * @param string $path
-     * @param array<string, string|bool|array|null> $options
+     * @param array<string, bool|array> $options
      */
     public function __construct(private readonly AssetType $type, string $path, array $options = [])
     {
         $this->origPath = $path;
 
+        /**  @psalm-suppress MixedArgumentTypeCoercion  */
         $this->attributeCollection = new AttributeCollection($options[AssetOption::ATTRIBUTES] ?? []);
 
         $this->options = new AssetOption($options);

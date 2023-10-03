@@ -5,11 +5,11 @@ namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\AssetType;
-use Enjoys\AssetsCollector\AttributeCollection;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Helpers;
+use Exception;
 
 class OneFileStrategy extends StrategyAbstract
 {
@@ -27,8 +27,8 @@ class OneFileStrategy extends StrategyAbstract
      * Build constructor.
      * @param Environment $environment
      * @param array<Asset> $assets
-     * @param string $type
-     * @throws \Exception
+     * @param AssetType $type
+     * @throws Exception
      */
     public function __construct(
         Environment $environment,
@@ -68,7 +68,7 @@ class OneFileStrategy extends StrategyAbstract
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function init(): void
     {
@@ -94,6 +94,7 @@ class OneFileStrategy extends StrategyAbstract
 
     /**
      * @return Asset[]
+     * @throws Exception
      */
     public function getResult(): array
     {
@@ -103,10 +104,17 @@ class OneFileStrategy extends StrategyAbstract
             if ($this->isCacheValid()) {
                 $this->logger->info(sprintf('Use cached file: %s', $this->filePath));
                 $this->logger->info(sprintf('Return url: %s', $this->fileUrl));
-                return array_merge([$this->fileUrl => null], $notCollectedResult);
+                return array_merge([
+                    new Asset($this->type, $this->fileUrl, [
+                        AssetOption::ATTRIBUTES => [
+                            $this->type->getSrcAttribute() => $this->fileUrl
+                        ]
+                    ])
+                ], $notCollectedResult);
             }
 
             $output = '';
+
 
             foreach ($this->assets as $asset) {
                 $reader = new Reader($asset, $this->environment);
@@ -118,17 +126,19 @@ class OneFileStrategy extends StrategyAbstract
                 }
             }
             Helpers::writeFile($this->filePath, $output, 'w', $this->logger);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->notice($e->getMessage());
         }
 
         $this->logger->info(sprintf('Return url: %s', $this->fileUrl));
 
-        return array_merge([new Asset($this->type, $this->fileUrl, [
-            AssetOption::ATTRIBUTES => [
-                $this->type->getSrcAttribute() => $this->fileUrl
-            ]
-        ])], $notCollectedResult);
+        return array_merge([
+            new Asset($this->type, $this->fileUrl, [
+                AssetOption::ATTRIBUTES => [
+                    $this->type->getSrcAttribute() => $this->fileUrl
+                ]
+            ])
+        ], $notCollectedResult);
     }
 
     /**

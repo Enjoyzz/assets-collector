@@ -2,11 +2,13 @@
 
 namespace Enjoys\AssetsCollector\CollectStrategy;
 
+use Enjoys\AssetsCollector\Asset;
+
 interface StrategyInterface
 {
 
     /**
-     * @return array<string, array|null>
+     * @return Asset[]
      */
     public function getResult(): array;
 }

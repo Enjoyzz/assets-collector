@@ -21,7 +21,7 @@ class StrategyFactory
     /**
      * @param Environment $environment
      * @param array<Asset> $assetsCollection
-     * @param string $type
+     * @param AssetType|string $type
      * @return StrategyInterface
      * @throws UnexpectedParameters
      */
@@ -30,15 +30,11 @@ class StrategyFactory
         array $assetsCollection,
         AssetType|string $type
     ): StrategyInterface {
-        if (is_string($type)){
-            $type = AssetType::from($type);
-        }
-        
-        $strategy = $environment->getStrategy();
-        if (!isset(self::STRATEGY[$strategy])) {
-            throw new UnexpectedParameters('Invalid strategy');
-        }
-        $strategyClass = self::STRATEGY[$strategy];
+        $type = AssetType::normalize($type);
+
+        $strategyClass = self::STRATEGY[$environment->getStrategy()] ?? throw new UnexpectedParameters(
+            'Invalid strategy'
+        );
 
         return new $strategyClass($environment, $assetsCollection, $type);
     }

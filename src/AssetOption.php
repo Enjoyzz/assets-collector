@@ -19,19 +19,11 @@ final class AssetOption
      */
     private array $symlinks = [];
 
-    /**
-     * @param array<string, string|bool|array|null> $options
-     */
-    public function __construct(array $options = [])
-    {
-        $this->setOptions($options);
-    }
 
     /**
-     * @param array<string, string|bool|array|null> $options
-     * @return $this
+     * @param array<string, bool|array> $options
      */
-    public function setOptions(array $options = []): AssetOption
+    public function __construct(array $options = [])
     {
         foreach ($options as $key => $value) {
             if (!property_exists($this, $key)) {
@@ -39,15 +31,9 @@ final class AssetOption
             }
             $this->setOption($key, $value);
         }
-        return $this;
     }
 
-    /**
-     * @param string $key
-     * @param string|bool|array|null $value
-     * @return $this
-     */
-    public function setOption(string $key, $value): AssetOption
+    public function setOption(string $key, bool|array $value): AssetOption
     {
         $this->$key = $value;
         return $this;

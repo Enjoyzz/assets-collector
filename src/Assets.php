@@ -55,7 +55,7 @@ class Assets
                 $path = array_shift($params);
             }
 
-            /** @var array<string, array|bool|null|string> $params */
+            /** @var array<string, array|bool> $params */
             $collection->add(
                 new Asset($type, $path, $params),
                 $namespace
@@ -80,15 +80,14 @@ class Assets
     {
         $type = AssetType::normalize($type);
         $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
-//        return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);
         return $this->getEnvironment()->getRenderer($type)->render($paths);
     }
 
 
     /**
      * @param AssetType $type
-     * @param array<Asset> $assetsCollection
-     * @return array
+     * @param Asset[] $assetsCollection
+     * @return Asset[]
      */
     private function getResults(AssetType $type, array $assetsCollection): array
     {

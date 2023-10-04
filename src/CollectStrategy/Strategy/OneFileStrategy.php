@@ -11,6 +11,8 @@ use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Helpers;
 use Exception;
 
+use function Enjoys\FileSystem\makeSymlink;
+
 class OneFileStrategy extends StrategyAbstract
 {
     private int $cacheTime;
@@ -122,7 +124,9 @@ class OneFileStrategy extends StrategyAbstract
 
 
                 foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
-                    Helpers::createSymlink($optLink, $optTarget, $this->logger);
+                    if (makeSymlink($optLink, $optTarget)) {
+                        $this->logger->info(sprintf('Created symlink: %s', $optLink));
+                    }
                 }
             }
             Helpers::writeFile($this->filePath, $output, 'w', $this->logger);

@@ -9,6 +9,8 @@ use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Helpers;
 use Exception;
 
+use function Enjoys\FileSystem\makeSymlink;
+
 class ManyFilesStrategy extends StrategyAbstract
 {
 
@@ -58,7 +60,9 @@ class ManyFilesStrategy extends StrategyAbstract
                 );
 
                 foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
-                    Helpers::createSymlink($optLink, $optTarget, $this->logger);
+                    if (makeSymlink($optLink, $optTarget)) {
+                        $this->logger->info(sprintf('Created symlink: %s', $optLink));
+                    }
                 }
             } catch (Exception  $e) {
                 $this->logger->error($e->getMessage());

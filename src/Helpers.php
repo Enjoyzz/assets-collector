@@ -71,22 +71,4 @@ final class Helpers
         }
     }
 
-    /**
-     * @param string $link
-     * @param string $target
-     * @param LoggerInterface|null $logger
-     * @throws \Exception
-     */
-    public static function createSymlink(string $link, string $target, LoggerInterface $logger = null): void
-    {
-        $logger ??= new NullLogger();
-
-        try {
-            if (makeSymlink($link, $target)) {
-                $logger->info(sprintf('Created symlink: %s', $link));
-            }
-        } catch (\Exception $e) {
-            $logger->notice($e->getMessage());
-        }
-    }
 }

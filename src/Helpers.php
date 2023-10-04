@@ -6,9 +6,6 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use function Enjoys\FileSystem\createDirectory;
-use function Enjoys\FileSystem\CreateSymlink;
-use function Enjoys\FileSystem\makeSymlink;
-use function Enjoys\FileSystem\writeFile;
 
 final class Helpers
 {
@@ -27,25 +24,6 @@ final class Helpers
             return 'https';
         }
         return 'http';
-    }
-
-    /**
-     * @param string $file
-     * @param string $data
-     * @param string $mode
-     * @param LoggerInterface|null $logger
-     * @return void
-     * @throws \Exception
-     */
-    public static function writeFile(
-        string $file,
-        string $data,
-        string $mode = 'w',
-        LoggerInterface $logger = null
-    ): void {
-        $logger ??= new NullLogger();
-        writeFile($file, $data, $mode);
-        $logger->info(sprintf('Write to: %s', $file));
     }
 
 

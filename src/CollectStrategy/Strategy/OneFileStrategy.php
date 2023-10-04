@@ -13,6 +13,7 @@ use Exception;
 
 use function Enjoys\FileSystem\createFile;
 use function Enjoys\FileSystem\makeSymlink;
+use function Enjoys\FileSystem\writeFile;
 
 class OneFileStrategy extends StrategyAbstract
 {
@@ -131,7 +132,8 @@ class OneFileStrategy extends StrategyAbstract
                     }
                 }
             }
-            Helpers::writeFile($this->filePath, $output, 'w', $this->logger);
+            writeFile($this->filePath, $output);
+            $this->logger->info(sprintf('Write to: %s', $this->filePath));
         } catch (Exception $e) {
             $this->logger->notice($e->getMessage());
         }

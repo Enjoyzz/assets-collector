@@ -6,7 +6,6 @@ use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
-use Enjoys\AssetsCollector\Helpers;
 use Exception;
 
 use function Enjoys\FileSystem\createFile;
@@ -25,7 +24,7 @@ class ManyFilesStrategy extends StrategyAbstract
         $cacheDir = $this->environment->getCompileDir() . '/.cache';
 
         foreach ($this->assets as $asset) {
-            if(false === $path = $asset->getPath()){
+            if (false === $path = $asset->getPath()) {
                 continue;
             }
 
@@ -71,13 +70,16 @@ class ManyFilesStrategy extends StrategyAbstract
             }
 
 
-            $assetAttributeCollection->set($this->type->getSrcAttribute(),$this->addVersion(
-                $this->environment->getBaseUrl() . str_replace(
-                    DIRECTORY_SEPARATOR,
-                    '/',
-                    $link
+            $assetAttributeCollection->set(
+                $this->type->getSrcAttribute(),
+                $this->addVersion(
+                    $this->environment->getBaseUrl() . str_replace(
+                        DIRECTORY_SEPARATOR,
+                        '/',
+                        $link
+                    )
                 )
-            ));
+            );
         }
 
         return array_filter($this->assets, function (Asset $asset) {

@@ -51,7 +51,7 @@ class StrategyFactoryTest extends TestCase
         $factory = StrategyFactory::getStrategy(
             $environment,
             [new Asset(AssetType::CSS, '//test.com')],
-            'css'
+            AssetType::CSS
         );
 
         $this->assertInstanceOf(StrategyInterface::class, $factory);

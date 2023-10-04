@@ -5,6 +5,7 @@ namespace Tests\Enjoys\AssetsCollector\Extensions\Twig;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use PHPUnit\Framework\TestCase;
@@ -41,11 +42,11 @@ class AssetsExtensionTest extends TestCase
     {
         $this->assertSame(
             "<link type='text/css' rel='stylesheet' href='http://google.com'>\n<link type='text/css' rel='stylesheet' href='http://yandex.ru'>\n",
-            $this->assetsCollector->get('css')
+            $this->assetsCollector->get(AssetType::CSS)
         );
         $this->assertSame(
             "<script src='http://google.com'></script>\n",
-            $this->assetsCollector->get('js')
+            $this->assetsCollector->get(AssetType::JS)
         );
     }
 

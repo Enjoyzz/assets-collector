@@ -23,7 +23,7 @@ class AssetsCollection
 
     public function add(Asset $asset, string $namespace): void
     {
-        if ($asset->getPath() === false || (null === $assetId = $asset->getId())) {
+        if (!$asset->isValid()) {
             $this->logger->notice(sprintf('Path invalid: %s', $asset->getOrigPath()));
             return;
         }
@@ -34,7 +34,7 @@ class AssetsCollection
         }
 
 
-        $this->assets[$asset->getType()->value][$namespace][$assetId] = $asset;
+        $this->assets[$asset->getType()->value][$namespace][$asset->getId()] = $asset;
     }
 
     public function has(Asset $asset, string $namespace): bool
@@ -46,14 +46,12 @@ class AssetsCollection
     }
 
     /**
-     * @param AssetType|string $type
+     * @param AssetType $type
      * @param string $namespace
      * @return Asset[]
      */
-    public function get(AssetType|string $type, string $namespace): array
+    public function get(AssetType $type, string $namespace): array
     {
-        $type = AssetType::normalize($type);
-
         if (!isset($this->assets[$type->value][$namespace])) {
             return [];
         }

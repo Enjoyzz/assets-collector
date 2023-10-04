@@ -18,20 +18,21 @@ class ManyFilesStrategy extends StrategyAbstract
     /**
      * @return Asset[]
      * @throws Exception
+     * @psalm-suppress PossiblyFalseArgument
      */
     public function getResult(): array
     {
         $cacheDir = $this->environment->getCompileDir() . '/.cache';
 
         foreach ($this->assets as $asset) {
-            if (false === $path = $asset->getPath()) {
+            if (!$asset->isValid()) {
                 continue;
             }
 
             $assetAttributeCollection = $asset->getAttributeCollection();
 
             if ($asset->isUrl()) {
-                $assetAttributeCollection->set($this->type->getSrcAttribute(), $this->addVersion($path));
+                $assetAttributeCollection->set($this->type->getSrcAttribute(), $this->addVersion($asset->getPath()));
                 continue;
             }
 
@@ -41,10 +42,10 @@ class ManyFilesStrategy extends StrategyAbstract
                     $this->environment->getProjectDir()
                 ],
                 '',
-                $path
+                $asset->getPath()
             );
 
-            $cacheFile = $cacheDir . '/' . ($asset->getId() ?? '');
+            $cacheFile = $cacheDir . '/' . $asset->getId();
             if (!file_exists($cacheFile) || (filemtime($cacheFile) + $this->environment->getCacheTime()) < time()) {
                 (new Reader($asset, $this->environment))->replaceRelativeUrlsAndCreatedSymlinks();
                 createFile($cacheFile);
@@ -55,7 +56,7 @@ class ManyFilesStrategy extends StrategyAbstract
                 $asset->getOptions()->setOption(
                     AssetOption::SYMLINKS,
                     array_merge(
-                        [$this->environment->getCompileDir() . $link => $path],
+                        [$this->environment->getCompileDir() . $link => $asset->getPath()],
                         $asset->getOptions()->getSymlinks()
                     )
                 );
@@ -83,7 +84,7 @@ class ManyFilesStrategy extends StrategyAbstract
         }
 
         return array_filter($this->assets, function (Asset $asset) {
-            return $asset->getPath() !== false;
+            return $asset->isValid();
         });
     }
 }

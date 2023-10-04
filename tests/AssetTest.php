@@ -41,8 +41,8 @@ class AssetTest extends TestCase
                 true
             ],
             [AssetType::CSS, __DIR__ . '/../README.md', [], false, realpath(__DIR__ . '/../README.md'), true, 'css', true],
-            [AssetType::CSS, '../README.md', [], false, false, true, 'css', false],
-            [AssetType::CSS, '../README.md', [AssetOption::MINIFY => false], false, false, false, 'css', false],
+            [AssetType::CSS, '../README.md', [], false, '', true, 'css', false],
+            [AssetType::CSS, '../README.md', [AssetOption::MINIFY => false], false, '', false, 'css', false],
         ];
     }
 
@@ -56,7 +56,7 @@ class AssetTest extends TestCase
         $this->assertSame($getPath, $asset->getPath());
         $this->assertSame($isMinify, $asset->getOptions()->isMinify());
         $this->assertSame($getType, $asset->getType()->value);
-        $this->assertSame($setId, !is_null($asset->getId()));
+        $this->assertSame($setId, !empty($asset->getId()));
     }
 
     public function testHttpScheme()

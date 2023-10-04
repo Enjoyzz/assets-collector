@@ -40,6 +40,6 @@ class AssetsCollectionTest extends TestCase
         $collection->add(new Asset(AssetType::CSS, __DIR__.'/fixtures/notexist.css'), 'common');
         $this->assertCount(2, $collection->get(AssetType::CSS, 'common'));
 
-        $this->assertSame([], $collection->get('css', 'empty_namespace'));
+        $this->assertSame([], $collection->get(AssetType::CSS, 'empty_namespace'));
     }
 }

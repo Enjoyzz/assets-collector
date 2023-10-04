@@ -59,9 +59,9 @@ class AssetsExtension extends AbstractExtension
         string $namespace = Assets::NAMESPACE_COMMON,
         string $method = 'push'
     ): void {
-        if (is_string($type)){
-            $type = AssetType::from($type);
-        }
+
+        $type = AssetType::convertToAssetType($type);
+
         $this->assetsCollector->add(
             $type,
             array_map(function ($item) {
@@ -87,7 +87,7 @@ class AssetsExtension extends AbstractExtension
      */
     public function getExternCss(string $namespace = Assets::NAMESPACE_COMMON): string
     {
-        return $this->assetsCollector->get('css', $namespace);
+        return $this->assetsCollector->get(AssetType::CSS, $namespace);
     }
 
     /**
@@ -97,7 +97,7 @@ class AssetsExtension extends AbstractExtension
      */
     public function getExternJs(string $namespace = Assets::NAMESPACE_COMMON): string
     {
-        return $this->assetsCollector->get('js', $namespace);
+        return $this->assetsCollector->get(AssetType::JS, $namespace);
     }
 
     /**

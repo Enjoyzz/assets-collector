@@ -7,7 +7,7 @@ enum AssetType: string
     case CSS = 'css';
     case JS = 'js';
 
-    public static function normalize(AssetType|string $value): AssetType
+    public static function convertToAssetType(AssetType|string $value): AssetType
     {
         if ($value instanceof AssetType){
             return $value;

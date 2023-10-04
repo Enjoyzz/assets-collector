@@ -37,12 +37,12 @@ class SymlinkTest extends TestCase
         $this->config->setStrategy(Assets::STRATEGY_ONE_FILE)->setBaseUrl('/_c');
         $assets = new Assets($this->config);
         $assets->add(
-            'css',
+            AssetType::CSS,
             [
                 $baseUrl = __DIR__ . '/../tests/fixtures/sub/css/style.css',
             ]
         );
-        $assets->get('css');
+        $assets->get(AssetType::CSS);
 
         $urlConverter = new UrlConverter();
         $targets = [
@@ -74,7 +74,7 @@ class SymlinkTest extends TestCase
                __DIR__ . '/fixtures/test.css',
             ]
         );
-        $assets->get('css');
+        $assets->get(AssetType::CSS);
 
         $this->assertCount(10, $logger->getLog('info'));
 
@@ -99,7 +99,7 @@ class SymlinkTest extends TestCase
             $this->assertTrue(in_array($target, $targets, true));
         }
 
-        $assets->get('css');
+        $assets->get(AssetType::CSS);
         $this->assertCount(10, $logger->getLog('info'));
 
     }

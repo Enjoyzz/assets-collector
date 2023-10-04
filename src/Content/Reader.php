@@ -42,7 +42,7 @@ class Reader
      */
     public function getContents(): string
     {
-        if ($this->content === false || $this->asset->getPath() === false) {
+        if (!$this->asset->isValid() || $this->content === false) {
             $this->logger->notice(sprintf('Nothing return: path is `%s`', $this->asset->getOrigPath()));
             return '';
         }
@@ -52,14 +52,14 @@ class Reader
 
     private function getContent(): false|string
     {
-        if (false === $path = $this->asset->getPath()) {
+        if (!$this->asset->isValid()) {
             return false;
         }
 
         if ($this->asset->isUrl()) {
-            return $this->readUrl($path);
+            return $this->readUrl($this->asset->getPath());
         }
-        return $this->readFile($path);
+        return $this->readFile($this->asset->getPath());
     }
 
 
@@ -149,7 +149,7 @@ class Reader
      */
     public function replaceRelativeUrlsAndCreatedSymlinks(): Reader
     {
-        if ($this->content === false || false === $this->asset->getPath()) {
+        if (!$this->asset->isValid() || $this->content === false) {
             return $this;
         }
 
@@ -161,9 +161,10 @@ class Reader
         return $this;
     }
 
+
     public function minify(): Reader
     {
-        if ($this->content === false || (false === $path = $this->asset->getPath()) || !$this->asset->getOptions()->isMinify()) {
+        if (!$this->asset->isValid() || $this->content === false || !$this->asset->getOptions()->isMinify()) {
             return $this;
         }
 
@@ -173,7 +174,7 @@ class Reader
             return $this;
         }
 
-        $this->logger->info(sprintf('Minify: %s', $path));
+        $this->logger->info(sprintf('Minify: %s', $this->asset->getPath()));
 
         $this->content = $minifier->minify($this->content) . "\n";
         return $this;

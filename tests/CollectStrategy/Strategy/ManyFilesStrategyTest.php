@@ -46,7 +46,7 @@ class ManyFilesStrategyTest extends TestCase
 
         $strategy = new ManyFilesStrategy(
             $this->environment,
-            $this->assetCollection->get('css', 'test'),
+            $this->assetCollection->get(AssetType::CSS, 'test'),
             AssetType::CSS
         );
 

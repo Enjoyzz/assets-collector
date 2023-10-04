@@ -10,9 +10,10 @@ use function str_starts_with;
 class Asset
 {
 
-    private ?string $id = null;
+    private string $id = '';
+    private string $path = '';
+    private bool $valid = false;
 
-    private string|false $path;
     private bool $isUrl;
     private string $origPath;
     private string $url = '';
@@ -36,9 +37,14 @@ class Asset
         $this->options = new AssetOption($options);
 
         $this->isUrl = $this->checkIsUrl($path);
-        $this->path = $this->getNormalizedPath($path);
+        $path = $this->getNormalizedPath($path);
 
-        $this->setId($this->path);
+        if ($path !== false){
+            $this->valid = true;
+            $this->path = $path;
+            $this->setId($this->path);
+        }
+
     }
 
     private function getNormalizedPath(string $path): false|string
@@ -83,7 +89,7 @@ class Asset
         return false;
     }
 
-    public function getPath(): false|string
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -98,7 +104,7 @@ class Asset
         return $this->isUrl;
     }
 
-    public function getId(): ?string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -108,11 +114,8 @@ class Asset
         return $this->origPath;
     }
 
-    private function setId(false|string $path): void
+    private function setId(string $path): void
     {
-        if ($path === false) {
-            return;
-        }
         $this->id = md5($path . serialize($this->getOptions()));
     }
 
@@ -124,6 +127,11 @@ class Asset
     public function getAttributeCollection(): AttributeCollection
     {
         return $this->attributeCollection;
+    }
+
+    public function isValid(): bool
+    {
+        return $this->valid;
     }
 
 

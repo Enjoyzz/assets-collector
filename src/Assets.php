@@ -34,16 +34,14 @@ class Assets
     }
 
     /**
-     * @param AssetType|string $type
+     * @param AssetType $type
      * @param array|string $paths
      * @param string $namespace
      * @param string $method
      * @return $this
      */
-    public function add(AssetType|string $type, array|string $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
+    public function add(AssetType $type, array|string $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
     {
-        $type = AssetType::normalize($type);
-
         $collection = new AssetsCollection($this->environment);
         /** @var array|string $path */
         foreach ((array)$paths as $path) {
@@ -72,13 +70,12 @@ class Assets
     }
 
     /**
-     * @param AssetType|string $type
+     * @param AssetType $type
      * @param string $namespace
      * @return string
      */
-    public function get(AssetType|string $type, string $namespace = self::NAMESPACE_COMMON): string
+    public function get(AssetType $type, string $namespace = self::NAMESPACE_COMMON): string
     {
-        $type = AssetType::normalize($type);
         $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
         return $this->getEnvironment()->getRenderer($type)->render($paths);
     }

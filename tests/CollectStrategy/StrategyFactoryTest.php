@@ -5,6 +5,7 @@ namespace Tests\Enjoys\AssetsCollector\CollectStrategy;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\AssetType;
+use Enjoys\AssetsCollector\CollectStrategy\Strategy;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\ManyFilesStrategy;
 use Enjoys\AssetsCollector\CollectStrategy\Strategy\OneFileStrategy;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyFactory;
@@ -18,11 +19,11 @@ class StrategyFactoryTest extends TestCase
 {
     use HelpersTestTrait;
 
-    private array $constructorEnvironmentArgs = ['_compile', __DIR__.'/..'];
+    private array $constructorEnvironmentArgs = ['_compile', __DIR__ . '/..'];
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive(__DIR__.'/../_compile', true);
+        $this->removeDirectoryRecursive(__DIR__ . '/../_compile', true);
     }
 
     public function testStrategyFactoryGood()
@@ -39,7 +40,7 @@ class StrategyFactoryTest extends TestCase
             [new Asset(AssetType::CSS, '//test.com')],
             AssetType::CSS
         );
-        $this->assertInstanceOf(StrategyInterface::class, $factory);
+        $this->assertInstanceOf(Strategy::class, $factory);
         $this->assertInstanceOf(ManyFilesStrategy::class, $factory);
 
         $environment = $this->getMockBuilder(Environment::class)
@@ -54,7 +55,7 @@ class StrategyFactoryTest extends TestCase
             AssetType::CSS
         );
 
-        $this->assertInstanceOf(StrategyInterface::class, $factory);
+        $this->assertInstanceOf(Strategy::class, $factory);
         $this->assertInstanceOf(OneFileStrategy::class, $factory);
     }
 

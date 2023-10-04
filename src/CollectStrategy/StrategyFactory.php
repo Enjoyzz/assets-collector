@@ -22,18 +22,28 @@ class StrategyFactory
      * @param Environment $environment
      * @param array<Asset> $assetsCollection
      * @param AssetType $type
-     * @return StrategyInterface
+     * @return Strategy
      * @throws UnexpectedParameters
+     * @throws \ReflectionException
      */
     public static function getStrategy(
         Environment $environment,
         array $assetsCollection,
         AssetType $type
-    ): StrategyInterface {
+    ): Strategy {
         $strategyClass = self::STRATEGY[$environment->getStrategy()] ?? throw new UnexpectedParameters(
             'Invalid strategy'
         );
 
-        return new $strategyClass($environment, $assetsCollection, $type);
+        $strategy = new $strategyClass($environment, $assetsCollection, $type);
+
+        $reflection = (new \ReflectionClass($strategy));
+
+        if ($reflection->getParentClass()->getName() !== Strategy::class) {
+            throw new \RuntimeException(
+                sprintf('%s must be extended from %s', $strategy::class, Strategy::class)
+            );
+        }
+        return $strategy;
     }
 }

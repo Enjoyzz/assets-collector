@@ -4,14 +4,14 @@ namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
-use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
+use Enjoys\AssetsCollector\CollectStrategy\Strategy;
 use Enjoys\AssetsCollector\Content\Reader;
 use Exception;
 
 use function Enjoys\FileSystem\createFile;
 use function Enjoys\FileSystem\makeSymlink;
 
-class ManyFilesStrategy extends StrategyAbstract
+class ManyFilesStrategy extends Strategy
 {
 
 

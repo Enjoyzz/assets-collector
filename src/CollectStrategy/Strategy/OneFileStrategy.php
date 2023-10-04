@@ -5,7 +5,7 @@ namespace Enjoys\AssetsCollector\CollectStrategy\Strategy;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\AssetType;
-use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
+use Enjoys\AssetsCollector\CollectStrategy\Strategy;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
 use Exception;
@@ -15,7 +15,7 @@ use function Enjoys\FileSystem\createFile;
 use function Enjoys\FileSystem\makeSymlink;
 use function Enjoys\FileSystem\writeFile;
 
-class OneFileStrategy extends StrategyAbstract
+class OneFileStrategy extends Strategy
 {
     private int $cacheTime;
     private string $filePath;

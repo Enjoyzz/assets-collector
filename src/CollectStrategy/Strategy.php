@@ -10,7 +10,7 @@ use Enjoys\AssetsCollector\Environment;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Log\LoggerInterface;
 
-abstract class StrategyAbstract implements StrategyInterface
+abstract class Strategy
 {
 
     protected string $hashId;
@@ -33,6 +33,11 @@ abstract class StrategyAbstract implements StrategyInterface
         $this->hashId = $this->generateHashId();
         $this->logger = $environment->getLogger();
     }
+
+    /**
+     * @return Asset[]
+     */
+    abstract public function getResult(): array;
 
     private function generateHashId(): string
     {

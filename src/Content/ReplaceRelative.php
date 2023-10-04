@@ -8,29 +8,29 @@ use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\UrlConverter;
+use Exception;
 use Psr\Log\LoggerInterface;
 
-class ReplaceRelative
-{
-    private string $content;
-    private LoggerInterface $logger;
-    private Asset $asset;
-    private Environment $environment;
-    private string $path;
+use function str_replace;
 
-    public function __construct(string $content, string $path, Asset $asset, Environment $environment)
-    {
-        $this->content = $content;
-        $this->asset = $asset;
-        $this->environment = $environment;
-        $this->path = $path;
+/**
+ * @psalm-suppress PossiblyFalseArgument
+ */
+final class ReplaceRelative
+{
+    private LoggerInterface $logger;
+
+    public function __construct(
+        private readonly string $content,
+        private readonly Asset $asset,
+        private readonly Environment $environment
+    ) {
         $this->logger = $environment->getLogger();
     }
 
 
     /**
-     * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function getContent(): string
     {
@@ -49,33 +49,23 @@ class ReplaceRelative
 
         if ($result === null) {
             $this->logger->notice(
-                sprintf('Regex return null value. Returned empty string: %s', $this->path)
+                sprintf('Regex return null value. Returned empty string: %s', $this->asset->getPath())
             );
             return '';
         }
-        $this->logger->info(sprintf('ReplaceRelativeUrls: %s', $this->path));
+        $this->logger->info(sprintf('ReplaceRelativeUrls: %s', $this->asset->getPath()));
         return $result;
     }
 
     /**
-     * @param LoggerInterface $logger
+     * @throws Exception
      */
-    public function setLogger(LoggerInterface $logger): void
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @param string $relativePath
-     * @return false|string
-     * @throws \Exception
-     */
-    private function getNormalizedPath(string $relativePath)
+    private function getNormalizedPath(string $relativePath): false|string
     {
         if ($this->asset->isUrl()) {
-            return $this->replaceUrls($this->path, $relativePath);
+            return $this->replaceUrls($this->asset->getPath(), $relativePath);
         }
-        return $this->replacePath($this->path, $relativePath);
+        return $this->replacePath($this->asset->getPath(), $relativePath);
     }
 
     /**
@@ -93,7 +83,7 @@ class ReplaceRelative
      * @param string $filePath
      * @param string $relativePath
      * @return false|string
-     * @throws \Exception
+     * @throws Exception
      */
     private function replacePath(string $filePath, string $relativePath)
     {
@@ -106,10 +96,10 @@ class ReplaceRelative
             return false;
         }
 
-        $relativeFullPath = \str_replace(
+        $relativeFullPath = str_replace(
             '\\',
             '/',
-            \str_replace(
+            str_replace(
                 [
                     $this->environment->getCompileDir(),
                     $this->environment->getProjectDir()

@@ -149,13 +149,12 @@ class Reader
      */
     public function replaceRelativeUrlsAndCreatedSymlinks(): Reader
     {
-        if ($this->content === false || false === $path = $this->asset->getPath()) {
+        if ($this->content === false || false === $this->asset->getPath()) {
             return $this;
         }
 
         if ($this->asset->getOptions()->isReplaceRelativeUrls()) {
-            $replaceRelativeUrls = new ReplaceRelative($this->content, $path, $this->asset, $this->environment);
-            $replaceRelativeUrls->setLogger($this->logger);
+            $replaceRelativeUrls = new ReplaceRelative($this->content, $this->asset, $this->environment);
             $this->content = $replaceRelativeUrls->getContent();
         }
 

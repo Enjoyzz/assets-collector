@@ -62,7 +62,7 @@ url("data:image")
 url('{$domain}/inner/path/style.css');
 CONTENT;
 
-        $processor = new ReplaceRelative($content, $url, new Asset(AssetType::CSS, $url), $this->environment);
+        $processor = new ReplaceRelative($content, new Asset(AssetType::CSS, $url), $this->environment);
         $this->assertSame($expectContent, $processor->getContent());
     }
 }

@@ -75,7 +75,6 @@ class ReplaceRelativePathsTest extends TestCase
     {
         $replaceClass = new ReplaceRelative(
             $data,
-            $path,
             new Asset(AssetType::CSS, $path),
             $this->config
         );

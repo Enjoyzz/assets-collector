@@ -6,6 +6,7 @@ use Enjoys\AssetsCollector\Helpers;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
+use function Enjoys\FileSystem\createDirectory;
 use function Enjoys\FileSystem\makeSymlink;
 
 class HelpersTest extends TestCase
@@ -41,7 +42,7 @@ class HelpersTest extends TestCase
         if ($create === false) {
             $this->expectException(Exception::class);
         }
-        Helpers::createDirectory($path);
+        createDirectory($path);
         $this->assertDirectoryExists($path);
     }
 

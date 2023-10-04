@@ -8,9 +8,9 @@ use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\CollectStrategy\StrategyAbstract;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\Helpers;
 use Exception;
 
+use function Enjoys\FileSystem\createDirectory;
 use function Enjoys\FileSystem\createFile;
 use function Enjoys\FileSystem\makeSymlink;
 use function Enjoys\FileSystem\writeFile;
@@ -76,11 +76,12 @@ class OneFileStrategy extends StrategyAbstract
      */
     private function init(): void
     {
-        Helpers::createDirectory(
-            pathinfo($this->filePath, PATHINFO_DIRNAME),
-            $this->environment->getDirectoryPermissions(),
-            $this->logger
-        );
+        if (createDirectory(
+            $path = pathinfo($this->filePath, PATHINFO_DIRNAME),
+            $this->environment->getDirectoryPermissions()
+        )) {
+            $this->logger->info(sprintf('Create directory %s', $path));
+        }
 
         if (!file_exists($this->filePath)) {
             createFile($this->filePath);

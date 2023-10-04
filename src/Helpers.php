@@ -48,12 +48,6 @@ final class Helpers
         $logger->info(sprintf('Write to: %s', $file));
     }
 
-    public static function createEmptyFile(string $file, LoggerInterface $logger = null): void
-    {
-        $logger ??= new NullLogger();
-        writeFile($file, '');
-        $logger->info(sprintf('Create file: %s', $file));
-    }
 
     /**
      * @param string $path

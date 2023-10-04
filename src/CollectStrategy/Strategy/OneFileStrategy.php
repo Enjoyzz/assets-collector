@@ -11,6 +11,7 @@ use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Helpers;
 use Exception;
 
+use function Enjoys\FileSystem\createFile;
 use function Enjoys\FileSystem\makeSymlink;
 
 class OneFileStrategy extends StrategyAbstract
@@ -81,8 +82,9 @@ class OneFileStrategy extends StrategyAbstract
         );
 
         if (!file_exists($this->filePath)) {
-            Helpers::createEmptyFile($this->filePath, $this->logger);
+            createFile($this->filePath);
             $this->fileCreated = true;
+            $this->logger->info(sprintf('Create file: %s', $this->filePath));
         }
     }
 

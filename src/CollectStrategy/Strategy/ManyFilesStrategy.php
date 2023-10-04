@@ -9,6 +9,7 @@ use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Helpers;
 use Exception;
 
+use function Enjoys\FileSystem\createFile;
 use function Enjoys\FileSystem\makeSymlink;
 
 class ManyFilesStrategy extends StrategyAbstract
@@ -47,7 +48,8 @@ class ManyFilesStrategy extends StrategyAbstract
             $cacheFile = $cacheDir . '/' . ($asset->getId() ?? '');
             if (!file_exists($cacheFile) || (filemtime($cacheFile) + $this->environment->getCacheTime()) < time()) {
                 (new Reader($asset, $this->environment))->replaceRelativeUrlsAndCreatedSymlinks();
-                Helpers::createEmptyFile($cacheFile, $this->logger);
+                createFile($cacheFile);
+                $this->logger->info(sprintf('Create file: %s', $cacheFile));
             }
 
             try {

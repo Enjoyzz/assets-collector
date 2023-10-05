@@ -18,6 +18,9 @@ class OneFileStrategy implements Strategy
 {
     private bool $fileCreated = false;
     private int $cacheTime = 0;
+    private string $filename = '';
+    private string $filePath = '';
+    private string $fileUrl = '';
 
     private function generateHashId(array $assets): string
     {
@@ -45,15 +48,15 @@ class OneFileStrategy implements Strategy
         $this->cacheTime = $environment->getCacheTime();
 
         /** @infection-ignore-all */
-        $filename = '_' . $type->value . DIRECTORY_SEPARATOR . $this->generateHashId(
+        $this->filename = '_' . $type->value . DIRECTORY_SEPARATOR . $this->generateHashId(
                 $assetsCollection
             ) . '.' . $type->value;
 
         /** @infection-ignore-all */
-        $filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $filename;
+        $this->filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $this->filename;
 
         /** @infection-ignore-all */
-        $fileUrl = $environment->getBaseUrl() . '/' . str_replace(DIRECTORY_SEPARATOR, '/', $filename);
+        $this->fileUrl = $environment->getBaseUrl() . '/' . str_replace(DIRECTORY_SEPARATOR, '/', $this->filename);
 
 
         $logger = $environment->getLogger();
@@ -65,22 +68,22 @@ class OneFileStrategy implements Strategy
             return !$asset->getOptions()->isNotCollect();
         });
 
-        if (!file_exists($filePath)) {
-            createFile($filePath);
+        if (!file_exists($this->filePath)) {
+            createFile($this->filePath);
             $this->fileCreated = true;
-            $logger->info(sprintf('Create file: %s', $filePath));
+            $logger->info(sprintf('Create file: %s', $this->filePath));
         }
 
         $notCollectedResult = (new ManyFilesStrategy())->getAssets($type, $notCollectAssets, $environment);
 
         try {
-            if ($this->isCacheValid($filePath)) {
-                $logger->info(sprintf('Use cached file: %s', $filePath));
-                $logger->info(sprintf('Return url: %s', $fileUrl));
+            if ($this->isCacheValid($this->filePath)) {
+                $logger->info(sprintf('Use cached file: %s', $this->filePath));
+                $logger->info(sprintf('Return url: %s', $this->fileUrl));
                 return array_merge([
-                    new Asset($type, $fileUrl, [
+                    new Asset($type, $this->fileUrl, [
                         AssetOption::ATTRIBUTES => [
-                            $type->getSrcAttribute() => $fileUrl
+                            $type->getSrcAttribute() => $this->fileUrl
                         ]
                     ])
                 ], $notCollectedResult);
@@ -93,27 +96,41 @@ class OneFileStrategy implements Strategy
                 $reader = new Reader($asset, $environment);
                 $output .= $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify()->getContents();
 
-
                 foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     if (makeSymlink($optLink, $optTarget)) {
                         $logger->info(sprintf('Created symlink: %s', $optLink));
                     }
                 }
             }
-            writeFile($filePath, $output);
-            $logger->info(sprintf('Write to: %s', $filePath));
+            writeFile($this->filePath, $output);
+            $logger->info(sprintf('Write to: %s', $this->filePath));
         } catch (Exception $e) {
             $logger->notice($e->getMessage());
         }
 
-        $logger->info(sprintf('Return url: %s', $fileUrl));
+        $logger->info(sprintf('Return url: %s', $this->fileUrl));
 
         return array_merge([
-            new Asset($type, $fileUrl, [
+            new Asset($type, $this->fileUrl, [
                 AssetOption::ATTRIBUTES => [
-                    $type->getSrcAttribute() => $fileUrl
+                    $type->getSrcAttribute() => $this->fileUrl
                 ]
             ])
         ], $notCollectedResult);
+    }
+
+    public function getFilename(): string
+    {
+        return $this->filename;
+    }
+
+    public function getFilePath(): string
+    {
+        return $this->filePath;
+    }
+
+    public function getFileUrl(): string
+    {
+        return $this->fileUrl;
     }
 }

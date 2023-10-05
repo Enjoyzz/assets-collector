@@ -9,12 +9,14 @@ use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
 use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Strategy\OneFileStrategy;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use JShrink\Minifier;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Log\LogLevel;
 use Tests\Enjoys\AssetsCollector\ArrayLogger;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 use tubalmartin\CssMin\Minifier as CSSmin;
@@ -70,9 +72,11 @@ class ReaderTest extends TestCase
 
     public function testLocalFile(): void
     {
+        $this->environment->setLogger($logger = new ArrayLogger());
         $reader = new Reader(new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css'), $this->environment);
         $reader->minify();
         $this->assertSame("body{color:#00008b}\n", $reader->getContents());
+        $this->assertCount(2, $logger->getLog(LogLevel::INFO));
     }
 
     public function testLocalFileNoMinify(): void
@@ -94,14 +98,30 @@ CSS,
 
     public function testReturnGetContentReadFalse(): void
     {
+        $this->environment->setLogger($logger = new ArrayLogger());
         $reader = new Reader(new Asset(AssetType::CSS, '/'), $this->environment);
         $this->assertSame('', $reader->getContents());
+        $this->assertCount(2, $logger->getLog(LogLevel::NOTICE));
     }
 
     public function testReturnGetContentFileExistsFalse(): void
     {
         $reader = new Reader(new Asset(AssetType::CSS, '/test.css'), $this->environment);
         $this->assertSame('', $reader->getContents());
+    }
+
+    public function testFailedReadFile(): void
+    {
+        $this->environment->setLogger($logger = new ArrayLogger());
+        $asset = new Asset(AssetType::CSS, '/test.css');
+
+        $reflection = new \ReflectionClass($asset);
+        $reflection->getProperty('valid')->setValue($asset, true);
+
+        $reader = new Reader($asset, $this->environment);
+        $this->assertSame('', $reader->getContents());
+
+        $this->assertCount(2, $logger->getLog(LogLevel::NOTICE));
     }
 
     public function testWithReplaceRelativePath(): void
@@ -135,16 +155,20 @@ CSS
         $this->assertStringContainsString('https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/fonts/fontawesome-webfont.eot', $reader->getContents());
     }
 
+    /**
+     * AssetOption::ATTRIBUTES добавлен для infection tests
+     */
     public function testWithDisableReplaceRelativePath(): void
     {
         $reader = new Reader(
             new Asset(
                 AssetType::CSS,
                 __DIR__ . '/../fixtures/sub/css/style.css',
-                [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
+                [AssetOption::ATTRIBUTES => [], AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
             $this->environment
         );
+        $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify();
         $this->assertSame(
             <<<CSS
 @font-face {
@@ -162,6 +186,7 @@ CSS
     public function testRemoteUrlWithReadHttpClientSuccess()
     {
         $this->environment
+            ->setLogger($logger = new ArrayLogger())
             ->setRequestFactory($this->requestFactory)
             ->setHttpClient($this->httpClient)
         ;
@@ -173,6 +198,7 @@ CSS
             ),
             $this->environment
         );
+        $this->assertNotEmpty($logger->getLog(LogLevel::INFO));
         $this->assertStringContainsString('Bootstrap  v5.2.0 (https://getbootstrap.com/)', $reader->getContents());
     }
 
@@ -191,7 +217,7 @@ CSS
             ),
             $this->environment
         );
-        $this->assertNotEmpty($logger->getLog('notice'));
+        $this->assertNotEmpty($logger->getLog(LogLevel::NOTICE));
         $this->assertSame('', $reader->getContents());
     }
 
@@ -221,7 +247,9 @@ CSS
             ),
             $this->environment
         );
-        $this->assertNotEmpty($logger->getLog('notice'));
+        $this->assertNotEmpty($logger->getLog(LogLevel::NOTICE));
         $this->assertStringContainsString('', $reader->getContents());
     }
+
+
 }

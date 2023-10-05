@@ -72,7 +72,12 @@ class Reader
             return $this->readWithPsrHttpClient($url, $httpClient, $requestFactory);
         }
 
-        return $this->readWithPhpFileGetContents($url);
+        try {
+            return $this->readWithPhpFileGetContents($url);
+        } catch (RuntimeException $e) {
+            $this->logger->notice(sprintf("Ошибка чтения содержимого файла: %s", $e->getMessage()));
+            return false;
+        }
     }
 
     /**
@@ -80,20 +85,15 @@ class Reader
      */
     private function readWithPhpFileGetContents(string $url): false|string
     {
-        try {
-            //Clear the most recent error
-            error_clear_last();
-            $content = @file_get_contents($url);
-            /** @var null|string[] $error */
-            $error = error_get_last();
-            if ($error !== null) {
-                throw new RuntimeException(sprintf("%s", $error['message']));
-            }
-            return $content;
-        } catch (Throwable $e) {
-            $this->logger->notice($e->getMessage());
-            return false;
+        //Clear the most recent error
+        error_clear_last();
+        $content = @file_get_contents($url);
+        /** @var null|string[] $error */
+        $error = error_get_last();
+        if ($error !== null) {
+            throw new RuntimeException(sprintf("%s", $error['message']));
         }
+        return $content;
     }
 
 
@@ -137,11 +137,6 @@ class Reader
 
         $this->logger->info(sprintf('Read: %s', $filename));
         return $content;
-    }
-
-    public function setLogger(LoggerInterface $logger): void
-    {
-        $this->logger = $logger;
     }
 
     /**

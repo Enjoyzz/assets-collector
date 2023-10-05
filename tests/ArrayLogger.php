@@ -3,6 +3,7 @@
 namespace Tests\Enjoys\AssetsCollector;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 class ArrayLogger implements LoggerInterface
 {
@@ -11,7 +12,7 @@ class ArrayLogger implements LoggerInterface
 
     public function emergency($message, array $context = array()): void
     {
-        $this->log['emergency'][] = [
+        $this->log[LogLevel::EMERGENCY][] = [
             $message,
             $context
         ];
@@ -19,7 +20,7 @@ class ArrayLogger implements LoggerInterface
 
     public function alert($message, array $context = array()): void
     {
-        $this->log['alert'][] = [
+        $this->log[LogLevel::ALERT][] = [
             $message,
             $context
         ];
@@ -27,7 +28,7 @@ class ArrayLogger implements LoggerInterface
 
     public function critical($message, array $context = array()): void
     {
-        $this->log['critical'][] = [
+        $this->log[LogLevel::CRITICAL][] = [
             $message,
             $context
         ];
@@ -35,7 +36,7 @@ class ArrayLogger implements LoggerInterface
 
     public function error($message, array $context = array()): void
     {
-        $this->log['error'][] = [
+        $this->log[LogLevel::ERROR][] = [
             $message,
             $context
         ];
@@ -43,7 +44,7 @@ class ArrayLogger implements LoggerInterface
 
     public function warning($message, array $context = array()): void
     {
-        $this->log['warning'][] = [
+        $this->log[LogLevel::WARNING][] = [
             $message,
             $context
         ];
@@ -51,7 +52,7 @@ class ArrayLogger implements LoggerInterface
 
     public function notice($message, array $context = array()): void
     {
-        $this->log['notice'][] = [
+        $this->log[LogLevel::NOTICE][] = [
             $message,
             $context
         ];
@@ -59,7 +60,7 @@ class ArrayLogger implements LoggerInterface
 
     public function info($message, array $context = array()): void
     {
-        $this->log['info'][] = [
+        $this->log[LogLevel::INFO][] = [
             $message,
             $context
         ];
@@ -67,7 +68,7 @@ class ArrayLogger implements LoggerInterface
 
     public function debug($message, array $context = array()): void
     {
-        $this->log['debug'][] = [
+        $this->log[LogLevel::DEBUG][] = [
             $message,
             $context
         ];

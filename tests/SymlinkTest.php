@@ -9,6 +9,7 @@ use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use Enjoys\AssetsCollector\Strategy\OneFileStrategy;
 use Enjoys\UrlConverter;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LogLevel;
 
 class SymlinkTest extends TestCase
 {
@@ -76,7 +77,7 @@ class SymlinkTest extends TestCase
         );
         $assets->get(AssetType::CSS);
 
-        $this->assertCount(10, $logger->getLog('info'));
+        $this->assertCount(10, $logger->getLog(LogLevel::INFO));
 
         $symlinks = $this->findAllSymlinks($this->config->getCompileDir());
 
@@ -100,7 +101,7 @@ class SymlinkTest extends TestCase
         }
 
         $assets->get(AssetType::CSS);
-        $this->assertCount(10, $logger->getLog('info'));
+        $this->assertCount(10, $logger->getLog(LogLevel::INFO));
 
     }
 

@@ -26,7 +26,7 @@ final class MinifierFactory
      * @param Closure(string): string $closure
      * @return Minifier
      */
-    public static function createFromClosure(Closure $closure): Minifier
+    private static function createFromClosure(Closure $closure): Minifier
     {
         return new class($closure) implements Minifier {
 

@@ -90,11 +90,11 @@ class AssetsExtensionTest extends TestCase
         $extension->asset('css', [
             [
                 '//yandex.ru',
-                AssetOption::NOT_COLLECT => true,
-                AssetOption::MINIFY => false,
                 AssetOption::ATTRIBUTES => [
                     'type' => false
-                ]
+                ],
+                AssetOption::NOT_COLLECT => true,
+                AssetOption::MINIFY => false
             ],
             'test.css',
             'tests/fixtures/test.css'

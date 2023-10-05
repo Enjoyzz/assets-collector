@@ -10,7 +10,6 @@ use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Strategy;
 use Exception;
 
-use function Enjoys\FileSystem\createDirectory;
 use function Enjoys\FileSystem\createFile;
 use function Enjoys\FileSystem\makeSymlink;
 use function Enjoys\FileSystem\writeFile;
@@ -61,13 +60,6 @@ class OneFileStrategy implements Strategy
             /** @var Asset $asset */
             return !$asset->getOptions()->isNotCollect();
         });
-
-        if (createDirectory(
-            $path = pathinfo($filePath, PATHINFO_DIRNAME),
-            $environment->getDirectoryPermissions()
-        )) {
-            $logger->info(sprintf('Create directory %s', $path));
-        }
 
         if (!file_exists($filePath)) {
             createFile($filePath);

@@ -23,8 +23,6 @@ class Environment
 
     private int $cacheTime = -1;
 
-    private int $directoryPermissions = 0x775;
-
     private ?string $version = null;
 
     private string $paramVersion = 'v';
@@ -143,16 +141,6 @@ class Environment
     {
         $this->logger = $logger;
         return $this;
-    }
-
-    public function getDirectoryPermissions(): int
-    {
-        return $this->directoryPermissions;
-    }
-
-    public function setDirectoryPermissions(int $directoryPermissions): void
-    {
-        $this->directoryPermissions = $directoryPermissions;
     }
 
     public function getHttpClient(): ?ClientInterface

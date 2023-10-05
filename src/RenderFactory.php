@@ -71,7 +71,7 @@ final class RenderFactory
      * @param Closure(Asset[]): string $closure
      * @return Renderer
      */
-    private static function createFromClosure(Closure $closure): Renderer
+    public static function createFromClosure(Closure $closure): Renderer
     {
         return new class($closure) implements Renderer {
 

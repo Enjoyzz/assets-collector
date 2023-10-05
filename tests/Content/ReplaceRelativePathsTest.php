@@ -9,6 +9,7 @@ use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Content\ReplaceRelative;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
@@ -26,7 +27,7 @@ class ReplaceRelativePathsTest extends TestCase
     {
         $this->config = new Environment('_compile', __DIR__ . '/..');
         $this->config->setBaseUrl('/t')
-            ->setStrategy(Assets::STRATEGY_MANY_FILES)
+            ->setStrategy(ManyFilesStrategy::class)
         ;
     }
 

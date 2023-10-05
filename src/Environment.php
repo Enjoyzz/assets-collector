@@ -5,6 +5,7 @@ namespace Enjoys\AssetsCollector;
 use Closure;
 use Enjoys\AssetsCollector\Exception\PathDirectoryIsNotValid;
 use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
+use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -18,14 +19,20 @@ class Environment
     private string $compileDir;
     private string $baseUrl = '';
     private int $cacheTime = -1;
-    private int $strategy = Assets::STRATEGY_MANY_FILES;
+    private int $directoryPermissions = 0x775;
+
     private ?string $version = null;
     private string $paramVersion = 'v';
+
     private LoggerInterface $logger;
     private ?ClientInterface $httpClient = null;
     private ?RequestFactoryInterface $requestFactory = null;
-    private int $directoryPermissions = 0775;
 
+
+    /**
+     * @var class-string<Strategy>|Strategy
+     */
+    private string|Strategy $strategy = ManyFilesStrategy::class;
 
     /**
      * @var array<string, Closure(string):string|Minifier|null>
@@ -111,38 +118,6 @@ class Environment
     }
 
     /**
-     * @param string $version
-     * @return $this
-     */
-    public function setVersion(string $version): Environment
-    {
-        $this->version = $version;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getVersion(): ?string
-    {
-        if ($this->version === null) {
-            return null;
-        }
-        return $this->paramVersion . '=' . $this->version;
-    }
-
-    /**
-     * @param string $paramVersion
-     * @return $this
-     */
-    public function setParamVersion(string $paramVersion): Environment
-    {
-        $this->paramVersion = $paramVersion;
-        return $this;
-    }
-
-
-    /**
      * @param int $cacheTime
      * @return $this
      */
@@ -160,17 +135,20 @@ class Environment
         return $this->cacheTime;
     }
 
-    public function getStrategy(): int
+    public function getStrategy(): Strategy
     {
-        return $this->strategy;
+        if ($this->strategy instanceof Strategy){
+            return $this->strategy;
+        }
+        return new $this->strategy();
     }
 
 
     /**
-     * @param int $strategy
+     * @param class-string<Strategy>|Strategy $strategy
      * @return Environment
      */
-    public function setStrategy(int $strategy): Environment
+    public function setStrategy(string|Strategy $strategy): Environment
     {
         $this->strategy = $strategy;
         return $this;
@@ -267,12 +245,43 @@ class Environment
 
     }
 
+    /**
+     * @param string $paramVersion
+     * @return $this
+     */
+    public function setParamVersion(string $paramVersion): Environment
+    {
+        $this->paramVersion = $paramVersion;
+        return $this;
+    }
+
+
+    /**
+     * @param string $version
+     * @return $this
+     */
+    public function setVersion(string $version): Environment
+    {
+        $this->version = $version;
+        return $this;
+    }
+
     public function getVersionQuery(): array
     {
         if ($this->version === null) {
             return [];
         }
         return [$this->paramVersion => $this->version];
+    }
+
+    public function getVersion(): ?string
+    {
+        return $this->version;
+    }
+
+    public function getParamVersion(): string
+    {
+        return $this->paramVersion;
     }
 
 }

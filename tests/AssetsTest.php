@@ -7,6 +7,7 @@ use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
+use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use PHPUnit\Framework\TestCase;
 
 class AssetsTest extends TestCase
@@ -23,7 +24,7 @@ class AssetsTest extends TestCase
     {
         $this->config = new Environment(__DIR__ . '/_compile', __DIR__ . '/../');
         $this->config->setBaseUrl('/t')
-            ->setStrategy(Assets::STRATEGY_MANY_FILES)
+            ->setStrategy(ManyFilesStrategy::class)
         ;
     }
 

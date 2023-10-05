@@ -13,9 +13,7 @@ use Psr\Log\LoggerInterface;
 
 use function str_replace;
 
-/**
- * @psalm-suppress PossiblyFalseArgument
- */
+
 final class ReplaceRelative
 {
     private LoggerInterface $logger;

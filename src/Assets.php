@@ -4,18 +4,12 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
-use Enjoys\AssetsCollector\CollectStrategy\StrategyFactory;
 use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
 use Psr\Log\LoggerInterface;
 
 class Assets
 {
     public const NAMESPACE_COMMON = 'common';
-
-    public const RENDER_HTML = 'html';
-
-    public const STRATEGY_ONE_FILE = 0;
-    public const STRATEGY_MANY_FILES = 1;
 
     /*
      * @var AssetsCollection
@@ -40,8 +34,12 @@ class Assets
      * @param string $method
      * @return $this
      */
-    public function add(AssetType $type, array|string $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
-    {
+    public function add(
+        AssetType $type,
+        array|string $paths,
+        string $namespace = self::NAMESPACE_COMMON,
+        string $method = 'push'
+    ): Assets {
         $collection = new AssetsCollection($this->environment);
         /** @var array|string $path */
         foreach ((array)$paths as $path) {
@@ -76,25 +74,13 @@ class Assets
      */
     public function get(AssetType $type, string $namespace = self::NAMESPACE_COMMON): string
     {
-        $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
-        return $this->getEnvironment()->getRenderer($type)->render($paths);
-    }
-
-
-    /**
-     * @param AssetType $type
-     * @param Asset[] $assetsCollection
-     * @return Asset[]
-     */
-    private function getResults(AssetType $type, array $assetsCollection): array
-    {
-        $strategy = StrategyFactory::getStrategy(
-            $this->environment,
-            $assetsCollection,
-            $type
+        return $this->environment->getRenderer($type)->render(
+            $this->environment->getStrategy()->getAssets(
+                $type,
+                $this->assetsCollection->get($type, $namespace),
+                $this->environment
+            )
         );
-
-        return $strategy->getResult();
     }
 
     /**

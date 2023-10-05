@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
+use GuzzleHttp\Psr7\Uri;
+
 use function getenv;
 use function str_starts_with;
 
@@ -133,6 +135,5 @@ class Asset
     {
         return $this->valid;
     }
-
 
 }

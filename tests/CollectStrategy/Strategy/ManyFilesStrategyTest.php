@@ -5,8 +5,8 @@ namespace Tests\Enjoys\AssetsCollector\CollectStrategy\Strategy;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetsCollection;
 use Enjoys\AssetsCollector\AssetType;
-use Enjoys\AssetsCollector\CollectStrategy\Strategy\ManyFilesStrategy;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
@@ -44,11 +44,7 @@ class ManyFilesStrategyTest extends TestCase
         $this->assetCollection->add(new Asset(AssetType::CSS, '//yandex.ru'), 'test');
         $this->assetCollection->add(new Asset(AssetType::CSS, __DIR__ . '/../../fixtures/test.css'), 'test');
 
-        $strategy = new ManyFilesStrategy(
-            $this->environment,
-            $this->assetCollection->get(AssetType::CSS, 'test'),
-            AssetType::CSS
-        );
+        $strategy = new ManyFilesStrategy();
 
         $this->assertSame(
             [
@@ -56,9 +52,15 @@ class ManyFilesStrategyTest extends TestCase
                 'http://yandex.ru',
                 '/foo/fixtures/test.css',
             ],
-            array_map(function ($i){
+            array_map(function ($i) {
                 return $i->getAttributeCollection()->get(AssetType::CSS->getSrcAttribute());
-            }, $strategy->getResult(), [])
+            },
+                $strategy->getAssets(
+                    AssetType::CSS,
+                    $this->assetCollection->get(AssetType::CSS, 'test'),
+                    $this->environment,
+                ),
+                [])
         );
     }
 }

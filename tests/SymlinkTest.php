@@ -5,6 +5,8 @@ namespace Tests\Enjoys\AssetsCollector;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
+use Enjoys\AssetsCollector\Strategy\OneFileStrategy;
 use Enjoys\UrlConverter;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +36,7 @@ class SymlinkTest extends TestCase
 
     public function testSingleStrategyCreatedSymLinks()
     {
-        $this->config->setStrategy(Assets::STRATEGY_ONE_FILE)->setBaseUrl('/_c');
+        $this->config->setStrategy(OneFileStrategy::class)->setBaseUrl('/_c');
         $assets = new Assets($this->config);
         $assets->add(
             AssetType::CSS,
@@ -63,7 +65,7 @@ class SymlinkTest extends TestCase
 
     public function testManyStrategyCreatedSymLinks()
     {
-        $this->config->setStrategy(Assets::STRATEGY_MANY_FILES);
+        $this->config->setStrategy(ManyFilesStrategy::class);
         $this->config->setLogger($logger = new ArrayLogger());
         $this->config->setCacheTime(300);
         $assets = new Assets($this->config);

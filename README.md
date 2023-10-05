@@ -36,7 +36,7 @@ $environment = new Environment($assetsDir, $projectDir);
 //Base URL to compile path for Web
 $environment->setBaseUrl("/assets-collector/example/assets"); 
 //Set strategy, default STRATEGY_MANY_FILES
-$environment->setStrategy(Assets::STRATEGY_ONE_FILE); //Assets::STRATEGY_MANY_FILES
+$environment->setStrategy(\Enjoys\AssetsCollector\Strategy\OneFileStrategy::class); //\Enjoys\AssetsCollector\Strategy\ManyFilesStrategy::class
 //Cache time for files in strategy STRATEGY_ONE_FILE
 $environment->setCacheTime(0); //cache time in seconds
 //Adds the output version, for example //example.php/style.css?v=123 
@@ -153,7 +153,7 @@ $assets->get('css'); //get Css with default namespace
 $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 ```
 
-При *$environment->setStrategy(Assets::STRATEGY_ONE_FILE);* происходит чтение всех файлов и запись в один файл. Вернет
+При *$environment->setStrategy(\Enjoys\AssetsCollector\Strategy\OneFileStrategy::class);* происходит чтение всех файлов и запись в один файл. Вернет
 html строку для подключения стилей или скриптов
 
 ```html
@@ -161,7 +161,7 @@ html строку для подключения стилей или скрипт
 <link type='text/css' rel='stylesheet' href='/assets/3c2ea3240f78656c2e4ad2b7f64a5bc2.css?_ver=1610822303'/>
 ```
 
-При *$environment->setStrategy(Assets::STRATEGY_MANY_FILES);* вернет стили или скрипты по отдельности, примерно так,
+При *$environment->setStrategy(\Enjoys\AssetsCollector\Strategy\ManyFilesStrategy::class);* вернет стили или скрипты по отдельности, примерно так,
 удобно при разработке
 
 ```html

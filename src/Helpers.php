@@ -2,6 +2,8 @@
 
 namespace Enjoys\AssetsCollector;
 
+use GuzzleHttp\Psr7\Uri;
+
 final class Helpers
 {
 
@@ -19,6 +21,16 @@ final class Helpers
             return 'https';
         }
         return 'http';
+    }
+
+
+    public static function addVersionToPath(string $path, array $versionQuery): string
+    {
+        $url = new Uri($path);
+        parse_str($url->getQuery(), $query);
+        return $url->withQuery(
+            http_build_query(array_merge($query, $versionQuery))
+        )->__toString();
     }
 
 

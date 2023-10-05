@@ -56,7 +56,7 @@ class AssetsExtension extends AbstractExtension
     public function asset(
         string|AssetType $type,
         array $paths = [],
-        string $namespace = Assets::NAMESPACE_COMMON,
+        string $group = Assets::GROUP_COMMON,
         string $method = 'push'
     ): void {
 
@@ -75,29 +75,29 @@ class AssetsExtension extends AbstractExtension
                 }
                 return $path;
             }, $paths),
-            $namespace,
+            $group,
             $method
         );
     }
 
     /**
-     * @param string $namespace
+     * @param string $group
      * @return string
      * @throws \Exception
      */
-    public function getExternCss(string $namespace = Assets::NAMESPACE_COMMON): string
+    public function getExternCss(string $group = Assets::GROUP_COMMON): string
     {
-        return $this->assetsCollector->get(AssetType::CSS, $namespace);
+        return $this->assetsCollector->get(AssetType::CSS, $group);
     }
 
     /**
-     * @param string $namespace
+     * @param string $group
      * @return string
      * @throws \Exception
      */
-    public function getExternJs(string $namespace = Assets::NAMESPACE_COMMON): string
+    public function getExternJs(string $group = Assets::GROUP_COMMON): string
     {
-        return $this->assetsCollector->get(AssetType::JS, $namespace);
+        return $this->assetsCollector->get(AssetType::JS, $group);
     }
 
     /**

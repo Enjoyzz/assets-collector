@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 
 class Assets
 {
-    public const NAMESPACE_COMMON = 'common';
+    public const GROUP_COMMON = 'common';
 
     /*
      * @var AssetsCollection
@@ -30,14 +30,14 @@ class Assets
     /**
      * @param AssetType $type
      * @param array|string $paths
-     * @param string $namespace
+     * @param string $group
      * @param string $method
      * @return $this
      */
     public function add(
         AssetType $type,
         array|string $paths,
-        string $namespace = self::NAMESPACE_COMMON,
+        string $group = self::GROUP_COMMON,
         string $method = 'push'
     ): Assets {
         $collection = new AssetsCollection($this->logger);
@@ -54,7 +54,7 @@ class Assets
             /** @var array<string, array|bool> $params */
             $collection->add(
                 new Asset($type, $path, $params),
-                $namespace
+                $group
             );
         }
 
@@ -67,12 +67,12 @@ class Assets
         return $this;
     }
 
-    public function get(AssetType $type, string $namespace = self::NAMESPACE_COMMON): string
+    public function get(AssetType $type, string $group = self::GROUP_COMMON): string
     {
         return $this->environment->getRenderer($type)->render(
             $this->environment->getStrategy()->getAssets(
                 $type,
-                $this->assetsCollection->get($type, $namespace),
+                $this->assetsCollection->get($type, $group),
                 $this->environment
             )
         );

@@ -65,7 +65,7 @@ $assets = new \Enjoys\AssetsCollector\Assets($environment);
 
 **Добавление в коллекцию**
 
-*Если третьим параметрам передать namespace, то при выводе так же нужно его писать. Своего рода группировка*
+*Если третьим параметрам передать $group, то при выводе так же нужно его писать. Своего рода группировка*
 
 ```php
 /** @var \Enjoys\AssetsCollector\Assets $assets */
@@ -141,7 +141,7 @@ $assets->add('css', [
 
 ```php
 /** @var \Enjoys\AssetsCollector\Assets $assets */
-$assets->add($type = 'css|js', [], $namespace, $method = 'push|unshift');
+$assets->add($type = 'css|js', [], $group, $method = 'push|unshift');
 ```
 
 **Вывод**

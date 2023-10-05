@@ -17,25 +17,25 @@ class AssetsCollection
     {
     }
 
-    public function add(Asset $asset, string $namespace): void
+    public function add(Asset $asset, string $group): void
     {
         if (!$asset->isValid()) {
             $this->logger->notice(sprintf('Path invalid: %s', $asset->getOrigPath()));
             return;
         }
 
-        if ($this->has($asset, $namespace)) {
+        if ($this->has($asset, $group)) {
             $this->logger->notice(sprintf('Duplicate path: %s', $asset->getOrigPath()));
             return;
         }
 
 
-        $this->assets[$asset->getType()->value][$namespace][$asset->getId()] = $asset;
+        $this->assets[$asset->getType()->value][$group][$asset->getId()] = $asset;
     }
 
-    public function has(Asset $asset, string $namespace): bool
+    public function has(Asset $asset, string $group): bool
     {
-        if (isset($this->assets[$asset->getType()->value][$namespace][$asset->getId()])) {
+        if (isset($this->assets[$asset->getType()->value][$group][$asset->getId()])) {
             return true;
         }
         return false;
@@ -43,15 +43,15 @@ class AssetsCollection
 
     /**
      * @param AssetType $type
-     * @param string $namespace
+     * @param string $group
      * @return Asset[]
      */
-    public function get(AssetType $type, string $namespace): array
+    public function get(AssetType $type, string $group): array
     {
-        if (!isset($this->assets[$type->value][$namespace])) {
+        if (!isset($this->assets[$type->value][$group])) {
             return [];
         }
-        return $this->assets[$type->value][$namespace];
+        return $this->assets[$type->value][$group];
     }
 
     /**

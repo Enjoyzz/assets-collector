@@ -24,7 +24,7 @@ class AssetsCollectionTest extends TestCase
 
     public function testAdd()
     {
-        $collection = new AssetsCollection($this->environment);
+        $collection = new AssetsCollection();
         $collection->add(new Asset(AssetType::CSS, 'http://test.test/style.css'),  'common');
         $this->assertCount(1, $collection->get(AssetType::CSS, 'common'));
 

@@ -27,7 +27,7 @@ class ManyFilesStrategyTest extends TestCase
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../..');
         $this->environment->setBaseUrl('/foo');
-        $this->assetCollection = new AssetsCollection($this->environment);
+        $this->assetCollection = new AssetsCollection();
     }
 
     protected function tearDown(): void

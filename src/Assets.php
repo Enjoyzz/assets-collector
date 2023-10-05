@@ -21,10 +21,10 @@ class Assets
      */
     private LoggerInterface $logger;
 
-    public function __construct(private Environment $environment)
+    public function __construct(private readonly Environment $environment)
     {
         $this->logger = $this->environment->getLogger();
-        $this->assetsCollection = new AssetsCollection($this->environment);
+        $this->assetsCollection = new AssetsCollection($this->logger);
     }
 
     /**
@@ -40,7 +40,7 @@ class Assets
         string $namespace = self::NAMESPACE_COMMON,
         string $method = 'push'
     ): Assets {
-        $collection = new AssetsCollection($this->environment);
+        $collection = new AssetsCollection($this->logger);
         /** @var array|string $path */
         foreach ((array)$paths as $path) {
             $params = [];
@@ -67,11 +67,6 @@ class Assets
         return $this;
     }
 
-    /**
-     * @param AssetType $type
-     * @param string $namespace
-     * @return string
-     */
     public function get(AssetType $type, string $namespace = self::NAMESPACE_COMMON): string
     {
         return $this->environment->getRenderer($type)->render(
@@ -84,7 +79,7 @@ class Assets
     }
 
     /**
-     * @return Environment
+     * @todo: maybe remove
      */
     public function getEnvironment(): Environment
     {
@@ -92,9 +87,9 @@ class Assets
     }
 
     /**
-     * @return LoggerInterface
+     * @todo: maybe remove
      */
-    public function getLogger(): LoggerInterface
+     public function getLogger(): LoggerInterface
     {
         return $this->logger;
     }

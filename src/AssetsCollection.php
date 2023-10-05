@@ -3,6 +3,7 @@
 namespace Enjoys\AssetsCollector;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class AssetsCollection
 {
@@ -10,15 +11,10 @@ class AssetsCollection
      * @var array<string, array<string, array<string, Asset>>>
      */
     private array $assets = [];
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $logger;
 
 
-    public function __construct(Environment $environment)
+    public function __construct(private readonly LoggerInterface $logger = new NullLogger())
     {
-        $this->logger = $environment->getLogger();
     }
 
     public function add(Asset $asset, string $namespace): void

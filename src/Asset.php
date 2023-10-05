@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
-use GuzzleHttp\Psr7\Uri;
-
 use function getenv;
 use function str_starts_with;
 
@@ -33,7 +31,7 @@ class Asset
     {
         $this->origPath = $path;
 
-        /**  @psalm-suppress MixedArgumentTypeCoercion  */
+        /**  @psalm-suppress MixedArgumentTypeCoercion */
         $this->attributeCollection = new AttributeCollection($options[AssetOption::ATTRIBUTES] ?? []);
 
         $this->options = new AssetOption($options);
@@ -41,12 +39,11 @@ class Asset
         $this->isUrl = $this->checkIsUrl($path);
         $path = $this->getNormalizedPath($path);
 
-        if ($path !== false){
+        if ($path !== false) {
             $this->valid = true;
             $this->path = $path;
             $this->setId($this->path);
         }
-
     }
 
     private function getNormalizedPath(string $path): false|string
@@ -58,6 +55,7 @@ class Asset
         if (false === $projectDir = getenv('ASSETS_PROJECT_DIRECTORY')) {
             $projectDir = '';
         }
+
         $paths = [
             $path,
             $projectDir . $path

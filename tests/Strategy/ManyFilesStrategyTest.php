@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Enjoys\AssetsCollector\CollectStrategy\Strategy;
+namespace Tests\Enjoys\AssetsCollector\Strategy;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetsCollection;
@@ -8,24 +8,26 @@ use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use PHPUnit\Framework\TestCase;
+use Tests\Enjoys\AssetsCollector\ArrayLogger;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
 class ManyFilesStrategyTest extends TestCase
 {
     use HelpersTestTrait;
 
-    /**
-     * @var Environment
-     */
-    private ?Environment $environment;
-    /**
-     * @var AssetsCollection
-     */
-    private ?AssetsCollection $assetCollection;
+
+    private ?Environment $environment = null;
+
+    private ?AssetsCollection $assetCollection = null;
+
+    private ?ArrayLogger $logger = null;
 
     protected function setUp(): void
     {
-        $this->environment = new Environment('_compile', __DIR__ . '/../..');
+        $this->logger = new ArrayLogger();
+        $this->environment = new Environment(
+            '_compile', __DIR__ . '/..', $this->logger
+        );
         $this->environment->setBaseUrl('/foo');
         $this->assetCollection = new AssetsCollection();
     }
@@ -36,28 +38,35 @@ class ManyFilesStrategyTest extends TestCase
 
         $this->environment = null;
         $this->assetCollection = null;
+        $this->logger = null;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testManyFilesStrategy(): void
     {
-        $this->assetCollection->add(new Asset(AssetType::CSS, '//google.com'), 'test');
-        $this->assetCollection->add(new Asset(AssetType::CSS, '//yandex.ru'), 'test');
-        $this->assetCollection->add(new Asset(AssetType::CSS, __DIR__ . '/../../fixtures/test.css'), 'test');
+        $assets = [
+            new Asset(AssetType::CSS, '//google.com'),
+            new Asset(AssetType::CSS, 'invalid'),
+            new Asset(AssetType::CSS, 'tests/fixtures/test.css'),
+            new Asset(AssetType::CSS, '//yandex.ru'),
+        ];
 
         $strategy = new ManyFilesStrategy();
 
         $this->assertSame(
             [
                 'http://google.com',
-                'http://yandex.ru',
                 '/foo/fixtures/test.css',
+                'http://yandex.ru',
             ],
             array_map(function ($i) {
                 return $i->getAttributeCollection()->get(AssetType::CSS->getSrcAttribute());
             },
                 $strategy->getAssets(
                     AssetType::CSS,
-                    $this->assetCollection->get(AssetType::CSS, 'test'),
+                    $assets,
                     $this->environment,
                 ),
                 [])

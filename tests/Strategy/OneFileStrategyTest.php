@@ -1,14 +1,9 @@
 <?php
 
-namespace Tests\Enjoys\AssetsCollector\CollectStrategy\Strategy;
+namespace Tests\Enjoys\AssetsCollector\Strategy;
 
-use Enjoys\AssetsCollector\Asset;
-use Enjoys\AssetsCollector\AssetOption;
-use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\Strategy\OneFileStrategy;
-use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 use tubalmartin\CssMin\Minifier as CSSmin;
 

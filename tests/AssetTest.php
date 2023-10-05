@@ -26,6 +26,8 @@ class AssetTest extends TestCase
      */
     public function data(): array
     {
+        $this->setUp();
+
         return [
             [AssetType::CSS, '//test', [], true, 'http://test', true, 'css', true],
             [AssetType::CSS, 'http://test', [], true, 'http://test', true, 'css', true],
@@ -43,6 +45,7 @@ class AssetTest extends TestCase
             [AssetType::CSS, __DIR__ . '/../README.md', [], false, realpath(__DIR__ . '/../README.md'), true, 'css', true],
             [AssetType::CSS, '../README.md', [], false, '', true, 'css', false],
             [AssetType::CSS, '../README.md', [AssetOption::MINIFY => false], false, '', false, 'css', false],
+            [AssetType::CSS, 'tests/fixtures/test.css', [AssetOption::MINIFY => false], false, $this->environment->getProjectDir().'/tests/fixtures/test.css', false, 'css', true],
         ];
     }
 
@@ -51,6 +54,7 @@ class AssetTest extends TestCase
      */
     public function test__construct($type, $path, $params, $isUrl, $getPath, $isMinify, $getType, $setId)
     {
+        chdir(__DIR__.'/fixtures');
         $asset = new Asset($type, $path, $params);
         $this->assertSame($isUrl, $asset->isUrl());
         $this->assertSame($getPath, $asset->getPath());

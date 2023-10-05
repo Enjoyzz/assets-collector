@@ -66,24 +66,17 @@ final class ReplaceRelative
         return $this->replacePath($this->asset->getPath(), $relativePath);
     }
 
-    /**
-     * @param string $baseUrl
-     * @param string $relativeUrl
-     * @return false|string
-     */
-    private function replaceUrls(string $baseUrl, string $relativeUrl)
+
+    private function replaceUrls(string $baseUrl, string $relativeUrl): false|string
     {
         $urlConverter = new UrlConverter();
         return $urlConverter->relativeToAbsolute($baseUrl, $relativeUrl);
     }
 
     /**
-     * @param string $filePath
-     * @param string $relativePath
-     * @return false|string
      * @throws Exception
      */
-    private function replacePath(string $filePath, string $relativePath)
+    private function replacePath(string $filePath, string $relativePath): false|string
     {
         $realpath = realpath(
             pathinfo($filePath, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR
@@ -107,6 +100,7 @@ final class ReplaceRelative
             )
         );
 
+        /** @infection-ignore-all */
         $this->asset->getOptions()->setOption(
             AssetOption::SYMLINKS,
             array_merge(

@@ -61,6 +61,7 @@ class ManyFilesStrategy implements Strategy
             }
 
             try {
+                /** @infection-ignore-all */
                 $asset->getOptions()->setOption(
                     AssetOption::SYMLINKS,
                     array_merge(

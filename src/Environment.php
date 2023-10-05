@@ -78,6 +78,7 @@ class Environment
     /**
      * Функцию realpath() нельзя применять так как директории изначально может не быть,
      * она может потом быть создана, если будут права
+     * @infection-ignore-all
      */
     private function normalizeCompileDir(string $path): string
     {

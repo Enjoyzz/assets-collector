@@ -58,12 +58,10 @@ class OneFileStrategy implements Strategy
 
         $logger = $environment->getLogger();
         $notCollectAssets = array_filter($assetsCollection, function ($asset) {
-            /** @var Asset $asset */
             return $asset->getOptions()->isNotCollect();
         });
 
         $collectAssets = array_filter($assetsCollection, function ($asset) {
-            /** @var Asset $asset */
             return !$asset->getOptions()->isNotCollect();
         });
 

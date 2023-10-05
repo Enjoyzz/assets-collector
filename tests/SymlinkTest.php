@@ -24,13 +24,11 @@ class SymlinkTest extends TestCase
     {
         $this->config = new Environment(__DIR__ . '/_compile', __DIR__ . '/../');
         $this->config->setLogger(new ArrayLogger());
-        $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
+        $this->removeDirectoryRecursive(__DIR__ . '/_compile', true);
     }
 
     protected function tearDown(): void
     {
-     //   $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
-
         $this->config = null;
     }
 

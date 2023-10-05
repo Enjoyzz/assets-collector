@@ -30,7 +30,7 @@ class AssetsTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
+        $this->removeDirectoryRecursive(__DIR__ . '/_compile', true);
 
         $this->config = null;
     }

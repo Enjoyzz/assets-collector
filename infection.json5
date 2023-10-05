@@ -9,7 +9,6 @@
         "@default": true
     },
     "logs": {
-        "text": "php://stderr",
         "html": "infection.html",
         "stryker": {
             "badge": "master"

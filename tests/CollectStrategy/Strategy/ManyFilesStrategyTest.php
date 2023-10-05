@@ -32,7 +32,7 @@ class ManyFilesStrategyTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive($this->environment->getCompileDir(), true);
+        $this->removeDirectoryRecursive(__DIR__ . '/_compile', true);
 
         $this->environment = null;
         $this->assetCollection = null;

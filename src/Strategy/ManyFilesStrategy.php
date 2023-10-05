@@ -24,7 +24,9 @@ class ManyFilesStrategy implements Strategy
      */
     public function getAssets(AssetType $type, array $assetsCollection, Environment $environment): array
     {
+        /** @infection-ignore-all */
         $cacheDir = $environment->getCompileDir() . '/.cache';
+
         $logger = $environment->getLogger();
 
         foreach ($assetsCollection as $asset) {

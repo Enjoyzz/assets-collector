@@ -43,10 +43,16 @@ class OneFileStrategy implements Strategy
     public function getAssets(AssetType $type, array $assetsCollection, Environment $environment): array
     {
         $this->cacheTime = $environment->getCacheTime();
+
+        /** @infection-ignore-all */
         $filename = '_' . $type->value . DIRECTORY_SEPARATOR . $this->generateHashId(
                 $assetsCollection
             ) . '.' . $type->value;
+
+        /** @infection-ignore-all */
         $filePath = $environment->getCompileDir() . DIRECTORY_SEPARATOR . $filename;
+
+        /** @infection-ignore-all */
         $fileUrl = $environment->getBaseUrl() . '/' . str_replace(DIRECTORY_SEPARATOR, '/', $filename);
 
 

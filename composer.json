@@ -34,9 +34,16 @@
         "vimeo/psalm": "^5.0",
         "guzzlehttp/guzzle": "^7.2",
         "tubalmartin/cssmin": "^4.1",
-        "tedivm/jshrink": "^1.6.2 | ~1.5.0"
+        "tedivm/jshrink": "^1.6.2 | ~1.5.0",
+        "roave/infection-static-analysis-plugin": "^1.33"
     },
     "scripts": {
-        "psalm": "psalm --show-info=true --config=psalm.xml --no-cache"
+        "psalm": "psalm --show-info=true --config=psalm.xml --no-cache",
+        "infection": "@php vendor/bin/roave-infection-static-analysis-plugin -j2"
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
     }
 }

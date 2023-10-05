@@ -1,0 +1,18 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "mutators": {
+        "@default": true
+    },
+    "logs": {
+        "text": "php://stderr",
+        "html": "infection.html",
+        "stryker": {
+            "badge": "master"
+        }
+    }
+}

@@ -39,7 +39,9 @@
     },
     "scripts": {
         "psalm": "psalm --show-info=true --config=psalm.xml --no-cache",
-        "infection": "@php vendor/bin/roave-infection-static-analysis-plugin -j2"
+        "tests": "@php vendor/bin/phpunit",
+        "infection": "@php vendor/bin/roave-infection-static-analysis-plugin -j2",
+        "infection-original": "@php vendor/bin/infection -j2"
     },
     "config": {
         "allow-plugins": {

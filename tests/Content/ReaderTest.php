@@ -128,7 +128,7 @@ CSS,
             new Asset(AssetType::CSS, __DIR__ . '/../fixtures/sub/css/style.css', [AssetOption::MINIFY => false]),
             $this->environment
         );
-        $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify();
+        $reader->replaceRelativeUrls()->minify();
         $this->assertSame(
             <<<CSS
 @font-face {
@@ -166,7 +166,7 @@ CSS
             ),
             $this->environment
         );
-        $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify();
+        $reader->replaceRelativeUrls()->minify();
         $this->assertSame(
             <<<CSS
 @font-face {

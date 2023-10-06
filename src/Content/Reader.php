@@ -142,7 +142,7 @@ class Reader
     /**
      * @throws Exception
      */
-    public function replaceRelativeUrlsAndCreatedSymlinks(): Reader
+    public function replaceRelativeUrls(): Reader
     {
         if (!$this->asset->isValid() || $this->content === false) {
             return $this;

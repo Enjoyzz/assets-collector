@@ -57,7 +57,7 @@ class ManyFilesStrategy implements Strategy
             $cacheFile = $cacheDir . '/' . $asset->getId();
 
             if (!file_exists($cacheFile) || (filemtime($cacheFile) + $environment->getCacheTime()) < time()) {
-                (new Reader($asset, $environment))->replaceRelativeUrlsAndCreatedSymlinks();
+                (new Reader($asset, $environment))->replaceRelativeUrls();
                 createFile($cacheFile);
                 $logger->info(sprintf('Create file: %s', $cacheFile));
             }

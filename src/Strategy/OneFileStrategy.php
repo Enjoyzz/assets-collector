@@ -94,7 +94,7 @@ class OneFileStrategy implements Strategy
 
             foreach ($collectAssets as $asset) {
                 $reader = new Reader($asset, $environment);
-                $output .= $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify()->getContents();
+                $output .= $reader->replaceRelativeUrls()->minify()->getContents();
 
                 foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     if (makeSymlink($optLink, $optTarget)) {

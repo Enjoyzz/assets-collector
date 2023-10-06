@@ -16,7 +16,6 @@ use function Enjoys\FileSystem\writeFile;
 
 class OneFileStrategy implements Strategy
 {
-    private bool $fileCreated = false;
     private int $cacheTime = 0;
     private string $filename = '';
     private string $filePath = '';
@@ -32,10 +31,10 @@ class OneFileStrategy implements Strategy
 
     private function isCacheValid(): bool
     {
-        if ($this->fileCreated) {
-            return false;
+        if (file_exists($this->filePath)){
+            return (filemtime($this->filePath) + $this->cacheTime) > time();
         }
-        return (filemtime($this->filePath) + $this->cacheTime) > time();
+        return false;
     }
 
 
@@ -67,12 +66,6 @@ class OneFileStrategy implements Strategy
         $collectAssets = array_filter($assetsCollection, function ($asset) {
             return !$asset->getOptions()->isNotCollect();
         });
-
-        if (!file_exists($this->filePath)) {
-            createFile($this->filePath);
-            $this->fileCreated = true;
-            $logger->info(sprintf('Create file: %s', $this->filePath));
-        }
 
         $notCollectedResult = (new ManyFilesStrategy())->getAssets($type, $notCollectAssets, $environment);
 

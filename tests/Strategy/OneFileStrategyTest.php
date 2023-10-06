@@ -49,7 +49,6 @@ class OneFileStrategyTest extends TestCase
      */
     public function testOneFileStrategy(): void
     {
-
         $assetsCollection = [
             new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css'),
             new Asset(AssetType::CSS, __DIR__ . '/../../tests/fixtures/test2.css'),
@@ -77,8 +76,7 @@ CSS
             file_get_contents($strategy->getFilePath())
         );
 
-        $this->assertCount(9, $this->logger->getLog(LogLevel::INFO));
-
+        $this->assertCount(8, $this->logger->getLog(LogLevel::INFO));
     }
 
     /**
@@ -86,7 +84,6 @@ CSS
      */
     public function testWithFilesCollectAndNoCollect()
     {
-
         $assetsCollection = [
             new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css'),
             new Asset(AssetType::CSS, __DIR__ . '/../../tests/fixtures/test2.css'),
@@ -117,25 +114,29 @@ CSS
             ),
             file_get_contents($strategy->getFilePath())
         );
-        $this->assertCount(13, $this->logger->getLog(LogLevel::INFO));
-
+        $this->assertCount(12, $this->logger->getLog(LogLevel::INFO));
     }
 
     /**
      * @TODO
      */
-    public function _testCache()
+    public function testCache()
     {
+
         $this->environment->setCacheTime(100);
+
+        $strategy = new OneFileStrategy();
+
         $assetsCollection = [
             new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css'),
-            new Asset(AssetType::CSS, __DIR__ . '/../../tests/fixtures/test2.css'),
         ];
-        $strategy = new OneFileStrategy();
+
         $strategy->getAssets(AssetType::CSS, $assetsCollection, $this->environment);
         $this->logger->clear();
         $strategy->getAssets(AssetType::CSS, $assetsCollection, $this->environment);
-            $this->assertCount(2, $this->logger->getLog(LogLevel::INFO));
+//        dd($this->logger->getLog(LogLevel::INFO));
+        $this->assertCount(2, $this->logger->getLog(LogLevel::INFO));
+
     }
 
 

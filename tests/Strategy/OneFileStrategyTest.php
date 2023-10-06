@@ -121,6 +121,22 @@ CSS
 
     }
 
+    /**
+     * @TODO
+     */
+    public function _testCache()
+    {
+        $this->environment->setCacheTime(100);
+        $assetsCollection = [
+            new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css'),
+            new Asset(AssetType::CSS, __DIR__ . '/../../tests/fixtures/test2.css'),
+        ];
+        $strategy = new OneFileStrategy();
+        $strategy->getAssets(AssetType::CSS, $assetsCollection, $this->environment);
+        $this->logger->clear();
+        $strategy->getAssets(AssetType::CSS, $assetsCollection, $this->environment);
+            $this->assertCount(2, $this->logger->getLog(LogLevel::INFO));
+    }
 
 
 }

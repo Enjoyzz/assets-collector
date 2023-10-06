@@ -90,4 +90,9 @@ class ArrayLogger implements LoggerInterface
         }
         return $this->log[$level] ?? [];
     }
+
+    public function clear(): void
+    {
+        $this->log = [];
+    }
 }

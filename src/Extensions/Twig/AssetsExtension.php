@@ -100,11 +100,4 @@ class AssetsExtension extends AbstractExtension
         return $this->assetsCollector->get(AssetType::JS, $group);
     }
 
-    /**
-     * @return Assets
-     */
-    public function getAssetsCollector(): Assets
-    {
-        return $this->assetsCollector;
-    }
 }

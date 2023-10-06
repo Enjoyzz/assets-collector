@@ -5,6 +5,8 @@ namespace Enjoys\AssetsCollector;
 use Closure;
 use Enjoys\AssetsCollector\Exception\PathDirectoryIsNotValid;
 use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -45,6 +47,7 @@ class Environment
     private ?ClientInterface $httpClient = null;
 
     private ?RequestFactoryInterface $requestFactory = null;
+    private Filesystem $filesystem;
 
     /**
      * Environment constructor.
@@ -55,7 +58,8 @@ class Environment
     public function __construct(
         string $compileDir = '/',
         string $projectDir = '',
-        private LoggerInterface $logger = new NullLogger()
+        private LoggerInterface $logger = new NullLogger(),
+        ?Filesystem $filesystem = null,
     ) {
         $projectDir = realpath($projectDir);
 
@@ -65,6 +69,12 @@ class Environment
             );
         }
         putenv("ASSETS_PROJECT_DIRECTORY=$projectDir/");
+
+        $this->filesystem = $filesystem ?? new Filesystem(
+            new LocalFilesystemAdapter(
+                $projectDir
+            )
+        );
 
         $this->projectDir = $projectDir;
         $this->compileDir = $this->normalizeCompileDir($compileDir);
@@ -235,6 +245,11 @@ class Environment
     public function getParamVersion(): string
     {
         return $this->paramVersion;
+    }
+
+    public function getFilesystem(): Filesystem
+    {
+        return $this->filesystem;
     }
 
 }

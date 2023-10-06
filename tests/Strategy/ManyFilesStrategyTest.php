@@ -3,11 +3,13 @@
 namespace Tests\Enjoys\AssetsCollector\Strategy;
 
 use Enjoys\AssetsCollector\Asset;
+use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\AssetsCollection;
 use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LogLevel;
 use Tests\Enjoys\AssetsCollector\ArrayLogger;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
@@ -72,5 +74,28 @@ class ManyFilesStrategyTest extends TestCase
                 ),
                 [])
         );
+
+        $this->assertCount(0, $this->logger->getLog(LogLevel::ERROR));
+    }
+
+    public function testManyFilesStrategyWithErrorSymlink(): void
+    {
+        $assets = [
+            new Asset(AssetType::CSS, 'tests/fixtures/test.css', [
+                AssetOption::SYMLINKS => [
+                    'invalidLink' => 'invalidTarget'
+                ]
+            ]),
+        ];
+
+        $strategy = new ManyFilesStrategy();
+
+        $strategy->getAssets(
+            AssetType::CSS,
+            $assets,
+            $this->environment,
+        );
+
+        $this->assertCount(1, $this->logger->getLog(LogLevel::ERROR));
     }
 }

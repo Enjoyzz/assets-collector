@@ -30,12 +30,12 @@ class OneFileStrategy implements Strategy
     }
 
 
-    private function isCacheValid(string $filePath): bool
+    private function isCacheValid(): bool
     {
         if ($this->fileCreated) {
             return false;
         }
-        return (filemtime($filePath) + $this->cacheTime) > time();
+        return (filemtime($this->filePath) + $this->cacheTime) > time();
     }
 
 
@@ -76,25 +76,28 @@ class OneFileStrategy implements Strategy
 
         $notCollectedResult = (new ManyFilesStrategy())->getAssets($type, $notCollectAssets, $environment);
 
+        $result = array_merge([
+            new Asset($type, $this->fileUrl, [
+                AssetOption::ATTRIBUTES => [
+                    $type->getSrcAttribute() => $this->fileUrl
+                ]
+            ])
+        ], $notCollectedResult);
+
         try {
-            if ($this->isCacheValid($this->filePath)) {
+            if ($this->isCacheValid()) {
                 $logger->info(sprintf('Use cached file: %s', $this->filePath));
                 $logger->info(sprintf('Return url: %s', $this->fileUrl));
-                return array_merge([
-                    new Asset($type, $this->fileUrl, [
-                        AssetOption::ATTRIBUTES => [
-                            $type->getSrcAttribute() => $this->fileUrl
-                        ]
-                    ])
-                ], $notCollectedResult);
+                return $result;
             }
 
-            $output = '';
-
-
             foreach ($collectAssets as $asset) {
-                $reader = new Reader($asset, $environment);
-                $output .= $reader->replaceRelativeUrls()->minify()->getContents();
+
+                writeFile(
+                    $this->filePath,
+                    (new Reader($asset, $environment))->replaceRelativeUrls()->minify()->getContents(),
+                    'a'
+                );
 
                 foreach ($asset->getOptions()->getSymlinks() as $optLink => $optTarget) {
                     if (makeSymlink($optLink, $optTarget)) {
@@ -102,7 +105,7 @@ class OneFileStrategy implements Strategy
                     }
                 }
             }
-            writeFile($this->filePath, $output);
+
             $logger->info(sprintf('Write to: %s', $this->filePath));
         } catch (Exception $e) {
             $logger->notice($e->getMessage());
@@ -110,13 +113,7 @@ class OneFileStrategy implements Strategy
 
         $logger->info(sprintf('Return url: %s', $this->fileUrl));
 
-        return array_merge([
-            new Asset($type, $this->fileUrl, [
-                AssetOption::ATTRIBUTES => [
-                    $type->getSrcAttribute() => $this->fileUrl
-                ]
-            ])
-        ], $notCollectedResult);
+        return $result;
     }
 
     public function getFilename(): string

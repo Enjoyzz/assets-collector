@@ -10,6 +10,9 @@ use PHPUnit\Framework\TestCase;
 
 class AssetTest extends TestCase
 {
+
+    use HelpersTestTrait;
+
     /**
      * @var Environment
      */
@@ -19,6 +22,13 @@ class AssetTest extends TestCase
     {
         $this->environment = new Environment(__DIR__ . '/_compile', __DIR__ . '/../');
         $this->environment->setBaseUrl('/t');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeDirectoryRecursive(__DIR__ . '/_compile', true);
+        $this->removeDirectoryRecursive(__DIR__ . '/tests', true);
+
     }
 
     /**

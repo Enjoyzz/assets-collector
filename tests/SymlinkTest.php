@@ -30,6 +30,8 @@ class SymlinkTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->removeDirectoryRecursive(__DIR__ . '/_compile', true);
+        $this->removeDirectoryRecursive(__DIR__ . '/tests', true);
         $this->config = null;
     }
 

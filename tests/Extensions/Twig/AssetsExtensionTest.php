@@ -9,10 +9,14 @@ use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use PHPUnit\Framework\TestCase;
+use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 use Twig\Loader\FilesystemLoader;
 
 class AssetsExtensionTest extends TestCase
 {
+
+    use HelpersTestTrait;
+
     /**
      * @var Assets
      */
@@ -31,6 +35,11 @@ class AssetsExtensionTest extends TestCase
         $this->extension = new AssetsExtension($this->assetsCollector);
         $this->extension->asset('css', ['//google.com', '//yandex.ru']);
         $this->extension->asset('js', ['//google.com']);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeDirectoryRecursive(__DIR__ . '/../../_compile', true);
     }
 
     public function testGetFunctions()

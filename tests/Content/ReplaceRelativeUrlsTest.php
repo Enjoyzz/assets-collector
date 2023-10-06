@@ -7,9 +7,13 @@ use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Content\ReplaceRelative;
 use Enjoys\AssetsCollector\Environment;
 use PHPUnit\Framework\TestCase;
+use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
 class ReplaceRelativeUrlsTest extends TestCase
 {
+
+    use HelpersTestTrait;
+
     private ?Environment $environment;
 
 
@@ -23,6 +27,7 @@ class ReplaceRelativeUrlsTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->removeDirectoryRecursive(__DIR__ . '/../_compile', true);
         $this->environment = null;
     }
     public function data()

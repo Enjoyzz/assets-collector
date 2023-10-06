@@ -53,7 +53,9 @@ class ManyFilesStrategy implements Strategy
                 $asset->getPath()
             );
 
+
             $cacheFile = $cacheDir . '/' . $asset->getId();
+
             if (!file_exists($cacheFile) || (filemtime($cacheFile) + $environment->getCacheTime()) < time()) {
                 (new Reader($asset, $environment))->replaceRelativeUrlsAndCreatedSymlinks();
                 createFile($cacheFile);
@@ -79,7 +81,7 @@ class ManyFilesStrategy implements Strategy
                 $logger->error($e->getMessage());
             }
 
-
+            /** @infection-ignore-all */
             $assetAttributeCollection->set(
                 $type->getSrcAttribute(),
                 Helpers::addVersionToPath(

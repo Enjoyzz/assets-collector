@@ -5,8 +5,6 @@ namespace Tests\Enjoys\AssetsCollector\Content;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\AssetType;
-use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
-use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Strategy\OneFileStrategy;
@@ -66,7 +64,7 @@ class ReaderTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive(__DIR__ . '/_compile', true);
+        $this->removeDirectoryRecursive(__DIR__ . '/../_compile', true);
         $this->environment = null;
     }
 

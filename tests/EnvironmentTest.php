@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Enjoys\AssetsCollector;
 
-use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\RenderFactory;
+use Enjoys\AssetsCollector\Strategy;
+use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -19,7 +20,7 @@ class EnvironmentTest extends TestCase
      */
     public function testSetProjectDir($path, $expect): void
     {
-        if(is_array($expect)){
+        if (is_array($expect)) {
             $this->expectException($expect[0]);
         }
         $environment = new Environment('', $path);
@@ -56,13 +57,13 @@ class EnvironmentTest extends TestCase
         return [
             ['', __DIR__],
             ['/', __DIR__],
-            ['/../dir', __DIR__.'/dir'],
-            ['/../../dir', __DIR__.'/dir'],
-            ['../dir', __DIR__.'/dir'],
-            ['dir', __DIR__.'/dir'],
-            ['dir/dir2', __DIR__.'/dir/dir2'],
-            ['dir/dir2/', __DIR__.'/dir/dir2'],
-            [__DIR__.'/../dir/', __DIR__.'/dir'],
+            ['/../dir', __DIR__ . '/dir'],
+            ['/../../dir', __DIR__ . '/dir'],
+            ['../dir', __DIR__ . '/dir'],
+            ['dir', __DIR__ . '/dir'],
+            ['dir/dir2', __DIR__ . '/dir/dir2'],
+            ['dir/dir2/', __DIR__ . '/dir/dir2'],
+            [__DIR__ . '/../dir/', __DIR__ . '/dir'],
         ];
     }
 
@@ -110,7 +111,6 @@ class EnvironmentTest extends TestCase
         $this->assertSame(null, $environment->getVersion());
         $environment->setVersion('1.0.0');
         $this->assertSame('1.0.0', $environment->getVersion());
-
     }
 
     public function testGetParamVersion()
@@ -119,17 +119,32 @@ class EnvironmentTest extends TestCase
         $this->assertSame('v', $environment->getParamVersion());
         $environment->setParamVersion('version');
         $this->assertSame('version', $environment->getParamVersion());
-
     }
 
     public function testSetRenderer()
     {
         $environment = new Environment();
-        $renderer = function ($assets){
+        $renderer = function ($assets) {
             return 'my render';
         };
         $environment->setRenderer(AssetType::CSS, $renderer);
         $this->assertSame($renderer([]), $environment->getRenderer(AssetType::CSS)->render([]));
+    }
+
+    public function testGetStrategy()
+    {
+        $environment = new Environment();
+        $this->assertSame(ManyFilesStrategy::class, $environment->getStrategy()::class);
+
+        $strategy = new class implements Strategy {
+
+            public function getAssets(AssetType $type, array $assetsCollection, Environment $environment): array
+            {
+                return [];
+            }
+        };
+        $environment->setStrategy($strategy);
+        $this->assertSame($strategy, $environment->getStrategy());
     }
 
 }

@@ -7,7 +7,6 @@ use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
-use Enjoys\AssetsCollector\Strategy\OneFileStrategy;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use JShrink\Minifier;
@@ -35,20 +34,20 @@ class ReaderTest extends TestCase
     protected function setUp(): void
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../');
-        $this->environment->setMinifier(AssetType::CSS, function ($content){
+        $this->environment->setMinifier(AssetType::CSS, function ($content) {
             $compressor = new CSSMin();
             return $compressor->run($content);
         });
-        $this->environment->setMinifier(AssetType::JS, function ($content){
+        $this->environment->setMinifier(AssetType::JS, function ($content) {
             return (string)Minifier::minify(
                 $content,
                 [
-                    'flaggedComments' =>  false
+                    'flaggedComments' => false
                 ]
             );
         });
 
-        $this->httpClient =  new Client(
+        $this->httpClient = new Client(
             [
                 'verify' => false,
                 'allow_redirects' => true,
@@ -143,14 +142,59 @@ CSS
         );
     }
 
-    public function xtestWithReplaceRelativeUrlWithOneFileStrategy(): void
+    public function testWithReplaceRelativeUrl(): void
     {
-      //  $this->environment->setStrategy(Assets::STRATEGY_ONE_FILE);
         $reader = new Reader(
-            new Asset(AssetType::CSS, 'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css', [AssetOption::MINIFY => false]),
+            new Asset(
+                AssetType::CSS,
+                'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css',
+            ),
             $this->environment
         );
-        $this->assertStringContainsString('https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/fonts/fontawesome-webfont.eot', $reader->getContents());
+        $reader->replaceRelativeUrls();
+        $this->assertStringContainsString(
+            "src: url('https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/fonts/fontawesome-webfont.eot');",
+            $reader->getContents()
+        );
+    }
+
+    public function testWithReplaceRelativeUrlFailed(): void
+    {
+        $asset = new Asset(
+            AssetType::CSS,
+            'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css',
+        );
+
+        $reflection = new \ReflectionClass($asset);
+        $reflection->getProperty('valid')->setValue($asset, false);
+
+        $reader = new Reader(
+            $asset,
+            $this->environment
+        );
+
+        $reader->replaceRelativeUrls();
+        $this->assertSame(
+            '',
+            $reader->getContents()
+        );
+    }
+
+    public function xtestWithReplaceRelativeUrlWithOneFileStrategy(): void
+    {
+        //  $this->environment->setStrategy(Assets::STRATEGY_ONE_FILE);
+        $reader = new Reader(
+            new Asset(
+                AssetType::CSS,
+                'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css',
+                [AssetOption::MINIFY => false]
+            ),
+            $this->environment
+        );
+        $this->assertStringContainsString(
+            'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/fonts/fontawesome-webfont.eot',
+            $reader->getContents()
+        );
     }
 
     /**
@@ -162,7 +206,11 @@ CSS
             new Asset(
                 AssetType::CSS,
                 __DIR__ . '/../fixtures/sub/css/style.css',
-                [AssetOption::ATTRIBUTES => [], AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
+                [
+                    AssetOption::ATTRIBUTES => [],
+                    AssetOption::MINIFY => false,
+                    AssetOption::REPLACE_RELATIVE_URLS => false
+                ]
             ),
             $this->environment
         );
@@ -186,8 +234,7 @@ CSS
         $this->environment
             ->setLogger($logger = new ArrayLogger())
             ->setRequestFactory($this->requestFactory)
-            ->setHttpClient($this->httpClient)
-        ;
+            ->setHttpClient($this->httpClient);
         $reader = new Reader(
             new Asset(
                 AssetType::CSS,
@@ -205,8 +252,7 @@ CSS
         $this->environment
             ->setLogger($logger = new ArrayLogger())
             ->setRequestFactory($this->requestFactory)
-            ->setHttpClient($this->httpClient)
-        ;
+            ->setHttpClient($this->httpClient);
         $reader = new Reader(
             new Asset(
                 AssetType::CSS,
@@ -235,8 +281,7 @@ CSS
     public function testRemoteUrlWithReadFileGetContentsFailed()
     {
         $this->environment
-            ->setLogger($logger = new ArrayLogger())
-        ;
+            ->setLogger($logger = new ArrayLogger());
         $reader = new Reader(
             new Asset(
                 AssetType::CSS,

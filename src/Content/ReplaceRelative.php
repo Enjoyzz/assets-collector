@@ -45,9 +45,6 @@ final class ReplaceRelative
             $this->content
         );
 
-        if ($result === null) {
-            return '';
-        }
         $this->logger->info(sprintf('ReplaceRelativeUrls: %s', $this->asset->getPath()));
         return $result;
     }

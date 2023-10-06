@@ -65,6 +65,11 @@ class ReplaceRelativePathsTest extends TestCase
                 __DIR__ . '/../fixtures/sub/css/style.css',
                 "src:url('/font3.eot');"
             ],
+            [
+                "color: red",
+                __DIR__ . '/../fixtures/sub/css/style.css',
+                "color: red"
+            ]
 
         ];
     }

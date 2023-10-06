@@ -73,6 +73,15 @@ class AssetTest extends TestCase
         $this->assertSame($setId, !empty($asset->getId()));
     }
 
+    public function testAssetIfEnv_ASSETS_PROJECT_DIRECTORY_IsFalse()
+    {
+        chdir(__DIR__.'/fixtures');
+        putenv('ASSETS_PROJECT_DIRECTORY');
+        $asset = new Asset(AssetType::CSS, 'tests/fixtures/test.css', [AssetOption::MINIFY => false]);
+        $this->assertSame(false, $asset->isValid());
+
+    }
+
     public function testHttpScheme()
     {
         $_SERVER['HTTP_SCHEME'] = 'https';

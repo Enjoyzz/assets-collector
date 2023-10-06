@@ -9,7 +9,7 @@ namespace Enjoys\AssetsCollector;
 final class AttributeCollection
 {
     /**
-     * @var array<non-empty-string, string|null|false>
+     * @var array<string, string|null|false>
      */
     private array $attributes = [];
 
@@ -26,6 +26,7 @@ final class AttributeCollection
             if ($key === ''){
                 continue;
             }
+            /** @psalm-suppress MixedPropertyTypeCoercion */
             $this->attributes[$key] = $value;
         }
     }

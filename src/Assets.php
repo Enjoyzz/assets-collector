@@ -86,11 +86,4 @@ class Assets
         return $this->environment;
     }
 
-    /**
-     * @todo: maybe remove
-     */
-     public function getLogger(): LoggerInterface
-    {
-        return $this->logger;
-    }
 }

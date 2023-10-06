@@ -40,8 +40,8 @@
     "scripts": {
         "psalm": "psalm --show-info=true --config=psalm.xml --no-cache",
         "tests": "@php vendor/bin/phpunit",
-        "infection": "@php vendor/bin/roave-infection-static-analysis-plugin -j2",
-        "infection-original": "@php vendor/bin/infection -j2"
+        "infection": "@php vendor/bin/roave-infection-static-analysis-plugin",
+        "infection-original": "@php vendor/bin/infection"
     },
     "config": {
         "allow-plugins": {

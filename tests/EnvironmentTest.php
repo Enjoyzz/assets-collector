@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Tests\Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\RenderFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -100,6 +102,34 @@ class EnvironmentTest extends TestCase
         $environment = new Environment();
         $environment->setLogger(new NullLogger());
         $this->assertInstanceOf(LoggerInterface::class, $environment->getLogger());
+    }
+
+    public function testGetVersion()
+    {
+        $environment = new Environment();
+        $this->assertSame(null, $environment->getVersion());
+        $environment->setVersion('1.0.0');
+        $this->assertSame('1.0.0', $environment->getVersion());
+
+    }
+
+    public function testGetParamVersion()
+    {
+        $environment = new Environment();
+        $this->assertSame('v', $environment->getParamVersion());
+        $environment->setParamVersion('version');
+        $this->assertSame('version', $environment->getParamVersion());
+
+    }
+
+    public function testSetRenderer()
+    {
+        $environment = new Environment();
+        $renderer = function ($assets){
+            return 'my render';
+        };
+        $environment->setRenderer(AssetType::CSS, $renderer);
+        $this->assertSame($renderer([]), $environment->getRenderer(AssetType::CSS)->render([]));
     }
 
 }

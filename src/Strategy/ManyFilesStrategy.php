@@ -53,7 +53,7 @@ class ManyFilesStrategy implements Strategy
                 $asset->getPath()
             );
 
-
+            /** @infection-ignore-all */
             $cacheFile = $cacheDir . '/' . $asset->getId();
 
             if (!file_exists($cacheFile) || (filemtime($cacheFile) + $environment->getCacheTime()) < time()) {

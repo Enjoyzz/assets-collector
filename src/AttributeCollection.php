@@ -8,12 +8,26 @@ namespace Enjoys\AssetsCollector;
 
 final class AttributeCollection
 {
+    /**
+     * @var array<non-empty-string, string|null|false>
+     */
+    private array $attributes = [];
 
     /**
      * @param array<array-key, string|null|false> $attributes
      */
-    public function __construct(private array $attributes = [])
+    public function __construct(array $attributes = [])
     {
+        foreach ($attributes as $key => $value) {
+            if (is_int($key) && is_string($value)) {
+                $key = $value;
+                $value = null;
+            }
+            if ($key === ''){
+                continue;
+            }
+            $this->attributes[$key] = $value;
+        }
     }
 
     public function isEmpty(): bool
@@ -48,14 +62,6 @@ final class AttributeCollection
         $result = [];
         foreach ($this->attributes as $key => $value) {
             if ($value === false) {
-                continue;
-            }
-
-            if (is_int($key)) {
-                $key = $value;
-                $value = null;
-            }
-            if ($key === null || $key === '') {
                 continue;
             }
 

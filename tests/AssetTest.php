@@ -137,4 +137,10 @@ class AssetTest extends TestCase
         unset($_SERVER['SERVER_PORT']);
     }
 
+    public function testGetId()
+    {
+        $asset = new Asset(AssetType::CSS, '//test.com', [AssetOption::MINIFY => false, AssetOption::NOT_COLLECT => true]);
+        $this->assertSame('429771529c250691d1dfbcfe11291c91', $asset->getId());
+    }
+
 }

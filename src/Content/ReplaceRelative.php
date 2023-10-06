@@ -46,9 +46,6 @@ final class ReplaceRelative
         );
 
         if ($result === null) {
-            $this->logger->notice(
-                sprintf('Regex return null value. Returned empty string: %s', $this->asset->getPath())
-            );
             return '';
         }
         $this->logger->info(sprintf('ReplaceRelativeUrls: %s', $this->asset->getPath()));

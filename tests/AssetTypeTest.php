@@ -34,6 +34,10 @@ class AssetTypeTest extends TestCase
             AssetType::JS,
             AssetType::convertToAssetType('js')
         );
+        $this->assertSame(
+            AssetType::JS,
+            AssetType::convertToAssetType(AssetType::JS)
+        );
     }
 
     public function testGetSrcAttribute()

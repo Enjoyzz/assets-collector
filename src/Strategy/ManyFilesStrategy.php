@@ -17,6 +17,7 @@ use function Enjoys\FileSystem\makeSymlink;
 class ManyFilesStrategy implements Strategy
 {
 
+    private string $prefix = 'compile://.cache/';
 
     /**
      * @inheritdoc
@@ -24,8 +25,10 @@ class ManyFilesStrategy implements Strategy
      */
     public function getAssets(AssetType $type, array $assetsCollection, Environment $environment): array
     {
+        $filesystem = $environment->getFilesystem();
+
         /** @infection-ignore-all */
-        $cacheDir = $environment->getCompileDir() . '/.cache';
+      //  $cacheDir = $environment->getFilesystem() . '/.cache';
 
         $logger = $environment->getLogger();
 
@@ -54,11 +57,11 @@ class ManyFilesStrategy implements Strategy
             );
 
 
-            $cacheFile = $cacheDir . '/' . $asset->getId();
+            $cacheFile =  $this->prefix . $asset->getId();
 
-            if (!file_exists($cacheFile) || (filemtime($cacheFile) + $environment->getCacheTime()) < time()) {
+            if (!$filesystem->has($cacheFile) || ($filesystem->lastModified($cacheFile) + $environment->getCacheTime()) < time()) {
                 (new Reader($asset, $environment))->replaceRelativeUrlsAndCreatedSymlinks();
-                createFile($cacheFile);
+                $filesystem->write($cacheFile, '');
                 $logger->info(sprintf('Create file: %s', $cacheFile));
             }
 

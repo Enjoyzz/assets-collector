@@ -66,4 +66,31 @@ class AssetsCollectionTest extends TestCase
         $collection->add(new Asset(AssetType::CSS, 'notexist.css'), 'main');
         $this->assertCount(2, $logger->getLog(LogLevel::NOTICE));
     }
+
+    public function testHas()
+    {
+        $asset = new Asset(AssetType::CSS, '//test.test/style.css');
+        $collection = new AssetsCollection();
+        $this->assertSame(false, $collection->has($asset, 'main'));
+        $collection->add($asset, 'main');
+        $this->assertSame(true, $collection->has($asset, 'main'));
+    }
+
+    public function testGetAssets()
+    {
+        $assets = [
+            new Asset(AssetType::CSS, '//test.url'),
+            new Asset(AssetType::CSS, '//test2.url'),
+            new Asset(AssetType::JS, '//test3.url'),
+        ];
+        $collection = new AssetsCollection();
+
+        foreach ($assets as $asset) {
+            $collection->add($asset, 'main');
+        }
+
+        $this->assertCount(2, $collection->getAssets()['css']['main']);
+        $this->assertCount(1, $collection->getAssets()['js']['main']);
+
+    }
 }

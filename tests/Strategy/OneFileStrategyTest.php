@@ -130,13 +130,27 @@ CSS
         $assetsCollection = [
             new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test2.css'),
             new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css'),
+            new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test3.css', [
+                AssetOption::NOT_COLLECT => true
+            ]),
         ];
 
-        $strategy->getAssets(AssetType::CSS, $assetsCollection, $this->environment);
+
+        $assets = $strategy->getAssets(AssetType::CSS, $assetsCollection, $this->environment);
+        $logs = array_values(array_filter($this->logger->getLog(LogLevel::INFO), function ($item){
+            return str_starts_with($item[0], 'Create file:');
+        }));
+        $this->assertCount(2, $assets);
+        $this->assertCount(1, $logs);
         $this->logger->clear();
-        $strategy->getAssets(AssetType::CSS, $assetsCollection, $this->environment);
+        $assets = $strategy->getAssets(AssetType::CSS, $assetsCollection, $this->environment);
+        $logs = array_values(array_filter($this->logger->getLog(LogLevel::INFO), function ($item){
+            return str_starts_with($item[0], 'Use cached file:');
+        }));
+        $this->assertCount(1, $logs);
+        $this->assertCount(2, $assets);
         $this->assertCount(2, $this->logger->getLog(LogLevel::INFO));
-        $this->assertStringContainsString('71f020adaee1d404c704a6cc10ced4d0', $this->logger->getLog(LogLevel::INFO)[0][0]);
+        $this->assertStringContainsString('15da2cd50c9e310876166da7e635850f', $this->logger->getLog(LogLevel::INFO)[0][0]);
 
     }
 

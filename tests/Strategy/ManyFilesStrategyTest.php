@@ -107,6 +107,7 @@ class ManyFilesStrategyTest extends TestCase
             new Asset(AssetType::CSS, '//google.com'),
             new Asset(AssetType::CSS, 'invalid'),
             $asset = new Asset(AssetType::CSS, 'tests/fixtures/test.css'),
+            new Asset(AssetType::CSS, 'tests/fixtures/test2.css'),
             new Asset(AssetType::CSS, '//yandex.ru'),
         ];
 
@@ -117,7 +118,7 @@ class ManyFilesStrategyTest extends TestCase
         $logs = array_values(array_filter($this->logger->getLog(LogLevel::INFO), function ($item){
             return str_starts_with($item[0], 'Create file:');
         }));
-        $this->assertCount(1, $logs);
+        $this->assertCount(2, $logs);
         $this->assertSame(sprintf('Create file: %s', $cacheFile), $logs[0][0]);
 
         $this->logger->clear();

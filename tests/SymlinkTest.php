@@ -19,12 +19,13 @@ class SymlinkTest extends TestCase
      * @var Environment
      */
     private ?Environment $config;
+    private ArrayLogger $logger;
 
 
     protected function setUp(): void
     {
-        $this->config = new Environment(__DIR__ . '/_compile', __DIR__ . '/../');
-        $this->config->setLogger(new ArrayLogger());
+        $this->logger = new ArrayLogger();
+        $this->config = new Environment(__DIR__ . '/_compile', __DIR__ . '/../', $this->logger);
         $this->removeDirectoryRecursive(__DIR__ . '/_compile', true);
     }
 
@@ -33,6 +34,7 @@ class SymlinkTest extends TestCase
         $this->removeDirectoryRecursive(__DIR__ . '/_compile', true);
         $this->removeDirectoryRecursive(__DIR__ . '/tests', true);
         $this->config = null;
+        $this->logger = new ArrayLogger();
     }
 
     public function testSingleStrategyCreatedSymLinks()
@@ -61,6 +63,13 @@ class SymlinkTest extends TestCase
 
             $this->assertTrue(in_array($target, $targets, true));
         }
+
+        $logs = array_values(array_filter($this->logger->getLog(LogLevel::INFO), function ($item){
+            return str_starts_with($item[0], 'Created symlink:');
+        }));
+
+        $this->assertCount(2, $logs);
+
     }
 
 

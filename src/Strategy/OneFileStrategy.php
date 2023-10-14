@@ -21,6 +21,10 @@ class OneFileStrategy implements Strategy
     private string $filePath = '';
     private string $fileUrl = '';
 
+    /**
+     * @param Asset[] $assets
+     * @return string
+     */
     private function generateHashId(array $assets): string
     {
 

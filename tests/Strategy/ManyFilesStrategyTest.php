@@ -98,4 +98,36 @@ class ManyFilesStrategyTest extends TestCase
 
         $this->assertCount(1, $this->logger->getLog(LogLevel::ERROR));
     }
+
+    public function testCache()
+    {
+        $this->environment->setCacheTime(1);
+
+        $assets = [
+            new Asset(AssetType::CSS, '//google.com'),
+            new Asset(AssetType::CSS, 'invalid'),
+            $asset = new Asset(AssetType::CSS, 'tests/fixtures/test.css'),
+            new Asset(AssetType::CSS, '//yandex.ru'),
+        ];
+
+        $strategy = new ManyFilesStrategy();
+        $strategy->getAssets(AssetType::CSS, $assets, $this->environment);
+        $this->assertTrue(file_exists($cacheFile = $this->environment->getCompileDir() . '/.cache/' . $asset->getId()));
+
+        $logs = array_values(array_filter($this->logger->getLog(LogLevel::INFO), function ($item){
+            return str_starts_with($item[0], 'Create file:');
+        }));
+        $this->assertCount(1, $logs);
+        $this->assertSame(sprintf('Create file: %s', $cacheFile), $logs[0][0]);
+
+        $this->logger->clear();
+        sleep(1);
+
+        $strategy->getAssets(AssetType::CSS, $assets, $this->environment);
+        $logs = array_values(array_filter($this->logger->getLog(LogLevel::INFO), function ($item){
+            return str_starts_with($item[0], 'Create file:');
+        }));
+        $this->assertCount(0, $logs);
+
+    }
 }

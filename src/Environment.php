@@ -210,9 +210,9 @@ class Environment
         return $this;
     }
 
-    public function setVersion(string $version): Environment
+    public function setVersion(string|int|float $version): Environment
     {
-        $this->version = $version;
+        $this->version = (string)$version;
         return $this;
     }
 

@@ -1,7 +1,5 @@
 # Assets Collector
 
-![7.4](https://github.com/Enjoyzz/assets-collector/workflows/7.4/badge.svg?branch=master)
-![8.0](https://github.com/Enjoyzz/assets-collector/workflows/8.0/badge.svg)
 ![8.1](https://github.com/Enjoyzz/assets-collector/workflows/8.1/badge.svg)
 ![8.2](https://github.com/Enjoyzz/assets-collector/workflows/8.2/badge.svg)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)
@@ -35,17 +33,17 @@ $assetsDir = $projectDir .'/assets';
 $environment = new Environment($assetsDir, $projectDir); 
 //Base URL to compile path for Web
 $environment->setBaseUrl("/assets-collector/example/assets"); 
-//Set strategy, default STRATEGY_MANY_FILES
+//Set strategy, default \Enjoys\AssetsCollector\Strategy\ManyFilesStrategy
 $environment->setStrategy(\Enjoys\AssetsCollector\Strategy\OneFileStrategy::class); //\Enjoys\AssetsCollector\Strategy\ManyFilesStrategy::class
 //Cache time for files in strategy STRATEGY_ONE_FILE
 $environment->setCacheTime(0); //cache time in seconds
 //Adds the output version, for example //example.php/style.css?v=123 
-$environment->setVersion(123);
+$environment->setVersion(123); //int|float|string
 //You can change the parameter for the version
-$environment->setParamVersion('?ver=');
+$environment->setParamVersion('version');
 
 /** 
- * YYou can add a logger that implements \Psr\Log\LoggerInterface, for example, Monolog
+ * You can add a logger that implements \Psr\Log\LoggerInterface, for example, Monolog
  * @var \Psr\Log\LoggerInterface $logger 
  */
 $environment->setLogger($logger);

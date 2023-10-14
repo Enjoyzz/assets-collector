@@ -23,7 +23,8 @@ class OneFileStrategy implements Strategy
 
     private function generateHashId(array $assets): string
     {
-        $assetsIds = array_keys($assets);
+
+        $assetsIds = array_map(fn($i) => $i->getId(), $assets);
         sort($assetsIds);
         return md5(implode('', $assetsIds));
     }

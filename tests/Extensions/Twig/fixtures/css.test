@@ -1,0 +1,9 @@
+--TEST--
+closure
+--TEMPLATE--
+{{ eCSS() }}
+--DATA--
+return []
+--EXPECT--
+<link type='text/css' rel='stylesheet' href='http://google.com'>
+<link type='text/css' rel='stylesheet' href='http://yandex.ru'>

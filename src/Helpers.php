@@ -47,7 +47,7 @@ final class Helpers
         $logger->info(sprintf('Write to: %s', $file));
     }
 
-    public static function createEmptyFile(string $file, LoggerInterface $logger = null): void
+    public static function createEmptyFile(string $file, ?LoggerInterface $logger = null): void
     {
         $logger ??= new NullLogger();
         writeFile($file, '');
@@ -61,7 +61,7 @@ final class Helpers
      * @return void
      * @throws \Exception
      */
-    public static function createDirectory(string $path, int $permissions = 0775, LoggerInterface $logger = null): void
+    public static function createDirectory(string $path, int $permissions = 0775, ?LoggerInterface $logger = null): void
     {
         $logger ??= new NullLogger();
 
@@ -76,7 +76,7 @@ final class Helpers
      * @param LoggerInterface|null $logger
      * @throws \Exception
      */
-    public static function createSymlink(string $link, string $target, LoggerInterface $logger = null): void
+    public static function createSymlink(string $link, string $target, ?LoggerInterface $logger = null): void
     {
         $logger ??= new NullLogger();
 

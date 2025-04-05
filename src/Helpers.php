@@ -40,7 +40,7 @@ final class Helpers
         string $file,
         string $data,
         string $mode = 'w',
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ): void {
         $logger ??= new NullLogger();
         writeFile($file, $data, $mode);

@@ -34,6 +34,9 @@ class OneFileStrategy implements Strategy
     }
 
 
+    /**
+     * @psalm-suppress PossiblyFalseOperand
+     */
     private function isCacheValid(): bool
     {
         if (file_exists($this->filePath)){

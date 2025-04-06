@@ -31,11 +31,11 @@
         "symfony/var-dumper": "^6.0",
         "phpunit/phpunit": "^9.5",
         "twig/twig": "^3.2",
-        "vimeo/psalm": "^5.0",
+        "vimeo/psalm": "^5.26 | ~6.4.1",
         "guzzlehttp/guzzle": "^7.2",
         "tubalmartin/cssmin": "^4.1",
         "tedivm/jshrink": "^1.6.2 | ~1.5.0",
-        "roave/infection-static-analysis-plugin": "^1.33"
+        "roave/infection-static-analysis-plugin": "~1.35.0 | ~1.36.0"
     },
     "scripts": {
         "psalm": "psalm --show-info=true --config=psalm.xml --no-cache",

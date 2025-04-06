@@ -46,7 +46,7 @@ final class ReplaceRelative
         );
 
         $this->logger->info(sprintf('ReplaceRelativeUrls: %s', $this->asset->getPath()));
-        return $result;
+        return $result ?? '';
     }
 
     /**
@@ -69,12 +69,13 @@ final class ReplaceRelative
 
     /**
      * @throws Exception
+     * @psalm-suppress PossiblyFalseOperand
      */
     private function replacePath(string $filePath, string $relativePath): false|string
     {
         $realpath = realpath(
             pathinfo($filePath, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR
-            . parse_url($relativePath, PHP_URL_PATH)
+            . (parse_url($relativePath, PHP_URL_PATH) ?? '')
         );
 
         if ($realpath === false) {

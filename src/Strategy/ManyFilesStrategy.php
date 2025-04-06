@@ -21,6 +21,7 @@ class ManyFilesStrategy implements Strategy
     /**
      * @inheritdoc
      * @throws Exception
+     * @psalm-suppress PossiblyFalseOperand
      */
     public function getAssets(AssetType $type, array $assetsCollection, Environment $environment): array
     {

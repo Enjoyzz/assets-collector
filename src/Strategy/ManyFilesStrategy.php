@@ -37,7 +37,7 @@ class ManyFilesStrategy implements Strategy
 
             if ($asset->isUrl()) {
                 $assetAttributeCollection->set(
-                    $type->getSrcAttribute(),
+                    $type->htmlAttribute(),
                     Helpers::addVersionToPath($asset->getPath(), $environment->getVersionQuery())
                 );
                 continue;
@@ -82,7 +82,7 @@ class ManyFilesStrategy implements Strategy
 
             /** @infection-ignore-all */
             $assetAttributeCollection->set(
-                $type->getSrcAttribute(),
+                $type->htmlAttribute(),
                 Helpers::addVersionToPath(
                     $environment->getBaseUrl() . str_replace(
                         DIRECTORY_SEPARATOR,

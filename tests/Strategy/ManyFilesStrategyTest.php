@@ -65,7 +65,7 @@ class ManyFilesStrategyTest extends TestCase
                 'http://yandex.ru',
             ],
             array_map(function ($i) {
-                return $i->getAttributeCollection()->get(AssetType::CSS->getSrcAttribute());
+                return $i->getAttributeCollection()->get(AssetType::CSS->htmlAttribute());
             },
                 $strategy->getAssets(
                     AssetType::CSS,

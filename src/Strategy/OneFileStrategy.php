@@ -77,7 +77,7 @@ class OneFileStrategy implements Strategy
         $result = array_merge([
             new Asset($type, $this->fileUrl, [
                 AssetOption::ATTRIBUTES => [
-                    $type->getSrcAttribute() => $this->fileUrl
+                    $type->htmlAttribute() => $this->fileUrl
                 ]
             ])
         ], $notCollectedResult);

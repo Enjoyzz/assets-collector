@@ -44,11 +44,11 @@ class AssetTypeTest extends TestCase
     {
         $this->assertSame(
             'src',
-            AssetType::JS->getSrcAttribute()
+            AssetType::JS->htmlAttribute()
         );
         $this->assertSame(
             'href',
-            AssetType::CSS->getSrcAttribute()
+            AssetType::CSS->htmlAttribute()
         );
     }
 }

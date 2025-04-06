@@ -18,7 +18,7 @@ enum AssetType: string
         return self::tryFrom(strtolower($value));
     }
 
-    public function getSrcAttribute(): string
+    public function htmlAttribute(): string
     {
         return match($this) {
             AssetType::CSS => 'href',

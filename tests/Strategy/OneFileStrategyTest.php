@@ -58,7 +58,7 @@ class OneFileStrategyTest extends TestCase
 
         $this->assertSame(['/test/something/' . $strategy->getFilename()],
             array_map(function ($i) {
-                return $i->getAttributeCollection()->get(AssetType::CSS->getSrcAttribute());
+                return $i->getAttributeCollection()->get(AssetType::CSS->htmlAttribute());
             }, $result, [])
         );
 
@@ -99,7 +99,7 @@ CSS
             '/test/something/fixtures/test3.css'
         ],
             array_map(function ($i) {
-                return $i->getAttributeCollection()->get(AssetType::CSS->getSrcAttribute());
+                return $i->getAttributeCollection()->get(AssetType::CSS->htmlAttribute());
             }, $result)
         );
         $this->assertSame(

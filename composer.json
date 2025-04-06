@@ -14,8 +14,8 @@
         "psr/log": "^1.0 | ^2.0 | ^3.0",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
-        "enjoys/url-converter": "*",
-        "enjoys/functions": "^2.3"
+        "enjoys/url-converter": "^1.0",
+        "enjoys/functions": "^2.4"
     },
     "autoload": {
         "psr-4": {

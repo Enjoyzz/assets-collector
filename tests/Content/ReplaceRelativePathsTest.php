@@ -6,8 +6,10 @@ namespace Tests\Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Content\ReplaceRelative;
 use Enjoys\AssetsCollector\Environment;
+use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use PHPUnit\Framework\TestCase;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 
@@ -25,13 +27,13 @@ class ReplaceRelativePathsTest extends TestCase
     {
         $this->config = new Environment('_compile', __DIR__ . '/..');
         $this->config->setBaseUrl('/t')
-            ->setStrategy(Assets::STRATEGY_MANY_FILES)
+            ->setStrategy(ManyFilesStrategy::class)
         ;
     }
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
+        $this->removeDirectoryRecursive(__DIR__ . '/../_compile', true);
         $this->config = null;
     }
 
@@ -63,6 +65,11 @@ class ReplaceRelativePathsTest extends TestCase
                 __DIR__ . '/../fixtures/sub/css/style.css',
                 "src:url('/font3.eot');"
             ],
+            [
+                "color: red",
+                __DIR__ . '/../fixtures/sub/css/style.css',
+                "color: red"
+            ]
 
         ];
     }
@@ -74,8 +81,7 @@ class ReplaceRelativePathsTest extends TestCase
     {
         $replaceClass = new ReplaceRelative(
             $data,
-            $path,
-            new Asset('css', $path),
+            new Asset(AssetType::CSS, $path),
             $this->config
         );
 

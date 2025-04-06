@@ -8,45 +8,78 @@ use PHPUnit\Framework\TestCase;
 class HelpersTest extends TestCase
 {
 
-    use HelpersTestTrait;
-
-    protected function tearDown(): void
+    public function testAddVersionToPath()
     {
-        $this->removeDirectoryRecursive(__DIR__.'/_compile', true);
+        $this->assertSame(
+            '/d/d.ext?version=test',
+            Helpers::addVersionToPath('/d/d.ext', ['version' => 'test'])
+        );
+
+        $this->assertSame(
+            '//yandex/file?foo=bar&version=1.0',
+            Helpers::addVersionToPath('//yandex/file?foo=bar', ['version' => '1.0'])
+        );
+
+        $this->assertSame(
+            'https://yandex/file?foo=bar&version=2.0',
+            Helpers::addVersionToPath('https://yandex/file?foo=bar&version=1.0', ['version' => '2.0'])
+        );
     }
 
-    public function dataErrorPath()
+    public function testGetHttpScheme()
     {
-        return [
-            [__DIR__.'/_compile', true],
-            ['.', false],
-            ['..', false],
-            ['...', false],
-            [__DIR__.'/...', false],
-            [__DIR__.'/..', false],
-            [__DIR__.'/.', false],
-            [__DIR__.'/_compile/.s', true],
-          //  ['/_te<>mp', false]
-        ];
+        $this->assertSame(
+            'http',
+            Helpers::getHttpScheme()
+        );
 
-    }
+        $_SERVER['HTTP_SCHEME'] = 'https';
+        $this->assertSame(
+            'https',
+            Helpers::getHttpScheme()
+        );
+        unset($_SERVER['HTTP_SCHEME']);
 
-    /**
-     * @dataProvider dataErrorPath
-     */
-    public function testCreateDirectoryError($path, $create)
-    {
-        if($create === false){
-            $this->expectException(\Exception::class);
-        }
-        Helpers::createDirectory($path);
-        $this->assertDirectoryExists($path);
-    }
+        $_SERVER['HTTPS'] = 'on';
+        $this->assertSame(
+            'https',
+            Helpers::getHttpScheme()
+        );
+        unset($_SERVER['HTTPS']);
 
-    public function testCreateSymlinkWhenUpFolderSymlynkAlreadyExist(){
-        //$this->expectWarning();
-        Helpers::createSymlink(__DIR__.'/_compile/fixtures/test.css', __DIR__.'/fixtures/test.css');
-        Helpers::createSymlink(__DIR__.'/_compile/fixtures', __DIR__.'/fixtures');
-        $this->assertTrue(true);
+        $_SERVER['HTTPS'] = true;
+        $this->assertSame(
+            'https',
+            Helpers::getHttpScheme()
+        );
+        unset($_SERVER['HTTPS']);
+
+        $_SERVER['HTTPS'] = 'Off';
+        $this->assertSame(
+            'http',
+            Helpers::getHttpScheme()
+        );
+        unset($_SERVER['HTTPS']);
+
+        $_SERVER['SERVER_PORT'] = '443';
+        $this->assertSame(
+            'https',
+            Helpers::getHttpScheme()
+        );
+        unset($_SERVER['SERVER_PORT']);
+
+        $_SERVER['SERVER_PORT'] = 443;
+        $this->assertSame(
+            'https',
+            Helpers::getHttpScheme()
+        );
+        unset($_SERVER['SERVER_PORT']);
+
+        $_SERVER['SERVER_PORT'] = 80;
+        $this->assertSame(
+            'http',
+            Helpers::getHttpScheme()
+        );
+        unset($_SERVER['SERVER_PORT']);
     }
 }

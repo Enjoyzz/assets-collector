@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace Enjoys\AssetsCollector;
 
-use Enjoys\AssetsCollector\CollectStrategy\StrategyFactory;
 use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
-use Enjoys\AssetsCollector\Render\RenderFactory;
 use Psr\Log\LoggerInterface;
 
 class Assets
 {
-    public const NAMESPACE_COMMON = 'common';
-
-    public const RENDER_HTML = 'html';
-
-    public const STRATEGY_ONE_FILE = 0;
-    public const STRATEGY_MANY_FILES = 1;
+    public const GROUP_COMMON = 'common';
 
     /*
      * @var AssetsCollection
@@ -24,32 +17,30 @@ class Assets
     private AssetsCollection $assetsCollection;
 
     /**
-     * @var Environment
-     */
-    private Environment $environment;
-
-    /**
      * @var LoggerInterface
      */
     private LoggerInterface $logger;
 
-    public function __construct(Environment $environment)
+    public function __construct(private readonly Environment $environment)
     {
-        $this->environment = $environment;
         $this->logger = $this->environment->getLogger();
-        $this->assetsCollection = new AssetsCollection($this->environment);
+        $this->assetsCollection = new AssetsCollection($this->logger);
     }
 
     /**
-     * @param string $type
-     * @param string|array $paths
-     * @param string $namespace
+     * @param AssetType $type
+     * @param array|string $paths
+     * @param string $group
      * @param string $method
      * @return $this
      */
-    public function add(string $type, $paths, string $namespace = self::NAMESPACE_COMMON, string $method = 'push'): Assets
-    {
-        $collection = new AssetsCollection($this->environment);
+    public function add(
+        AssetType $type,
+        array|string $paths,
+        string $group = self::GROUP_COMMON,
+        string $method = 'push'
+    ): Assets {
+        $collection = new AssetsCollection($this->logger);
         /** @var array|string $path */
         foreach ((array)$paths as $path) {
             $params = [];
@@ -60,10 +51,10 @@ class Assets
                 $path = array_shift($params);
             }
 
-            /** @var array<string, array|bool|null|string> $params */
+            /** @var array<string, array|bool> $params */
             $collection->add(
                 new Asset($type, $path, $params),
-                $namespace
+                $group
             );
         }
 
@@ -76,48 +67,23 @@ class Assets
         return $this;
     }
 
-    /**
-     * @param string $type
-     * @param string $namespace
-     * @return string
-     * @throws \Exception
-     */
-    public function get(string $type, string $namespace = self::NAMESPACE_COMMON): string
+    public function get(AssetType $type, string $group = self::GROUP_COMMON): string
     {
-        $paths = $this->getResults($type, $this->assetsCollection->get($type, $namespace));
-        return RenderFactory::getRender(\strtolower($type), $this->environment)->getResult($paths);
-    }
-
-
-    /**
-     * @param string $type
-     * @param array<Asset> $assetsCollection
-     * @return array
-     */
-    private function getResults(string $type, array $assetsCollection): array
-    {
-        $strategy = StrategyFactory::getStrategy(
-            $this->environment,
-            $assetsCollection,
-            $type
+        return $this->environment->getRenderer($type)->render(
+            $this->environment->getStrategy()->getAssets(
+                $type,
+                $this->assetsCollection->get($type, $group),
+                $this->environment
+            )
         );
-
-        return $strategy->getResult();
     }
 
     /**
-     * @return Environment
+     * @todo: maybe remove
      */
     public function getEnvironment(): Environment
     {
         return $this->environment;
     }
 
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger(): LoggerInterface
-    {
-        return $this->logger;
-    }
 }

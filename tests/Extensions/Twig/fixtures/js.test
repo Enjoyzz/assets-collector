@@ -1,0 +1,8 @@
+--TEST--
+closure
+--TEMPLATE--
+{{ eJS() }}
+--DATA--
+return []
+--EXPECT--
+<script src='http://google.com'></script>

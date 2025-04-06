@@ -1,78 +1,88 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enjoys\AssetsCollector;
 
-use Enjoys\AssetsCollector\Content\Minify\Adapters\NullMinify;
-use Enjoys\AssetsCollector\Content\Minify\MinifyInterface;
+use Closure;
 use Enjoys\AssetsCollector\Exception\PathDirectoryIsNotValid;
-use Enjoys\AssetsCollector\Exception\UnexpectedParameters;
+use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+use function putenv;
+
 class Environment
 {
+
     private string $projectDir;
+
     private string $compileDir;
+
     private string $baseUrl = '';
+
     private int $cacheTime = -1;
-    private int $strategy = Assets::STRATEGY_MANY_FILES;
-    private string $render = Assets::RENDER_HTML;
+
     private ?string $version = null;
-    private string $paramVersion = '?v=';
-    private LoggerInterface $logger;
-    private ?ClientInterface $httpClient = null;
-    private ?RequestFactoryInterface $requestFactory = null;
-    private int $directoryPermissions = 0775;
+
+    private string $paramVersion = 'v';
+
     /**
-     * @var array{css: MinifyInterface, js: MinifyInterface}
+     * @var class-string<Strategy>|Strategy
      */
-    private array $minify;
+    private string|Strategy $strategy = ManyFilesStrategy::class;
+
+    /**
+     * @var array<string, Closure(string):string|Minifier|null>
+     */
+    private array $minifiers = [];
+
+    /**
+     * @var array<string, Closure(Asset[]):string|Renderer|null>
+     */
+    private array $renderers = [];
+
+    private ?ClientInterface $httpClient = null;
+
+    private ?RequestFactoryInterface $requestFactory = null;
 
     /**
      * Environment constructor.
      * @param string $compileDir
      * @param string $projectDir Если пустая строка, то realpath вернет текущую рабочую директорию
-     * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
+     * @param LoggerInterface $logger
      */
-    public function __construct(string $compileDir = '/', string $projectDir = '')
-    {
-        $this->minify = [
-            'css' => new NullMinify(),
-            'js' => new NullMinify()
-        ];
-
+    public function __construct(
+        string $compileDir = '/',
+        string $projectDir = '',
+        private LoggerInterface $logger = new NullLogger()
+    ) {
         $projectDir = realpath($projectDir);
 
         if ($projectDir === false) {
             throw new PathDirectoryIsNotValid(
-                "Не установлена директория проекта или не удалось автоматически определить директорию"
+                "The project directory is not installed or the directory could not be determined automatically"
             );
         }
-        $this->projectDir = $projectDir;
-        \putenv("ASSETS_PROJECT_DIRECTORY={$this->projectDir}/");
+        putenv("ASSETS_PROJECT_DIRECTORY=$projectDir/");
 
-        $this->compileDir = $this->setCompileDir($compileDir);
-        $this->logger = new NullLogger();
+        $this->projectDir = $projectDir;
+        $this->compileDir = $this->normalizeCompileDir($compileDir);
     }
 
-    /**
-     * @return string
-     */
     public function getProjectDir(): string
     {
         return $this->projectDir;
     }
 
-
     /**
      * Функцию realpath() нельзя применять так как директории изначально может не быть,
      * она может потом быть создана, если будут права
-     * @param string $path
-     * @return string
+     * @infection-ignore-all
      */
-    private function setCompileDir(string $path): string
+    private function normalizeCompileDir(string $path): string
     {
         if (str_starts_with($path, $this->getProjectDir())) {
             $path = str_replace($this->getProjectDir(), '', $path);
@@ -81,98 +91,45 @@ class Environment
         return rtrim($path, '/');
     }
 
-    /**
-     * @return string
-     */
     public function getCompileDir(): string
     {
         return $this->compileDir;
     }
 
-
-    /**
-     * @param string $baseUrl
-     * @return $this
-     */
     public function setBaseUrl(string $baseUrl = '/'): Environment
     {
         $this->baseUrl = rtrim($baseUrl, '\/');
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getBaseUrl(): string
     {
         return $this->baseUrl;
     }
 
-    /**
-     * @param string $version
-     * @return $this
-     */
-    public function setVersion(string $version): Environment
-    {
-        $this->version = $version;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getVersion(): ?string
-    {
-        if ($this->version === null) {
-            return null;
-        }
-        return $this->paramVersion . $this->version;
-    }
-
-    /**
-     * @param string $paramVersion
-     * @return $this
-     */
-    public function setParamVersion(string $paramVersion): Environment
-    {
-        $this->paramVersion = $paramVersion;
-        return $this;
-    }
-
-
-    /**
-     * @param int $cacheTime
-     * @return $this
-     */
     public function setCacheTime(int $cacheTime): Environment
     {
         $this->cacheTime = $cacheTime;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCacheTime(): int
     {
         return $this->cacheTime;
     }
 
-    public function getStrategy(): int
+    public function getStrategy(): Strategy
     {
-        return $this->strategy;
-    }
-
-    public function getRender(): string
-    {
-        return $this->render;
+        if ($this->strategy instanceof Strategy) {
+            return $this->strategy;
+        }
+        return new $this->strategy();
     }
 
     /**
-     * @param int $strategy
-     * @return Environment
+     * @param class-string<Strategy>|Strategy $strategy
      */
-    public function setStrategy(int $strategy): Environment
+    public function setStrategy(string|Strategy $strategy): Environment
     {
         $this->strategy = $strategy;
         return $this;
@@ -189,45 +146,6 @@ class Environment
         return $this;
     }
 
-    public function setMinifyJS(MinifyInterface $minifyImpl): void
-    {
-        $this->minify['js'] = $minifyImpl;
-    }
-
-    public function setMinifyCSS(MinifyInterface $minifyImpl): void
-    {
-        $this->minify['css'] = $minifyImpl;
-    }
-
-    /**
-     * @param string $type
-     * @return MinifyInterface
-     */
-    public function getMinify(string $type): MinifyInterface
-    {
-        if (!array_key_exists($type, $this->minify)) {
-            throw new UnexpectedParameters('Possible use only css or js');
-        }
-        return $this->minify[$type];
-    }
-
-    /**
-     * @return int
-     */
-    public function getDirectoryPermissions(): int
-    {
-        return $this->directoryPermissions;
-    }
-
-    /**
-     * @param int $directoryPermissions
-     */
-    public function setDirectoryPermissions(int $directoryPermissions): void
-    {
-        $this->directoryPermissions = $directoryPermissions;
-    }
-
-
     public function getHttpClient(): ?ClientInterface
     {
         return $this->httpClient;
@@ -239,7 +157,6 @@ class Environment
         return $this;
     }
 
-
     public function getRequestFactory(): ?RequestFactoryInterface
     {
         return $this->requestFactory;
@@ -250,4 +167,76 @@ class Environment
         $this->requestFactory = $requestFactory;
         return $this;
     }
+
+    /**
+     * @param AssetType $type
+     * @param Minifier|Closure(string):string|null $minifier
+     * @return Environment
+     */
+    public function setMinifier(AssetType $type, Minifier|Closure|null $minifier): Environment
+    {
+        $this->minifiers[$type->value] = $minifier;
+        return $this;
+    }
+
+    public function getMinifier(AssetType $type): ?Minifier
+    {
+        return MinifierFactory::get($this->minifiers[$type->value] ?? null);
+    }
+
+    /**
+     * @param AssetType $type
+     * @param Renderer|Closure(Asset[]):string|null $renderer
+     * @return Environment
+     */
+    public function setRenderer(AssetType $type, Renderer|Closure|null $renderer): Environment
+    {
+        $this->renderers[$type->value] = $renderer;
+        return $this;
+    }
+
+    public function getRenderer(AssetType $type): Renderer
+    {
+        $renderer = $this->renderers[$type->value]
+            ?? RenderFactory::getDefaultRenderer($type);
+
+        if ($renderer instanceof Renderer) {
+            return $renderer;
+        }
+        return RenderFactory::createFromClosure($renderer);
+    }
+
+    public function setParamVersion(string $paramVersion): Environment
+    {
+        $this->paramVersion = $paramVersion;
+        return $this;
+    }
+
+    public function setVersion(string|int|float $version): Environment
+    {
+        $this->version = (string)$version;
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getVersionQuery(): array
+    {
+        if ($this->version === null) {
+            return [];
+        }
+        return [$this->paramVersion => $this->version];
+    }
+
+    public function getVersion(): ?string
+    {
+        return $this->version;
+    }
+
+    public function getParamVersion(): string
+    {
+        return $this->paramVersion;
+    }
+
 }

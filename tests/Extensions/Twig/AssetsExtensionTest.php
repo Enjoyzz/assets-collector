@@ -5,13 +5,18 @@ namespace Tests\Enjoys\AssetsCollector\Extensions\Twig;
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use PHPUnit\Framework\TestCase;
+use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
 use Twig\Loader\FilesystemLoader;
 
 class AssetsExtensionTest extends TestCase
 {
+
+    use HelpersTestTrait;
+
     /**
      * @var Assets
      */
@@ -32,6 +37,11 @@ class AssetsExtensionTest extends TestCase
         $this->extension->asset('js', ['//google.com']);
     }
 
+    protected function tearDown(): void
+    {
+        $this->removeDirectoryRecursive(__DIR__ . '/../../_compile', true);
+    }
+
     public function testGetFunctions()
     {
         $this->assertCount(3, $this->extension->getFunctions());
@@ -41,11 +51,11 @@ class AssetsExtensionTest extends TestCase
     {
         $this->assertSame(
             "<link type='text/css' rel='stylesheet' href='http://google.com'>\n<link type='text/css' rel='stylesheet' href='http://yandex.ru'>\n",
-            $this->assetsCollector->get('css')
+            $this->assetsCollector->get(AssetType::CSS)
         );
         $this->assertSame(
             "<script src='http://google.com'></script>\n",
-            $this->assetsCollector->get('js')
+            $this->assetsCollector->get(AssetType::JS)
         );
     }
 
@@ -89,11 +99,11 @@ class AssetsExtensionTest extends TestCase
         $extension->asset('css', [
             [
                 '//yandex.ru',
-                AssetOption::NOT_COLLECT => true,
-                AssetOption::MINIFY => false,
                 AssetOption::ATTRIBUTES => [
                     'type' => false
-                ]
+                ],
+                AssetOption::NOT_COLLECT => true,
+                AssetOption::MINIFY => false
             ],
             'test.css',
             'tests/fixtures/test.css'

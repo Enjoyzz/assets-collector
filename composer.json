@@ -10,15 +10,12 @@
         }
     ],
     "require": {
-        "php": "^7.4 | ^8.0",
-        "symfony/polyfill-php80": "^1.0",
-        "tubalmartin/cssmin": "^4.1",
-        "tedivm/jshrink": "^1.6.2 | ~1.5.0",
+        "php": "^8.1",
         "psr/log": "^1.0 | ^2.0 | ^3.0",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
-        "enjoys/url-converter": "*",
-        "enjoys/functions": "^2.3"
+        "enjoys/url-converter": "^1.0",
+        "enjoys/functions": "^2.4"
     },
     "autoload": {
         "psr-4": {
@@ -31,13 +28,24 @@
         }
     },
     "require-dev": {
-        "symfony/var-dumper": "^5.4 | ^6.0",
+        "symfony/var-dumper": "^6.0",
         "phpunit/phpunit": "^9.5",
         "twig/twig": "^3.2",
-        "vimeo/psalm": "^4.8",
-        "guzzlehttp/guzzle": "^7.2"
+        "vimeo/psalm": "^5.26 | ~6.4.1",
+        "guzzlehttp/guzzle": "^7.2",
+        "tubalmartin/cssmin": "^4.1",
+        "tedivm/jshrink": "^1.6.2 | ~1.5.0",
+        "roave/infection-static-analysis-plugin": "~1.35.0 | ~1.36.0"
     },
     "scripts": {
-        "psalm": "psalm --show-info=true --config=psalm.xml --no-cache"
+        "psalm": "psalm --show-info=true --config=psalm.xml --no-cache",
+        "tests": "@php vendor/bin/phpunit",
+        "infection": "@php vendor/bin/roave-infection-static-analysis-plugin",
+        "infection-original": "@php vendor/bin/infection"
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
     }
 }

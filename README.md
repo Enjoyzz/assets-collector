@@ -1,12 +1,13 @@
 # Assets Collector
 
-![7.4](https://github.com/Enjoyzz/assets-collector/workflows/7.4/badge.svg?branch=master)
-![8.0](https://github.com/Enjoyzz/assets-collector/workflows/8.0/badge.svg)
 ![8.1](https://github.com/Enjoyzz/assets-collector/workflows/8.1/badge.svg)
 ![8.2](https://github.com/Enjoyzz/assets-collector/workflows/8.2/badge.svg)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Enjoyzz/assets-collector/?branch=master)
+
+
+
 
 ## Установка
 
@@ -32,17 +33,17 @@ $assetsDir = $projectDir .'/assets';
 $environment = new Environment($assetsDir, $projectDir); 
 //Base URL to compile path for Web
 $environment->setBaseUrl("/assets-collector/example/assets"); 
-//Set strategy, default STRATEGY_MANY_FILES
-$environment->setStrategy(Assets::STRATEGY_ONE_FILE); //Assets::STRATEGY_MANY_FILES
+//Set strategy, default \Enjoys\AssetsCollector\Strategy\ManyFilesStrategy
+$environment->setStrategy(\Enjoys\AssetsCollector\Strategy\OneFileStrategy::class); //\Enjoys\AssetsCollector\Strategy\ManyFilesStrategy::class
 //Cache time for files in strategy STRATEGY_ONE_FILE
 $environment->setCacheTime(0); //cache time in seconds
 //Adds the output version, for example //example.php/style.css?v=123 
-$environment->setVersion(123);
+$environment->setVersion(123); //int|float|string
 //You can change the parameter for the version
-$environment->setParamVersion('?ver=');
+$environment->setParamVersion('version');
 
 /** 
- * YYou can add a logger that implements \Psr\Log\LoggerInterface, for example, Monolog
+ * You can add a logger that implements \Psr\Log\LoggerInterface, for example, Monolog
  * @var \Psr\Log\LoggerInterface $logger 
  */
 $environment->setLogger($logger);
@@ -62,7 +63,7 @@ $assets = new \Enjoys\AssetsCollector\Assets($environment);
 
 **Добавление в коллекцию**
 
-*Если третьим параметрам передать namespace, то при выводе так же нужно его писать. Своего рода группировка*
+*Если третьим параметрам передать $group, то при выводе так же нужно его писать. Своего рода группировка*
 
 ```php
 /** @var \Enjoys\AssetsCollector\Assets $assets */
@@ -138,7 +139,7 @@ $assets->add('css', [
 
 ```php
 /** @var \Enjoys\AssetsCollector\Assets $assets */
-$assets->add($type = 'css|js', [], $namespace, $method = 'push|unshift');
+$assets->add($type = 'css|js', [], $group, $method = 'push|unshift');
 ```
 
 **Вывод**
@@ -150,7 +151,7 @@ $assets->get('css'); //get Css with default namespace
 $assets->get('js', 'admin_namespace'); //Get Js with namespace `admin_namespace`
 ```
 
-При *$environment->setStrategy(Assets::STRATEGY_ONE_FILE);* происходит чтение всех файлов и запись в один файл. Вернет
+При *$environment->setStrategy(\Enjoys\AssetsCollector\Strategy\OneFileStrategy::class);* происходит чтение всех файлов и запись в один файл. Вернет
 html строку для подключения стилей или скриптов
 
 ```html
@@ -158,7 +159,7 @@ html строку для подключения стилей или скрипт
 <link type='text/css' rel='stylesheet' href='/assets/3c2ea3240f78656c2e4ad2b7f64a5bc2.css?_ver=1610822303'/>
 ```
 
-При *$environment->setStrategy(Assets::STRATEGY_MANY_FILES);* вернет стили или скрипты по отдельности, примерно так,
+При *$environment->setStrategy(\Enjoys\AssetsCollector\Strategy\ManyFilesStrategy::class);* вернет стили или скрипты по отдельности, примерно так,
 удобно при разработке
 
 ```html
@@ -217,57 +218,32 @@ $extension = new AssetsExtension($assets, $loader));
 
 <a id="options_cssminify"></a>
 
-## Настройки CSS Minify
+## Настройки Minify
 
-По умолчанию в качестве минификатора используется **NullMinify::class**, то есть ничего не сжимается. Для установки
-минификатора, в Environment используется метод **Environment::setMinifyCSS(MinifyInterface $minifyImpl)**
+По умолчанию в качестве минификатора CSS и JS ничего не используется, то есть ничего не сжимается. Для настройки
+минификатора, в Environment используется метод **Environment::setMinifier(AssetsType $type, Minify|\Closure|null $minifier)**
 
-Базовая реализация CSS Minify реализована с помощью библиотеки **tubalmartin\CssMin**
-Подробное описание параметров: https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port#api
-
-Легко можно реализовать минификацию с помощью других библиотек, реализовав интерфейс
-*\Enjoys\AssetsCollector\Content\Minify\MinifyInterface::class*
+Проще всего передать в класс анонимную функцию (\Closure(string): string), но также можно передать объект класса, реализовавший интерфейс
+*\Enjoys\AssetsCollector\Minify::class* для сложных случаев.
 
 ```php
-use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
-
 /** @var \Enjoys\AssetsCollector\Environment $environment */
-//необязательно передавать все параметры, можно только выборочно 
-$environment->setMinifyCSS(
-    new CssMinify([
-        'keepSourceMapComment' => false, //bool
-        'removeImportantComments' => true, //bool
-        'setLineBreakPosition' => 1000, //int
-        'setMaxExecutionTime' => 60, //int
-        'setMemoryLimit' => '128M',
-        'setPcreBacktrackLimit' => 1000000, //int
-        'setPcreRecursionLimit' => 500000, //int
-    ])
-);
+use Enjoys\AssetsCollector\AssetType;
+
+// css
+$environment->setMinifier(AssetType::CSS, function (string $content): string {
+    return (new CSSMin())->run($content);
+});
+
+$environment->setMinifier(AssetType::CSS, new class implements \Enjoys\AssetsCollector\Minifier {
+    public function minify(string $content): string {
+        return (new CSSMin())->run($content);
+    }
+});
+
 ```
-
-<a id="options_jsminify"></a>
-
-## Настройки JS Minify
-
-По умолчанию в качестве минификатора используется **NullMinify::class**, то есть ничего не сжимается. Для установки
-минификатора, в Environment используется метод **Environment::setMinifyJS(MinifyInterface $minifyImpl)**
-
-Базовая реализация CSS Minify реализована с помощью библиотеки **JShrink**
-Подробнее про [JShrink](https://github.com/tedious/JShrink)
-
-Легко можно реализовать минификацию с помощью других библиотек, реализовав интерфейс
-*\Enjoys\AssetsCollector\Content\Minify\MinifyInterface::class*
-
-```php
-
-use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
-
-/** @var \Enjoys\AssetsCollector\Environment $environment */
-// Необязательно передавать все параметры, можно только выборочно 
-$environment->setJsMinifyOptions(
-    new JsMinify([
-        'flaggedComments' => false
-    ])
-);
-```
+Список third-party минификаторов:
+- CSS
+  - **YUI-CSS-compressor-PHP-port** [tubalmartin/cssmin](https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port)
+- JS
+  - **JShrink** [tedivm/jshrink](https://github.com/tedious/JShrink)

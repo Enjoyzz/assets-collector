@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Enjoys\AssetsCollector\Extensions\Twig;
 
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Twig\Error\LoaderError;
 use Twig\Extension\AbstractExtension;
 use Twig\Loader\LoaderInterface;
@@ -53,11 +54,17 @@ class AssetsExtension extends AbstractExtension
      * @throws LoaderError
      */
     public function asset(
-        string $type,
+        string|AssetType $type,
         array $paths = [],
-        string $namespace = Assets::NAMESPACE_COMMON,
+        string $group = Assets::GROUP_COMMON,
         string $method = 'push'
     ): void {
+
+        $type = AssetType::tryToAssetType($type);
+        if ($type === null) {
+            return;
+        }
+
         $this->assetsCollector->add(
             $type,
             array_map(function ($item) {
@@ -71,36 +78,29 @@ class AssetsExtension extends AbstractExtension
                 }
                 return $path;
             }, $paths),
-            $namespace,
+            $group,
             $method
         );
     }
 
     /**
-     * @param string $namespace
+     * @param string $group
      * @return string
      * @throws \Exception
      */
-    public function getExternCss(string $namespace = Assets::NAMESPACE_COMMON): string
+    public function getExternCss(string $group = Assets::GROUP_COMMON): string
     {
-        return $this->assetsCollector->get('css', $namespace);
+        return $this->assetsCollector->get(AssetType::CSS, $group);
     }
 
     /**
-     * @param string $namespace
+     * @param string $group
      * @return string
      * @throws \Exception
      */
-    public function getExternJs(string $namespace = Assets::NAMESPACE_COMMON): string
+    public function getExternJs(string $group = Assets::GROUP_COMMON): string
     {
-        return $this->assetsCollector->get('js', $namespace);
+        return $this->assetsCollector->get(AssetType::JS, $group);
     }
 
-    /**
-     * @return Assets
-     */
-    public function getAssetsCollector(): Assets
-    {
-        return $this->assetsCollector;
-    }
 }

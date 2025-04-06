@@ -1,10 +1,8 @@
-name: '8.2'
+name: 'Tests'
 
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
 
 jobs:
   run:
@@ -12,11 +10,11 @@ jobs:
     strategy:
       matrix:
         operating-system: [ubuntu-latest, macOS-latest]
-        php-versions: ['8.2']
+        php-versions: ['8.1', '8.2', '8.3', '8.4']
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2

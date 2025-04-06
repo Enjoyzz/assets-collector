@@ -3,12 +3,13 @@
 namespace Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
-use Enjoys\AssetsCollector\Content\Minify\MinifyFactory;
 use Enjoys\AssetsCollector\Environment;
+use Exception;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
+use RuntimeException;
+use Throwable;
 
 /**
  * Class Reader
@@ -16,50 +17,32 @@ use Psr\Log\NullLogger;
  */
 class Reader
 {
-    /**
-     * @var Asset
-     */
-    private Asset $asset;
 
-    /**
-     * @var false|string
-     */
-    private $content;
-    /**
-     * @var false|string
-     */
-    private $path;
 
-    private Environment $environment;
-    /**
-     * @var LoggerInterface|NullLogger
-     */
+    private false|string $content;
+
+
     private LoggerInterface $logger;
 
     /**
      * Reader constructor.
      * @param Asset $asset
      * @param Environment $environment
-     * @param LoggerInterface|null $logger
      */
     public function __construct(
-        Asset $asset,
-        Environment $environment,
-        LoggerInterface $logger = null
+        private readonly Asset $asset,
+        private readonly Environment $environment,
     ) {
-        $this->environment = $environment;
-        $this->asset = $asset;
-        $this->logger = $logger ?? $this->environment->getLogger();
-        $this->path = $this->asset->getPath();
+        $this->logger = $this->environment->getLogger();
         $this->content = $this->getContent();
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getContents(): string
     {
-        if ($this->content === false || $this->path === false) {
+        if (!$this->asset->isValid() || $this->content === false) {
             $this->logger->notice(sprintf('Nothing return: path is `%s`', $this->asset->getOrigPath()));
             return '';
         }
@@ -67,25 +50,20 @@ class Reader
     }
 
 
-    /**
-     * @return false|string
-     */
-    private function getContent()
+    private function getContent(): false|string
     {
-        if ($this->path === false) {
+        if (!$this->asset->isValid()) {
             return false;
         }
 
         if ($this->asset->isUrl()) {
-            return $this->readUrl($this->path);
+            return $this->readUrl($this->asset->getPath());
         }
-        return $this->readFile($this->path);
+        return $this->readFile($this->asset->getPath());
     }
 
-    /**
-     * @return false|string
-     */
-    private function readUrl(string $url)
+
+    private function readUrl(string $url): false|string
     {
         if (
             null !== ($httpClient = $this->environment->getHttpClient())
@@ -94,63 +72,56 @@ class Reader
             return $this->readWithPsrHttpClient($url, $httpClient, $requestFactory);
         }
 
-        return $this->readWithPhpFileGetContents($url);
-    }
-
-    /**
-     * @return false|string
-     * @throws \RuntimeException
-     */
-    private function readWithPhpFileGetContents(string $url)
-    {
         try {
-            //Clear the most recent error
-            error_clear_last();
-            $content = @file_get_contents($url);
-            /** @var null|string[] $error */
-            $error = error_get_last();
-            if ($error !== null) {
-                throw new \RuntimeException(sprintf("%s", $error['message']));
-            }
-            return $content;
-        } catch (\Throwable $e) {
-            $this->logger->notice($e->getMessage());
+            return $this->readWithPhpFileGetContents($url);
+        } catch (RuntimeException $e) {
+            $this->logger->notice(sprintf("Ошибка чтения содержимого файла: %s", $e->getMessage()));
             return false;
         }
     }
 
     /**
-     * @return false|string
+     * @throws RuntimeException
      */
+    private function readWithPhpFileGetContents(string $url): false|string
+    {
+        //Clear the most recent error
+        error_clear_last();
+        $content = @file_get_contents($url);
+        /** @var null|string[] $error */
+        $error = error_get_last();
+        if ($error !== null) {
+            throw new RuntimeException(sprintf("%s", $error['message']));
+        }
+        return $content;
+    }
+
+
     private function readWithPsrHttpClient(
         string $url,
         ClientInterface $client,
         RequestFactoryInterface $requestFactory
-    ) {
+    ): false|string {
         try {
             $response = $client->sendRequest(
                 $requestFactory->createRequest('get', $url)
             );
 
             if ($response->getStatusCode() !== 200) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf('HTTP error: %s - %s', $response->getStatusCode(), $response->getReasonPhrase())
                 );
             }
 
             $this->logger->info(sprintf('Read: %s', $url));
             return $response->getBody()->getContents();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->notice($e->getMessage());
             return false;
         }
     }
 
-    /**
-     * @param string $filename
-     * @return false|string
-     */
-    private function readFile(string $filename)
+    private function readFile(string $filename): false|string
     {
         if (!file_exists($filename)) {
             $this->logger->notice(sprintf("Файла по указанному пути нет: %s", $filename));
@@ -159,7 +130,7 @@ class Reader
 
         try {
             $content = $this->readWithPhpFileGetContents($filename);
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->logger->notice(sprintf("Ошибка чтения содержимого файла: %s", $e->getMessage()));
             return false;
         }
@@ -169,45 +140,38 @@ class Reader
     }
 
     /**
-     * @param LoggerInterface|NullLogger $logger
+     * @throws Exception
      */
-    public function setLogger($logger): void
+    public function replaceRelativeUrls(): Reader
     {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function replaceRelativeUrlsAndCreatedSymlinks(): Reader
-    {
-        if ($this->content === false || $this->path === false) {
+        if (!$this->asset->isValid() || $this->content === false) {
             return $this;
         }
 
         if ($this->asset->getOptions()->isReplaceRelativeUrls()) {
-            $replaceRelativeUrls = new ReplaceRelative($this->content, $this->path, $this->asset, $this->environment);
-            $replaceRelativeUrls->setLogger($this->logger);
+            $replaceRelativeUrls = new ReplaceRelative($this->content, $this->asset, $this->environment);
             $this->content = $replaceRelativeUrls->getContent();
         }
 
         return $this;
     }
 
+
     public function minify(): Reader
     {
-        if ($this->content === false || $this->path === false) {
+        if (!$this->asset->isValid() || $this->content === false || !$this->asset->getOptions()->isMinify()) {
             return $this;
         }
-        if ($this->asset->getOptions()->isMinify()) {
-            $this->content = MinifyFactory::minify(
-                    $this->content,
-                    $this->asset->getType(),
-                    $this->environment
-                )->getContent() . "\n";
-            $this->logger->info(sprintf('Minify: %s', $this->path));
+
+        $minifier = $this->environment->getMinifier($this->asset->getType());
+
+        if ($minifier === null) {
+            return $this;
         }
 
+        $this->logger->info(sprintf('Minify: %s', $this->asset->getPath()));
+
+        $this->content = $minifier->minify($this->content) . "\n";
         return $this;
     }
 }

@@ -10,63 +10,43 @@ use function str_starts_with;
 class Asset
 {
 
-    /**
-     * @deprecated use AssetOption::MINIFY
-     */
-    public const MINIFY = 'minify';
-    /**
-     * @deprecated use AssetOption::REPLACE_RELATIVE_URLS
-     */
-    public const REPLACE_RELATIVE_URLS = 'replaceRelativeUrls';
-    /**
-     * @deprecated use AssetOption::SYMLINKS
-     */
-    public const CREATE_SYMLINK = 'symlinks';
-    /**
-     * @deprecated use AssetOption::NOT_COLLECT
-     */
-    public const NOT_COLLECT = 'notCollect';
-    /**
-     * @deprecated use AssetOption::ATTRIBUTES
-     */
-    public const ATTRIBUTES = 'attributes';
+    private string $id = '';
+    private string $path = '';
+    private bool $valid = false;
 
-    private ?string $id = null;
-
-    /**
-     * @var string|false
-     */
-    private $path;
-    private string $type;
     private bool $isUrl;
     private string $origPath;
     private string $url = '';
 
     private AssetOption $options;
+    private AttributeCollection $attributeCollection;
 
 
     /**
-     * @param string $type
+     * @param AssetType $type
      * @param string $path
-     * @param array<string, string|bool|array|null> $options
+     * @param array<string, bool|array> $options
      */
-    public function __construct(string $type, string $path, array $options = [])
+    public function __construct(private readonly AssetType $type, string $path, array $options = [])
     {
-        $this->type = $type;
         $this->origPath = $path;
+
+        /**  @psalm-suppress MixedArgumentTypeCoercion */
+        $this->attributeCollection = new AttributeCollection($options[AssetOption::ATTRIBUTES] ?? []);
+
         $this->options = new AssetOption($options);
 
         $this->isUrl = $this->checkIsUrl($path);
-        $this->path = $this->getNormalizedPath($path);
+        $path = $this->getNormalizedPath($path);
 
-        $this->setId($this->path);
+        if ($path !== false) {
+            $this->valid = true;
+            $this->path = $path;
+            $this->setId($this->path);
+        }
     }
 
-    /**
-     * @param string $path
-     * @return false|string
-     */
-    private function getNormalizedPath(string $path)
+    private function getNormalizedPath(string $path): false|string
     {
         if ($this->isUrl()) {
             return $this->url;
@@ -75,6 +55,7 @@ class Asset
         if (false === $projectDir = getenv('ASSETS_PROJECT_DIRECTORY')) {
             $projectDir = '';
         }
+
         $paths = [
             $path,
             $projectDir . $path
@@ -108,15 +89,12 @@ class Asset
         return false;
     }
 
-    /**
-     * @return false|string
-     */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    public function getType(): string
+    public function getType(): AssetType
     {
         return $this->type;
     }
@@ -126,7 +104,7 @@ class Asset
         return $this->isUrl;
     }
 
-    public function getId(): ?string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -136,14 +114,8 @@ class Asset
         return $this->origPath;
     }
 
-    /**
-     * @param string|false $path
-     */
-    private function setId($path): void
+    private function setId(string $path): void
     {
-        if ($path === false) {
-            return;
-        }
         $this->id = md5($path . serialize($this->getOptions()));
     }
 
@@ -151,4 +123,15 @@ class Asset
     {
         return $this->options;
     }
+
+    public function getAttributeCollection(): AttributeCollection
+    {
+        return $this->attributeCollection;
+    }
+
+    public function isValid(): bool
+    {
+        return $this->valid;
+    }
+
 }

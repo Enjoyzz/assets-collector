@@ -4,8 +4,10 @@ namespace Tests\Enjoys\AssetsCollector;
 
 use Enjoys\AssetsCollector\AssetOption;
 use Enjoys\AssetsCollector\Assets;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Environment;
 use Enjoys\AssetsCollector\Exception\NotAllowedMethods;
+use Enjoys\AssetsCollector\Strategy\ManyFilesStrategy;
 use PHPUnit\Framework\TestCase;
 
 class AssetsTest extends TestCase
@@ -22,13 +24,13 @@ class AssetsTest extends TestCase
     {
         $this->config = new Environment(__DIR__ . '/_compile', __DIR__ . '/../');
         $this->config->setBaseUrl('/t')
-            ->setStrategy(Assets::STRATEGY_MANY_FILES)
+            ->setStrategy(ManyFilesStrategy::class)
         ;
     }
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive($this->config->getCompileDir(), true);
+        $this->removeDirectoryRecursive(__DIR__ . '/_compile', true);
 
         $this->config = null;
     }
@@ -37,7 +39,7 @@ class AssetsTest extends TestCase
     {
         $assets = new Assets($this->config);
         $assets->add(
-            'css',
+            AssetType::CSS,
             [
                 __DIR__ . '/../tests/fixtures/test.css',
                 '//server.com/style.css',
@@ -46,42 +48,46 @@ class AssetsTest extends TestCase
             ]
         );
         $assets->add(
-            'js',
+            AssetType::JS,
             [
                 'not/exists.js',
-                'http://localhost/script.js',
-                ['https://localhost/script.js']
+                'http://localhost/script.js?foo=bar&baz=bar',
+                ['https://localhost/script.js?xyz[]=1&xyz[]=2']
             ]
         );
+
+        $assets->getEnvironment()->setParamVersion('version');
+        $assets->getEnvironment()->setVersion(2);
+
         $this->assertSame(
             str_replace(
                 "\r",
                 "",
                 <<<HTML
-<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css'>
-<link type='text/css' rel='stylesheet' href='http://server.com/style.css'>
-<link type='text/css' rel='stylesheet' href='http://secure.com/style.css'>
-<link type='text/css' rel='stylesheet' href='https://notsecure.com/style.css'>
+<link type='text/css' rel='stylesheet' href='/t/tests/fixtures/test.css?version=2'>
+<link type='text/css' rel='stylesheet' href='http://server.com/style.css?version=2'>
+<link type='text/css' rel='stylesheet' href='http://secure.com/style.css?version=2'>
+<link type='text/css' rel='stylesheet' href='https://notsecure.com/style.css?version=2'>
 
 HTML
             ),
-            $assets->get('css')
+            $assets->get(AssetType::CSS)
         );
 
 
-        $assets->getEnvironment()->setParamVersion('?v=');
+        $assets->getEnvironment()->setParamVersion('v');
         $assets->getEnvironment()->setVersion(1);
         $this->assertSame(
             str_replace(
                 "\r",
                 "",
                 <<<HTML
-<script src='http://localhost/script.js?v=1'></script>
-<script src='https://localhost/script.js?v=1'></script>
+<script src='http://localhost/script.js?foo=bar&baz=bar&v=1'></script>
+<script src='https://localhost/script.js?xyz%5B0%5D=1&xyz%5B1%5D=2&v=1'></script>
 
 HTML
             ),
-            $assets->get('js')
+            $assets->get(AssetType::JS)
         );
     }
 
@@ -89,14 +95,14 @@ HTML
     {
         $assets = new Assets($this->config);
         $assets->add(
-            'css',
+            AssetType::CSS,
             [
                 __DIR__ . '/../tests/fixtures/test.css',
                 __DIR__ . '/../tests/fixtures/test2.css',
             ]
         );
         $assets->add(
-            'css',
+            AssetType::CSS,
             [
                 __DIR__ . '/../tests/fixtures/test3.css',
             ]
@@ -113,7 +119,7 @@ HTML
 
 HTML
             ),
-            $assets->get('css')
+            $assets->get(AssetType::CSS)
         );
     }
 
@@ -121,7 +127,7 @@ HTML
     {
         $assets = new Assets($this->config);
         $assets->add(
-            'css',
+            AssetType::CSS,
             [
                 __DIR__ . '/../tests/fixtures/test.css',
                 __DIR__ . '/../tests/fixtures/test2.css',
@@ -130,7 +136,7 @@ HTML
             'unshift'
         );
         $assets->add(
-            'css',
+            AssetType::CSS,
             [
                 __DIR__ . '/../tests/fixtures/test3.css',
             ],
@@ -149,7 +155,7 @@ HTML
 
 HTML
             ),
-            $assets->get('css', 'test')
+            $assets->get(AssetType::CSS, 'test')
         );
     }
 
@@ -158,7 +164,7 @@ HTML
         $this->expectException(NotAllowedMethods::class);
         $assets = new Assets($this->config);
         $assets->add(
-            'css',
+            AssetType::CSS,
             [
                 __DIR__ . '/../tests/fixtures/test.css',
             ],
@@ -172,13 +178,13 @@ HTML
     {
         $assets = new Assets($this->config);
         $assets->add(
-            'css',
+            AssetType::CSS,
             [
                 __DIR__ . '/../tests/fixtures/test.css'
             ]
         );
         $assets->add(
-            'css',
+            AssetType::CSS,
             [
                 __DIR__ . '/../tests/fixtures/test.css'
             ]
@@ -192,7 +198,7 @@ HTML
 
 HTML
             ),
-            $assets->get('css')
+            $assets->get(AssetType::CSS)
         );
     }
 
@@ -201,7 +207,7 @@ HTML
         $_SERVER['HTTP_SCHEME'] = 'https';
         $assets = new Assets($this->config);
         $assets->add(
-            'js',
+            AssetType::JS,
             [
                 [
                     '//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js',
@@ -220,7 +226,7 @@ HTML
 
 HTML
             ),
-            $assets->get('js')
+            $assets->get(AssetType::JS)
         );
         unset($_SERVER['HTTP_SCHEME']);
     }
@@ -232,7 +238,7 @@ HTML
 //            ->setStrategy(Assets::STRATEGY_ONE_FILE);
         $assets = new Assets($this->config);
         $assets->add(
-            'js',
+            AssetType::JS,
             [
                 [
                     'local:/require.min.js',
@@ -252,7 +258,7 @@ HTML
 
 HTML
             ),
-            $assets->get('js')
+            $assets->get(AssetType::JS)
         );
         unset($_SERVER['HTTP_SCHEME']);
     }

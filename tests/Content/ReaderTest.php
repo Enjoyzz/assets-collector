@@ -4,17 +4,19 @@ namespace Tests\Enjoys\AssetsCollector\Content;
 
 use Enjoys\AssetsCollector\Asset;
 use Enjoys\AssetsCollector\AssetOption;
-use Enjoys\AssetsCollector\Content\Minify\Adapters\CssMinify;
-use Enjoys\AssetsCollector\Content\Minify\Adapters\JsMinify;
+use Enjoys\AssetsCollector\AssetType;
 use Enjoys\AssetsCollector\Content\Reader;
 use Enjoys\AssetsCollector\Environment;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
+use JShrink\Minifier;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Log\LogLevel;
 use Tests\Enjoys\AssetsCollector\ArrayLogger;
 use Tests\Enjoys\AssetsCollector\HelpersTestTrait;
+use tubalmartin\CssMin\Minifier as CSSmin;
 
 class ReaderTest extends TestCase
 {
@@ -32,10 +34,20 @@ class ReaderTest extends TestCase
     protected function setUp(): void
     {
         $this->environment = new Environment('_compile', __DIR__ . '/../');
-        $this->environment->setMinifyCSS(new CssMinify([]));
-        $this->environment->setMinifyJS(new JsMinify([]));
+        $this->environment->setMinifier(AssetType::CSS, function ($content) {
+            $compressor = new CSSMin();
+            return $compressor->run($content);
+        });
+        $this->environment->setMinifier(AssetType::JS, function ($content) {
+            return (string)Minifier::minify(
+                $content,
+                [
+                    'flaggedComments' => false
+                ]
+            );
+        });
 
-        $this->httpClient =  new Client(
+        $this->httpClient = new Client(
             [
                 'verify' => false,
                 'allow_redirects' => true,
@@ -51,21 +63,23 @@ class ReaderTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->removeDirectoryRecursive($this->environment->getCompileDir(), true);
+        $this->removeDirectoryRecursive(__DIR__ . '/../_compile', true);
         $this->environment = null;
     }
 
     public function testLocalFile(): void
     {
-        $reader = new Reader(new Asset('css', __DIR__ . '/../fixtures/test.css'), $this->environment);
+        $this->environment->setLogger($logger = new ArrayLogger());
+        $reader = new Reader(new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css'), $this->environment);
         $reader->minify();
         $this->assertSame("body{color:#00008b}\n", $reader->getContents());
+        $this->assertCount(2, $logger->getLog(LogLevel::INFO));
     }
 
     public function testLocalFileNoMinify(): void
     {
         $reader = new Reader(
-            new Asset('css', __DIR__ . '/../fixtures/test.css', [AssetOption::MINIFY => false]),
+            new Asset(AssetType::CSS, __DIR__ . '/../fixtures/test.css', [AssetOption::MINIFY => false]),
             $this->environment
         );
         $this->assertSame(
@@ -81,23 +95,39 @@ CSS,
 
     public function testReturnGetContentReadFalse(): void
     {
-        $reader = new Reader(new Asset('css', '/'), $this->environment);
+        $this->environment->setLogger($logger = new ArrayLogger());
+        $reader = new Reader(new Asset(AssetType::CSS, '/'), $this->environment);
         $this->assertSame('', $reader->getContents());
+        $this->assertCount(2, $logger->getLog(LogLevel::NOTICE));
     }
 
     public function testReturnGetContentFileExistsFalse(): void
     {
-        $reader = new Reader(new Asset('css', '/test.css'), $this->environment);
+        $reader = new Reader(new Asset(AssetType::CSS, '/test.css'), $this->environment);
         $this->assertSame('', $reader->getContents());
+    }
+
+    public function testFailedReadFile(): void
+    {
+        $this->environment->setLogger($logger = new ArrayLogger());
+        $asset = new Asset(AssetType::CSS, '/test.css');
+
+        $reflection = new \ReflectionClass($asset);
+        $reflection->getProperty('valid')->setValue($asset, true);
+
+        $reader = new Reader($asset, $this->environment);
+        $this->assertSame('', $reader->getContents());
+
+        $this->assertCount(2, $logger->getLog(LogLevel::NOTICE));
     }
 
     public function testWithReplaceRelativePath(): void
     {
         $reader = new Reader(
-            new Asset('css', __DIR__ . '/../fixtures/sub/css/style.css', [AssetOption::MINIFY => false]),
+            new Asset(AssetType::CSS, __DIR__ . '/../fixtures/sub/css/style.css', [AssetOption::MINIFY => false]),
             $this->environment
         );
-        $reader->replaceRelativeUrlsAndCreatedSymlinks()->minify();
+        $reader->replaceRelativeUrls()->minify();
         $this->assertSame(
             <<<CSS
 @font-face {
@@ -112,26 +142,79 @@ CSS
         );
     }
 
-    public function xtestWithReplaceRelativeUrlWithOneFileStrategy(): void
+    public function testWithReplaceRelativeUrl(): void
     {
-      //  $this->environment->setStrategy(Assets::STRATEGY_ONE_FILE);
         $reader = new Reader(
-            new Asset('css', 'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css', [AssetOption::MINIFY => false]),
+            new Asset(
+                AssetType::CSS,
+                'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css',
+            ),
             $this->environment
         );
-        $this->assertStringContainsString('https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/fonts/fontawesome-webfont.eot', $reader->getContents());
+        $reader->replaceRelativeUrls();
+        $this->assertStringContainsString(
+            "src: url('https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/fonts/fontawesome-webfont.eot');",
+            $reader->getContents()
+        );
     }
 
+    public function testWithReplaceRelativeUrlFailed(): void
+    {
+        $asset = new Asset(
+            AssetType::CSS,
+            'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css',
+        );
+
+        $reflection = new \ReflectionClass($asset);
+        $reflection->getProperty('valid')->setValue($asset, false);
+
+        $reader = new Reader(
+            $asset,
+            $this->environment
+        );
+
+        $reader->replaceRelativeUrls();
+        $this->assertSame(
+            '',
+            $reader->getContents()
+        );
+    }
+
+    public function xtestWithReplaceRelativeUrlWithOneFileStrategy(): void
+    {
+        //  $this->environment->setStrategy(Assets::STRATEGY_ONE_FILE);
+        $reader = new Reader(
+            new Asset(
+                AssetType::CSS,
+                'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css',
+                [AssetOption::MINIFY => false]
+            ),
+            $this->environment
+        );
+        $this->assertStringContainsString(
+            'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/fonts/fontawesome-webfont.eot',
+            $reader->getContents()
+        );
+    }
+
+    /**
+     * AssetOption::ATTRIBUTES добавлен для infection tests
+     */
     public function testWithDisableReplaceRelativePath(): void
     {
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 __DIR__ . '/../fixtures/sub/css/style.css',
-                [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
+                [
+                    AssetOption::ATTRIBUTES => [],
+                    AssetOption::MINIFY => false,
+                    AssetOption::REPLACE_RELATIVE_URLS => false
+                ]
             ),
             $this->environment
         );
+        $reader->replaceRelativeUrls()->minify();
         $this->assertSame(
             <<<CSS
 @font-face {
@@ -149,17 +232,18 @@ CSS
     public function testRemoteUrlWithReadHttpClientSuccess()
     {
         $this->environment
+            ->setLogger($logger = new ArrayLogger())
             ->setRequestFactory($this->requestFactory)
-            ->setHttpClient($this->httpClient)
-        ;
+            ->setHttpClient($this->httpClient);
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.css',
                 [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
             $this->environment
         );
+        $this->assertNotEmpty($logger->getLog(LogLevel::INFO));
         $this->assertStringContainsString('Bootstrap  v5.2.0 (https://getbootstrap.com/)', $reader->getContents());
     }
 
@@ -168,17 +252,16 @@ CSS
         $this->environment
             ->setLogger($logger = new ArrayLogger())
             ->setRequestFactory($this->requestFactory)
-            ->setHttpClient($this->httpClient)
-        ;
+            ->setHttpClient($this->httpClient);
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 'https://cdn.jsdelivr.net/invalid_url',
                 [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
             $this->environment
         );
-        $this->assertNotEmpty($logger->getLog('notice'));
+        $this->assertNotEmpty($logger->getLog(LogLevel::NOTICE));
         $this->assertSame('', $reader->getContents());
     }
 
@@ -186,7 +269,7 @@ CSS
     {
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.css',
                 [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
@@ -198,17 +281,18 @@ CSS
     public function testRemoteUrlWithReadFileGetContentsFailed()
     {
         $this->environment
-            ->setLogger($logger = new ArrayLogger())
-        ;
+            ->setLogger($logger = new ArrayLogger());
         $reader = new Reader(
             new Asset(
-                'css',
+                AssetType::CSS,
                 'https://cdn.jsdelivr.net/invalid_url',
                 [AssetOption::MINIFY => false, AssetOption::REPLACE_RELATIVE_URLS => false]
             ),
             $this->environment
         );
-        $this->assertNotEmpty($logger->getLog('notice'));
+        $this->assertNotEmpty($logger->getLog(LogLevel::NOTICE));
         $this->assertStringContainsString('', $reader->getContents());
     }
+
+
 }

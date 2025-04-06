@@ -60,7 +60,10 @@ class AssetsExtension extends AbstractExtension
         string $method = 'push'
     ): void {
 
-        $type = AssetType::convertToAssetType($type);
+        $type = AssetType::tryToAssetType($type);
+        if ($type === null) {
+            return;
+        }
 
         $this->assetsCollector->add(
             $type,

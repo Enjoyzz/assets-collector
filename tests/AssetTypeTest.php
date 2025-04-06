@@ -12,31 +12,31 @@ class AssetTypeTest extends TestCase
     {
         $this->assertSame(
             AssetType::CSS,
-            AssetType::convertToAssetType('Css')
+            AssetType::tryToAssetType('Css')
         );
         $this->assertSame(
             AssetType::CSS,
-            AssetType::convertToAssetType('CSS')
+            AssetType::tryToAssetType('CSS')
         );
         $this->assertSame(
             AssetType::CSS,
-            AssetType::convertToAssetType('css')
+            AssetType::tryToAssetType('css')
         );
         $this->assertSame(
             AssetType::JS,
-            AssetType::convertToAssetType('Js')
+            AssetType::tryToAssetType('Js')
         );
         $this->assertSame(
             AssetType::JS,
-            AssetType::convertToAssetType('JS')
+            AssetType::tryToAssetType('JS')
         );
         $this->assertSame(
             AssetType::JS,
-            AssetType::convertToAssetType('js')
+            AssetType::tryToAssetType('js')
         );
         $this->assertSame(
             AssetType::JS,
-            AssetType::convertToAssetType(AssetType::JS)
+            AssetType::tryToAssetType(AssetType::JS)
         );
     }
 

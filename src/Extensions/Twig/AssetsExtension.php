@@ -32,7 +32,7 @@ class AssetsExtension extends AbstractExtension
     private Assets $assetsCollector;
     private ?LoaderInterface $loader;
 
-    public function __construct(Assets $assetsCollector, LoaderInterface $loader = null)
+    public function __construct(Assets $assetsCollector, ?LoaderInterface $loader = null)
     {
         $this->assetsCollector = $assetsCollector;
         $this->loader = $loader;
